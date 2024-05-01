@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "name": "John Doe",
+    "grades": [
+      {
+        "grade": 90,
+        "subject": "math"
+      },
+      {
+        "grade": 85,
+        "subject": "algebra"
+      }
+    ],
+    "email": "john.doe@example.com",
+    "dateJoined": "2023-01-15T00:00:00Z",
+    "address": "123 Main St",
+    "city": "Anytown",
+    "country": "USA",
+    "zip": 12345
+  },
+  {
+    "id": "2",
+    "name": "Jane Smith",
+    "grades": [
+      {
+        "grade": 95,
+        "subject": "math"
+      },
+      {
+        "grade": 80,
+        "subject": "algebra"
+      }
+    ],
+    "email": "jane.smith@example.com",
+    "dateJoined": "2023-02-20T00:00:00Z",
+    "address": "456 Elm St",
+    "city": "Smallville",
+    "country": "USA",
+    "zip": 67890
+  },
+  {
+    "id": "3",
+    "name": "Alice Johnson",
+    "grades": [
+      {
+        "grade": 88,
+        "subject": "math"
+      },
+      {
+        "grade": 92,
+        "subject": "algebra"
+      }
+    ],
+    "email": "alice.johnson@example.com",
+    "dateJoined": "2023-03-10T00:00:00Z",
+    "address": "789 Oak St",
+    "city": "Villageville",
+    "country": "USA",
+    "zip": 13579
+  },
+  {
+    "id": "4",
+    "name": "Bob Brown",
+    "grades": [
+      {
+        "grade": 85,
+        "subject": "math"
+      },
+      {
+        "grade": 90,
+        "subject": "algebra"
+      }
+    ],
+    "email": "bob.brown@example.com",
+    "dateJoined": "2023-04-05T00:00:00Z",
+    "address": "1011 Pine St",
+    "city": "Mountain Town",
+    "country": "USA",
+    "zip": 24680
+  },
+  {
+    "id": "5",
+    "name": "Emily Davis",
+    "grades": [
+      {
+        "grade": 92,
+        "subject": "math"
+      },
+      {
+        "grade": 88,
+        "subject": "algebra"
+      }
+    ],
+    "email": "emily.davis@example.com",
+    "dateJoined": "2023-05-15T00:00:00Z",
+    "address": "1213 Cedar St",
+    "city": "Lakeview",
+    "country": "USA",
+    "zip": 98765
+  },
+  {
+    "id": "6",
+    "name": "Michael Wilson",
+    "grades": [
+      {
+        "grade": 87,
+        "subject": "math"
+      },
+      {
+        "grade": 85,
+        "subject": "algebra"
+      }
+    ],
+    "email": "michael.wilson@example.com",
+    "dateJoined": "2023-06-20T00:00:00Z",
+    "address": "1415 Birch St",
+    "city": "Riverside",
+    "country": "USA",
+    "zip": 24681
+  },
+  {
+    "id": "7",
+    "name": "Sarah Martinez",
+    "grades": [
+      {
+        "grade": 89,
+        "subject": "math"
+      },
+      {
+        "grade": 91,
+        "subject": "algebra"
+      }
+    ],
+    "email": "sarah.martinez@example.com",
+    "dateJoined": "2023-07-10T00:00:00Z",
+    "address": "1617 Maple St",
+    "city": "Springfield",
+    "country": "USA",
+    "zip": 13579
+  },
+  {
+    "id": "8",
+    "name": "David Garcia",
+    "grades": [
+      {
+        "grade": 93,
+        "subject": "math"
+      },
+      {
+        "grade": 87,
+        "subject": "algebra"
+      }
+    ],
+    "email": "david.garcia@example.com",
+    "dateJoined": "2023-08-05T00:00:00Z",
+    "address": "1819 Pine St",
+    "city": "Oceanview",
+    "country": "USA",
+    "zip": 64201
+  },
+  {
+    "id": "9",
+    "name": "Olivia Rodriguez",
+    "grades": [
+      {
+        "grade": 91,
+        "subject": "math"
+      },
+      {
+        "grade": 89,
+        "subject": "algebra"
+      }
+    ],
+    "email": "olivia.rodriguez@example.com",
+    "dateJoined": "2023-09-15T00:00:00Z",
+    "address": "2021 Oak St",
+    "city": "Hillside",
+    "country": "USA",
+    "zip": 12340
+  },
+  {
+    "id": "10",
+    "name": "Daniel Hernandez",
+    "grades": [
+      {
+        "grade": 86,
+        "subject": "math"
+      },
+      {
+        "grade": 94,
+        "subject": "algebra"
+      }
+    ],
+    "email": "daniel.hernandez@example.com",
+    "dateJoined": "2023-10-20T00:00:00Z",
+    "address": "2223 Elm St",
+    "city": "Sunset",
+    "country": "USA",
+    "zip": 98765
+  },
+  {
+    "id": "11",
+    "name": "Sophia Lopez",
+    "grades": [
+      {
+        "grade": 90,
+        "subject": "math"
+      },
+      {
+        "grade": 92,
+        "subject": "algebra"
+      }
+    ],
+    "email": "sophia.lopez@example.com",
+    "dateJoined": "2023-11-10T00:00:00Z",
+    "address": "2425 Maple St",
+    "city": "Lakeside",
+    "country": "USA",
+    "zip": 24680
+  },
+  {
+    "id": "12",
+    "name": "Logan Perez",
+    "grades": [
+      {
+        "grade": 88,
+        "subject": "math"
+      },
+      {
+        "grade": 89,
+        "subject": "algebra"
+      }
+    ],
+    "email": "logan.perez@example.com",
+    "dateJoined": "2023-12-05T00:00:00Z",
+    "address": "2627 Cedar St",
+    "city": "Hometown",
+    "country": "USA",
+    "zip": 13579
+  },
+  {
+    "id": "13",
+    "name": "Mia Gonzalez",
+    "grades": [
+      {
+        "grade": 94,
+        "subject": "math"
+      },
+      {
+        "grade": 87,
+        "subject": "algebra"
+      }
+    ],
+    "email": "mia.gonzalez@example.com",
+    "dateJoined": "2024-01-15T00:00:00Z",
+    "address": "2829 Birch St",
+    "city": "Cityville",
+    "country": "USA",
+    "zip": 64201
+  },
+  {
+    "id": "14",
+    "name": "Ethan Torres",
+    "grades": [
+      {
+        "grade": 85,
+        "subject": "math"
+      },
+      {
+        "grade": 91,
+        "subject": "algebra"
+      }
+    ],
+    "email": "ethan.torres@example.com",
+    "dateJoined": "2024-02-20T00:00:00Z",
+    "address": "3031 Pine St",
+    "city": "Harbor",
+    "country": "USA",
+    "zip": 12340
+  },
+  {
+    "id": "15",
+    "name": "Isabella Ramirez",
+    "grades": [
+      {
+        "grade": 92,
+        "subject": "math"
+      },
+      {
+        "grade": 90,
+        "subject": "algebra"
+      }
+    ],
+    "email": "isabella.ramirez@example.com",
+    "dateJoined": "2024-03-10T00:00:00Z",
+    "address": "3233 Oak St",
+    "city": "Hilltop",
+    "country": "USA",
+    "zip": 98765
+  },
+  {
+    "id": "16",
+    "name": "Alexander Flores",
+    "grades": [
+      {
+        "grade": 87,
+        "subject": "math"
+      },
+      {
+        "grade": 88,
+        "subject": "algebra"
+      }
+    ],
+    "email": "alexander.flores@example.com",
+    "dateJoined": "2024-04-05T00:00:00Z",
+    "address": "3435 Elm St",
+    "city": "Valley",
+    "country": "USA",
+    "zip": 24680
+  },
+  {
+    "id": "17",
+    "name": "Charlotte Morgan",
+    "grades": [
+      {
+        "grade": 89,
+        "subject": "math"
+      },
+      {
+        "grade": 92,
+        "subject": "algebra"
+      }
+    ],
+    "email": "charlotte.morgan@example.com",
+    "dateJoined": "2024-05-15T00:00:00Z",
+    "address": "3637 Maple St",
+    "city": "Rivertown",
+    "country": "USA",
+    "zip": 13579
+  },
+  {
+    "id": "18",
+    "name": "Liam King",
+    "grades": [
+      {
+        "grade": 91,
+        "subject": "math"
+      },
+      {
+        "grade": 89,
+        "subject": "algebra"
+      }
+    ],
+    "email": "liam.king@example.com",
+    "dateJoined": "2024-06-20T00:00:00Z",
+    "address": "3839 Pine St",
+    "city": "Mountainview",
+    "country": "USA",
+    "zip": 64201
+  },
+  {
+    "id": "19",
+    "name": "Amelia Powell",
+    "grades": [
+      {
+        "grade": 86,
+        "subject": "math"
+      },
+      {
+        "grade": 94,
+        "subject": "algebra"
+      }
+    ],
+    "email": "amelia.powell@example.com",
+    "dateJoined": "2024-07-10T00:00:00Z",
+    "address": "4041 Oak St",
+    "city": "Lakeside",
+    "country": "USA",
+    "zip": 12340
+  },
+  {
+    "id": "20",
+    "name": "Benjamin Hughes",
+    "grades": [
+      {
+        "grade": 93,
+        "subject": "math"
+      },
+      {
+        "grade": 88,
+        "subject": "algebra"
+      }
+    ],
+    "email": "benjamin.hughes@example.com",
+    "dateJoined": "2024-08-05T00:00:00Z",
+    "address": "4243 Elm St",
+    "city": "Sunrise",
+    "country": "USA",
+    "zip": 98765
+  }
+]

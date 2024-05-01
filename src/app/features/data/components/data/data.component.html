@@ -1,0 +1,7 @@
+<ng-container *ngIf="trainees$ | async; let traineesState">
+  <app-data-table
+    [dataTableConfig]="tableConfig"
+    [items]="traineesState.trainees"
+    [isLoading]="traineesState.isLoading"
+  />
+</ng-container>

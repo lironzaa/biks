@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 import { DataTableColumn, DataTableConfig } from "../../../interfaces/data-table";
 
@@ -11,9 +11,7 @@ import { DataTableColumn, DataTableConfig } from "../../../interfaces/data-table
 export class DataTableComponent {
   @Input() dataTableConfig!: DataTableConfig;
   @Input() items: any[] = [];
-  @Input() isLoading!: boolean;
-  @Input() linkPath!: string;
-  @Input() isRelativePath!: boolean;
+  @Input() isLoading = false;
 
   trackByItemId(index: number, item: any): any {
     return item.id;

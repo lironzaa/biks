@@ -1,4 +1,4 @@
-<table class="table table-hover text-center">
+<table class="table">
   <thead>
   <tr>
     <th *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
@@ -17,7 +17,7 @@
       <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
           [ngSwitch]="header.columnType">
         <ng-container *ngSwitchCase="'date'">
-          {{ item[header.dataProperty] | date:'dd/MM/yyyy' }}
+          {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
         </ng-container>
         <ng-container *ngSwitchDefault>
           {{ item[header.dataProperty] }}
@@ -27,10 +27,10 @@
   </tr>
   <tr *ngIf="!isLoading && items.length === 0">
     <td colspan="12">
-      <p>אין פריטים לתצוגה</p>
+      <p>No items to display</p>
     </td>
   </tr>
   </tbody>
 </table>
 
-<!--<app-pagination *ngIf="!isLoading && items.length > 0"></app-pagination>-->
+<app-pagination *ngIf="!isLoading && items.length > 0"></app-pagination>

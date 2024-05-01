@@ -5,5 +5,5 @@ export interface DataTableConfig {
 export interface DataTableColumn {
   title: string;
   dataProperty: string;
-  columnType?: string;
+  columnType?: "date";
 }

@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'colors';
+@import 'ngx-toastr/toastr';
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 html, body {
   height: 100%;
@@ -20,6 +22,24 @@ body {
 
 .pointer {
   cursor: pointer;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
 }
 
 // Padding
