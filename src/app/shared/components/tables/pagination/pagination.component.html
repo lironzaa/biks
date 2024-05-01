@@ -1,0 +1,18 @@
+<nav class="d-flex justify-content-start" dir="rtl" aria-label="Page navigation">
+  <ul class="pagination ms-4 mb-0">
+    <li class="page-item" (click)="navigateToPage('firstPage')">
+      <a class="page-link pointer" [ngClass]="{'disabled':page===1}">עמוד ראשון</a>
+    </li>
+    <li *ngIf="paginationData.hasPreviousPage" (click)="navigateToPage('previousPage')" class="page-item">
+      <a class="page-link pointer">{{page - 1}}</a>
+    </li>
+    <li class="page-item"><a class="page-link pointer active">{{page}}</a></li>
+    <li *ngIf="paginationData.hasNextPage" (click)="navigateToPage('nextPage')" class="page-item">
+      <a class="page-link pointer">{{page + 1}}</a>
+    </li>
+    <li class="page-item" (click)="navigateToPage('lastPage')">
+      <a class="page-link pointer" [ngClass]="{'disabled':page===paginationData.pagesCount}">עמוד אחרון</a>
+    </li>
+  </ul>
+  <span class="bold fs-4">סה"כ {{paginationData.itemsCount}} רשומות</span>
+</nav>

@@ -8,7 +8,8 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
-          "standalone": false
+          "standalone": false,
+          "changeDetection": "OnPush"
         },
         "@schematics/angular:directive": {
           "standalone": false
@@ -104,5 +105,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "d7c7c0c4-4d24-45f2-a253-cba827e2e62b"
   }
 }

@@ -1,0 +1,36 @@
+<table class="table table-hover text-center">
+  <thead>
+  <tr>
+    <th *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
+        scope="col">{{ header.title }}
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngIf="isLoading">
+    <td colspan="12">
+      <app-spinner></app-spinner>
+    </td>
+  </tr>
+  <tr *ngFor="let item of items; trackBy: trackByItemId" class="pointer">
+    <ng-container *ngIf="!isLoading && items.length > 0">
+      <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
+          [ngSwitch]="header.columnType">
+        <ng-container *ngSwitchCase="'date'">
+          {{ item[header.dataProperty] | date:'dd/MM/yyyy' }}
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          {{ item[header.dataProperty] }}
+        </ng-container>
+      </td>
+    </ng-container>
+  </tr>
+  <tr *ngIf="!isLoading && items.length === 0">
+    <td colspan="12">
+      <p>אין פריטים לתצוגה</p>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<!--<app-pagination *ngIf="!isLoading && items.length > 0"></app-pagination>-->

@@ -1,0 +1,16 @@
+<header>
+  <div class="header-container py-3 bg-primary">
+    <a [routerLink]="['/data']" class="home-item nav-item">
+      <span class="pl-1 pr-3">Biks</span>
+    </a>
+    <a [routerLink]="['/data']" class="nav-item" [routerLinkActive]="['is-active']">
+      <span class="pr-3">Data</span>
+    </a>
+    <a [routerLink]="['/analysis']" class="nav-item" [routerLinkActive]="['is-active']">
+      <span class="pr-3">Analysis</span>
+    </a>
+    <a [routerLink]="['/monitor']" class="nav-item" [routerLinkActive]="['is-active']">
+      <span class="pr-3">Monitor</span>
+    </a>
+  </div>
+</header>

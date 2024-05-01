@@ -1,1 +1,80 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'colors';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Backgrounds
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+// General
+
+.pointer {
+  cursor: pointer;
+}
+
+// Padding
+
+.px-3 {
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.py-3 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.pr-3 {
+  padding-right: 1rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pl-3 {
+  padding-left: 1rem;
+}
+
+// Margin
+
+.my-3 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.my-4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-5 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.m-3 {
+  margin: 1rem;
+}

@@ -1,0 +1,20 @@
+.header-container {
+  display: flex;
+  align-items: center;
+}
+
+.home-item {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: var(--white-color);
+}
+
+.is-active {
+  font-weight: bold;
+}
