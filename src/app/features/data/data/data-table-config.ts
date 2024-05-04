@@ -1,4 +1,4 @@
-import { DataTableConfig } from "../../../shared/interfaces/data-table";
+import { DataTableConfig } from "../../../shared/interfaces/data-table-interface";
 
 export const dataTableConfig: DataTableConfig = {
   columns: [
@@ -9,3 +9,4 @@ export const dataTableConfig: DataTableConfig = {
     { title: "Subject", dataProperty: "subject" },
   ],
 }
+

@@ -1,6 +1,6 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "name": "John Doe",
     "grades": [
       {
@@ -20,7 +20,7 @@
     "zip": 12345
   },
   {
-    "id": "2",
+    "id": 2,
     "name": "Jane Smith",
     "grades": [
       {
@@ -40,7 +40,7 @@
     "zip": 67890
   },
   {
-    "id": "3",
+    "id": 3,
     "name": "Alice Johnson",
     "grades": [
       {
@@ -60,7 +60,7 @@
     "zip": 13579
   },
   {
-    "id": "4",
+    "id": 4,
     "name": "Bob Brown",
     "grades": [
       {
@@ -80,7 +80,7 @@
     "zip": 24680
   },
   {
-    "id": "5",
+    "id": 5,
     "name": "Emily Davis",
     "grades": [
       {
@@ -100,7 +100,7 @@
     "zip": 98765
   },
   {
-    "id": "6",
+    "id": 6,
     "name": "Michael Wilson",
     "grades": [
       {
@@ -120,7 +120,7 @@
     "zip": 24681
   },
   {
-    "id": "7",
+    "id": 7,
     "name": "Sarah Martinez",
     "grades": [
       {
@@ -140,7 +140,7 @@
     "zip": 13579
   },
   {
-    "id": "8",
+    "id": 8,
     "name": "David Garcia",
     "grades": [
       {
@@ -160,7 +160,7 @@
     "zip": 64201
   },
   {
-    "id": "9",
+    "id": 9,
     "name": "Olivia Rodriguez",
     "grades": [
       {
@@ -180,7 +180,7 @@
     "zip": 12340
   },
   {
-    "id": "10",
+    "id": 10,
     "name": "Daniel Hernandez",
     "grades": [
       {
@@ -200,7 +200,7 @@
     "zip": 98765
   },
   {
-    "id": "11",
+    "id": 11,
     "name": "Sophia Lopez",
     "grades": [
       {
@@ -220,7 +220,7 @@
     "zip": 24680
   },
   {
-    "id": "12",
+    "id": 12,
     "name": "Logan Perez",
     "grades": [
       {
@@ -240,7 +240,7 @@
     "zip": 13579
   },
   {
-    "id": "13",
+    "id": 13,
     "name": "Mia Gonzalez",
     "grades": [
       {
@@ -260,7 +260,7 @@
     "zip": 64201
   },
   {
-    "id": "14",
+    "id": 14,
     "name": "Ethan Torres",
     "grades": [
       {
@@ -280,7 +280,7 @@
     "zip": 12340
   },
   {
-    "id": "15",
+    "id": 15,
     "name": "Isabella Ramirez",
     "grades": [
       {
@@ -300,7 +300,7 @@
     "zip": 98765
   },
   {
-    "id": "16",
+    "id": 16,
     "name": "Alexander Flores",
     "grades": [
       {
@@ -320,7 +320,7 @@
     "zip": 24680
   },
   {
-    "id": "17",
+    "id": 17,
     "name": "Charlotte Morgan",
     "grades": [
       {
@@ -340,7 +340,7 @@
     "zip": 13579
   },
   {
-    "id": "18",
+    "id": 18,
     "name": "Liam King",
     "grades": [
       {
@@ -360,7 +360,7 @@
     "zip": 64201
   },
   {
-    "id": "19",
+    "id": 19,
     "name": "Amelia Powell",
     "grades": [
       {
@@ -380,7 +380,7 @@
     "zip": 12340
   },
   {
-    "id": "20",
+    "id": 20,
     "name": "Benjamin Hughes",
     "grades": [
       {

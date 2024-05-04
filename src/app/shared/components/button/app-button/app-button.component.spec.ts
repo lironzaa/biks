@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AppButtonComponent } from './app-button.component';
+import { AppButtonComponent } from "./app-button.component";
 
-describe('AppButtonComponent', () => {
+describe("AppButtonComponent", () => {
   let component: AppButtonComponent;
   let fixture: ComponentFixture<AppButtonComponent>;
 
@@ -17,7 +17,7 @@ describe('AppButtonComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 
-import { PaginationData } from "../../../interfaces/pagination-data";
+import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
 
 @Component({
-  selector: 'app-pagination',
-  templateUrl: './pagination.component.html',
-  styleUrl: './pagination.component.scss',
+  selector: "app-pagination",
+  templateUrl: "./pagination.component.html",
+  styleUrl: "./pagination.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnInit, OnDestroy {
@@ -32,8 +32,8 @@ export class PaginationComponent implements OnInit, OnDestroy {
   initQueryParamsSub(): void {
     this.queryParamsSub = this.route.queryParams
       .subscribe(queryParams => {
-        this.page = queryParams['page'] ? +queryParams['page'] : 1;
-        console.log(this.page);
+        this.page = queryParams["page"] ? +queryParams["page"] : 1;
+        // console.log(this.page);
       });
   }
 
@@ -41,16 +41,18 @@ export class PaginationComponent implements OnInit, OnDestroy {
     this.paginationDataSub = this.paginationDataService.getPaginationDataListener()
       .subscribe(paginationData => {
         this.paginationData = paginationData;
-        console.log(this.paginationData);
+        // console.log(this.paginationData);
       });
   }
 
-  navigateToPage(navigateType: 'previousPage' | 'nextPage'): void {
+  navigateToPage(navigateType: "previousPage" | "nextPage"): void {
     switch (navigateType) {
       case "previousPage":
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(20, this.page - 1));
         this.navigate(this.page - 1);
         break;
       case "nextPage":
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(20, this.page + 1));
         this.navigate(this.page + 1);
         break;
     }
@@ -65,12 +67,12 @@ export class PaginationComponent implements OnInit, OnDestroy {
       {
         relativeTo: this.route,
         queryParams,
-        queryParamsHandling: 'merge',
+        queryParamsHandling: "merge",
       });
   }
 
   ngOnDestroy(): void {
-    this.queryParamsSub.unsubscribe();
-    this.paginationDataSub.unsubscribe();
+    if (!this.queryParamsSub.closed) this.queryParamsSub.unsubscribe();
+    if (!this.paginationDataSub.closed) this.paginationDataSub.unsubscribe();
   }
 }

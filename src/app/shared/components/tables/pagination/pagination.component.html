@@ -1,18 +1,20 @@
-<div class="d-flex flex-column" aria-label="Page navigation">
-  <div class="pagination ms-4 mb-0 d-flex">
-    <div (click)="navigateToPage('previousPage')" class="page-item">
-      <app-button
-        [text]="'Previous'"
-        [color]="'primary'"
-      />
+<div class="pagination-container">
+  <div class="ms-4 mb-0 d-flex">
+    <app-button
+      [text]="'Previous'"
+      [color]="'primary'"
+      [isDisabled]="!paginationData.hasPreviousPage"
+      (buttonClicked)="navigateToPage('previousPage')"
+    />
+    <div class="current-page-div">
+      <p class="current-page">{{ page }}</p>
     </div>
-    <div class="page-item"><a class="page-link pointer active">{{ page }}</a></div>
-    <div (click)="navigateToPage('nextPage')" class="page-item">
-      <app-button
-        [text]="'Next'"
-        [color]="'primary'"
-      />
-    </div>
+    <app-button
+      [text]="'Next'"
+      [color]="'primary'"
+      [isDisabled]="!paginationData.hasNextPage"
+      (buttonClicked)="navigateToPage('nextPage')"
+    />
   </div>
   <div>
     <span class="bold fs-4">סה"כ {{ paginationData.itemsCount }} רשומות</span>

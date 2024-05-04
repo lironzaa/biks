@@ -1,17 +1,22 @@
-import { createAction, props } from '@ngrx/store';
+import { createAction, props } from "@ngrx/store";
 
-import { Trainee } from "../interfaces/Trainee";
+import { Trainee } from "../interfaces/trainee-interface";
 
 export const getTrainees = createAction(
-  '[Trainees] Get Trainees]'
+  "[Trainees] Get Trainees]"
 );
 
 export const traineesFetched = createAction(
-  '[Trainees] Trainees Fetched]',
+  "[Trainees] Trainees Fetched]",
   props<{ trainees: Trainee[] }>()
 );
 
 export const traineesError = createAction(
-  '[Trainees] Trainees Error]',
+  "[Trainees] Trainees Error]",
   props<{ errorMessage: string }>()
+);
+
+export const filterTrainees = createAction(
+  "[Trainees] Filter Trainees]",
+  props<{ trainees: Trainee[] }>()
 );

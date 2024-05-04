@@ -1,15 +1,18 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatButton } from "@angular/material/button";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { MatInput } from "@angular/material/input";
 
-import { TextInputComponent } from './components/inputs/text-input/text-input.component';
-import { DataTableComponent } from './components/tables/data-table/data-table.component';
-import { SpinnerComponent } from './components/spinner/spinner.component';
-import { PaginationComponent } from './components/tables/pagination/pagination.component';
-import { AppButtonComponent } from './components/button/app-button/app-button.component';
+import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
+import { DataTableComponent } from "./components/tables/data-table/data-table.component";
+import { SpinnerComponent } from "./components/spinner/spinner.component";
+import { PaginationComponent } from "./components/tables/pagination/pagination.component";
+import { AppButtonComponent } from "./components/button/app-button/app-button.component";
+import { TableFiltersComponent } from "./components/tables/table-filters/table-filters.component";
+import { AsStringPipe } from "./pipes/as-string.pipe";
 
 @NgModule({
   declarations: [
@@ -17,7 +20,9 @@ import { AppButtonComponent } from './components/button/app-button/app-button.co
     DataTableComponent,
     SpinnerComponent,
     PaginationComponent,
-    AppButtonComponent
+    AppButtonComponent,
+    TableFiltersComponent,
+    AsStringPipe
   ],
   exports: [
     DataTableComponent,
@@ -32,6 +37,7 @@ import { AppButtonComponent } from './components/button/app-button/app-button.co
     MatFormField,
     MatProgressSpinner,
     MatButton,
+    MatInput,
   ]
 })
 export class SharedModule {

@@ -1,7 +1,16 @@
-<ng-container *ngIf="trainees$ | async; let traineesState">
-  <app-data-table
-    [dataTableConfig]="tableConfig"
-    [items]="traineesState.trainees"
-    [isLoading]="traineesState.isLoading"
-  />
-</ng-container>
+<div>
+  <div class="table-container">
+    <ng-container *ngIf="trainees$ | async; let traineesState">
+      <app-data-table
+        [dataTableConfig]="tableConfig"
+        [items]="traineesState.trainees"
+        [itemsOrigin]="traineesState.traineesOrigin"
+        [isLoading]="traineesState.isLoading"
+        [filtersForm]="dataFiltersForm"
+      />
+    </ng-container>
+  </div>
+  <div class="form-container">
+
+  </div>
+</div>

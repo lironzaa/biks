@@ -25,12 +25,11 @@ thead {
 
 .table > :not(caption) > * > * {
   padding: .5rem;
-  background-color: var(--bs-table-bg);
   border-bottom-width: 1px;
 }
 
 thead, tbody, tfoot, tr, td, th {
-  border-color: var(--border-color);
+  border-color: var(--gray-color);
   border-style: solid;
   border-width: 0;
 }
@@ -42,7 +41,7 @@ tr {
 }
 
 tr:hover {
-  background-color: var(--border-color);
+  background-color: var(--gray-color);
 }
 
 .table > tbody {

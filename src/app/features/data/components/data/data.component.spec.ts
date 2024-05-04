@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DataComponent } from './data.component';
+import { DataComponent } from "./data.component";
 
-describe('DataComponent', () => {
+describe("DataComponent", () => {
   let component: DataComponent;
   let fixture: ComponentFixture<DataComponent>;
 
@@ -17,7 +17,7 @@ describe('DataComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

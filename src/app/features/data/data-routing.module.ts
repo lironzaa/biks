@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
 
 import { DataComponent } from "./components/data/data.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: DataComponent,
   }
 ];

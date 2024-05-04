@@ -1,30 +1,34 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 
-import { PaginationData } from "../interfaces/pagination-data";
+import { PaginationData } from "../interfaces/pagination-data-interface";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class PaginationDataService {
-  ITEMS_PER_PAGE = 10;
+  private ITEMS_PER_PAGE = 10;
   private paginationData = new BehaviorSubject<PaginationData>({
+    currentPage: 1,
     itemsCount: 0,
     pagesCount: 0,
     nextPage: 0,
     hasNextPage: false,
     previousPage: 0,
-    hasPreviousPage: false
+    hasPreviousPage: false,
+    itemsPerPage: this.ITEMS_PER_PAGE
   });
 
-  calculatePaginationData(itemsCount: number): PaginationData {
+  calculatePaginationData(itemsCount: number, page: number): PaginationData {
     return {
+      currentPage: page,
       itemsCount: itemsCount,
       pagesCount: Math.ceil(itemsCount / this.ITEMS_PER_PAGE),
-      nextPage: 2,
-      hasNextPage: itemsCount > 10,
-      previousPage: 0,
-      hasPreviousPage: false
+      nextPage: page + 1,
+      hasNextPage: this.ITEMS_PER_PAGE * page < itemsCount,
+      previousPage: page - 1,
+      hasPreviousPage: page > 1,
+      itemsPerPage: this.ITEMS_PER_PAGE
     }
   }
 

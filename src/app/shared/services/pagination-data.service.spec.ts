@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { PaginationDataService } from './pagination-data.service';
+import { PaginationDataService } from "./pagination-data.service";
 
-describe('PaginationDataService', () => {
+describe("PaginationDataService", () => {
   let service: PaginationDataService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('PaginationDataService', () => {
     service = TestBed.inject(PaginationDataService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

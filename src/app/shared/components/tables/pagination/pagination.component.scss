@@ -1,3 +1,15 @@
-.page-link {
-  padding: 1rem;
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  margin-inline-start: 1rem;
+}
+
+.current-page-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-page {
+  margin: 0 1rem;
 }
