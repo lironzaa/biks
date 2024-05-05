@@ -7,6 +7,7 @@ import { createTrainee } from "../../store/trainees.actions";
 import { CreateTrainee } from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
+import { SubjectTypeOptions } from "../../data/subject-type-options";
 
 @Component({
   selector: "app-trainee-form",
@@ -30,14 +31,11 @@ export class TraineeFormComponent {
     "subject": new FormControl<SubjectType | null>(null),
   });
 
+  subjectTypeOptions = SubjectTypeOptions;
+
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
               protected formUtilitiesService: FormUtilitiesService) {
   }
-
-  // this.formRegister = this.fb.group({
-  //   email: [ "" ],
-  //   password: [ "" ],
-  // });
 
   onSubmitForm(): void {
     console.log(this.traineeForm.value);

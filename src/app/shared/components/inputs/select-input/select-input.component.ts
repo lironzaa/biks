@@ -5,24 +5,28 @@ import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
 
 @Component({
-  selector: "app-text-input",
+  selector: "app-select-input",
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextInputComponent),
+      useExisting: forwardRef(() => SelectInputComponent),
       multi: true,
     },
   ],
-  templateUrl: "./text-input.component.html",
-  styleUrls: [ "./text-input.component.scss" ],
+  templateUrl: "./select-input.component.html",
+  styleUrl: "./select-input.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextInputComponent<T>
+export class SelectInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input() override type: "text" | "number" | "email" = "text";
+  @Input({ required: true }) options: string[] = [];
   @Input() placeholder?: string | undefined;
   @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+
+  trackByOptionName(index: number, option: string) {
+    return option;
+  }
 }

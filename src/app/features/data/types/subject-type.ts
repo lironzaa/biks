@@ -1,1 +1,1 @@
-export type SubjectType = "math" | "algebra";
+export type SubjectType = "Math" | "Algebra";

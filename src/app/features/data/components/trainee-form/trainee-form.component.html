@@ -1,49 +1,81 @@
 <form [formGroup]="traineeForm" (ngSubmit)="onSubmitForm()">
-  <app-text-input
-    [placeholder]="'Name'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
-    [name]="'name'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'name')"
-  />
-  <app-text-input
-    [type]="'number'"
-    [placeholder]="'Grade'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
-    [name]="'grade'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'grade')"
-  />
-  <app-text-input
-    [type]="'email'"
-    [placeholder]="'Email'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
-    [name]="'email'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'email')"
-  />
-  <app-text-input
-    [placeholder]="'Address'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
-    [name]="'address'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'address')"
-  />
-  <app-text-input
-    [placeholder]="'City'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
-    [name]="'city'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'city')"
-  />
-  <app-text-input
-    [placeholder]="'Country'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
-    [name]="'country'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'country')"
-  />
-  <app-text-input
-    [type]="'number'"
-    [placeholder]="'Zip'"
-    [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
-    [name]="'zip'"
-    [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'zip')"
-  />
+  <div>
+    <app-text-input
+      [placeholder]="'Name'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
+      [name]="'name'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'name')"
+    />
+  </div>
+  <div>
+    <app-text-input
+      [type]="'number'"
+      [placeholder]="'Grade'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
+      [name]="'grade'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'grade')"
+    />
+  </div>
+  <div>
+    <app-text-input
+      [type]="'email'"
+      [placeholder]="'Email'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
+      [name]="'email'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'email')"
+    />
+  </div>
+  <div>
+    <app-date-input
+      [placeholder]="'Date Joined'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
+      [name]="'dateJoined'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'dateJoined')"
+    />
+  </div>
+  <div>
+    <app-text-input
+      [placeholder]="'Address'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
+      [name]="'address'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'address')"
+    />
+  </div>
+
+  <div>
+    <app-text-input
+      [placeholder]="'City'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
+      [name]="'city'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'city')"
+    />
+  </div>
+  <div>
+    <app-text-input
+      [placeholder]="'Country'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
+      [name]="'country'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'country')"
+    />
+  </div>
+  <div>
+    <app-text-input
+      [type]="'number'"
+      [placeholder]="'Zip'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
+      [name]="'zip'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'zip')"
+    />
+  </div>
+  <div>
+    <app-select-input
+      [options]="subjectTypeOptions"
+      [placeholder]="'Subject'"
+      [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
+      [name]="'subject'"
+      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'subject')"
+    />
+  </div>
   <app-button
     [text]="isEditMode ? 'Edit' : 'Create'"
     [color]="'primary'"

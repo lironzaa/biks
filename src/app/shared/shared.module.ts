@@ -1,10 +1,18 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatButton } from "@angular/material/button";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
-import { MatInput } from "@angular/material/input";
+import { MatInput, MatInputModule } from "@angular/material/input";
+import { MatOption, MatSelect } from "@angular/material/select";
+import {
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerModule,
+  MatDatepickerToggle
+} from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
 
 import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
 import { DataTableComponent } from "./components/tables/data-table/data-table.component";
@@ -13,6 +21,8 @@ import { PaginationComponent } from "./components/tables/pagination/pagination.c
 import { AppButtonComponent } from "./components/button/app-button/app-button.component";
 import { TableFiltersComponent } from "./components/tables/table-filters/table-filters.component";
 import { ErrorInputComponent } from "./components/inputs/error-input/error-input.component";
+import { SelectInputComponent } from "./components/inputs/select-input/select-input.component";
+import { DateInputComponent } from "./components/inputs/date-input/date-input.component";
 
 import { AsStringPipe } from "./pipes/as-string.pipe";
 
@@ -26,6 +36,8 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     TableFiltersComponent,
     AsStringPipe,
     ErrorInputComponent,
+    SelectInputComponent,
+    DateInputComponent,
   ],
   exports: [
     DataTableComponent,
@@ -33,6 +45,8 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     ReactiveFormsModule,
     TextInputComponent,
     AppButtonComponent,
+    SelectInputComponent,
+    DateInputComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +58,16 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     MatProgressSpinner,
     MatButton,
     MatInput,
-  ]
+    MatSelect,
+    MatOption,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatHint,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatInputModule
+  ],
 })
 export class SharedModule {
 }

@@ -5,22 +5,21 @@ import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
 
 @Component({
-  selector: "app-text-input",
+  selector: "app-date-input",
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextInputComponent),
+      useExisting: forwardRef(() => DateInputComponent),
       multi: true,
     },
   ],
-  templateUrl: "./text-input.component.html",
-  styleUrls: [ "./text-input.component.scss" ],
+  templateUrl: "./date-input.component.html",
+  styleUrl: "./date-input.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextInputComponent<T>
+export class DateInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input() override type: "text" | "number" | "email" = "text";
   @Input() placeholder?: string | undefined;
   @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};

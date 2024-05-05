@@ -1,7 +1,9 @@
 <ng-container *ngIf="control">
   <mat-form-field>
     <mat-label>{{ placeholder }}</mat-label>
-    <input [formControl]="control" [attr.value]="value || null" [type]="type" matInput>
+    <mat-select [formControl]="control">
+      <mat-option *ngFor="let option of options; trackBy: trackByOptionName" [value]="option">{{ option }}</mat-option>
+    </mat-select>
   </mat-form-field>
   <app-error-input
     [formContained]="control"

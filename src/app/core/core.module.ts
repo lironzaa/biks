@@ -9,18 +9,15 @@ import { MatIcon } from "@angular/material/icon";
 import { HttpClientModule } from "@angular/common/http";
 
 import { HeaderComponent } from "./components/layout/header/header.component";
-import { FooterComponent } from "./components/layout/footer/footer.component";
 import * as fromApp from "./store/app.reducer";
 import { TraineesEffects } from "../features/data/store/trainees.effects";
 
 @NgModule({
   declarations: [
     HeaderComponent,
-    FooterComponent
   ],
   exports: [
     HeaderComponent,
-    FooterComponent
   ],
   imports: [
     CommonModule,
