@@ -12,6 +12,8 @@ import { SpinnerComponent } from "./components/spinner/spinner.component";
 import { PaginationComponent } from "./components/tables/pagination/pagination.component";
 import { AppButtonComponent } from "./components/button/app-button/app-button.component";
 import { TableFiltersComponent } from "./components/tables/table-filters/table-filters.component";
+import { ErrorInputComponent } from "./components/inputs/error-input/error-input.component";
+
 import { AsStringPipe } from "./pipes/as-string.pipe";
 
 @NgModule({
@@ -22,11 +24,15 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     PaginationComponent,
     AppButtonComponent,
     TableFiltersComponent,
-    AsStringPipe
+    AsStringPipe,
+    ErrorInputComponent,
   ],
   exports: [
     DataTableComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    ReactiveFormsModule,
+    TextInputComponent,
+    AppButtonComponent,
   ],
   imports: [
     CommonModule,

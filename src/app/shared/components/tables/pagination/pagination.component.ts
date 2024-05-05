@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 
 import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
@@ -12,21 +12,19 @@ import { PaginationDataService } from "../../../services/pagination-data.service
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnInit, OnDestroy {
-  paginationData!: PaginationData;
   page!: number;
 
   private queryParamsSub!: Subscription;
-  private paginationDataSub!: Subscription;
+  paginationData$: Observable<PaginationData>;
 
   constructor(private route: ActivatedRoute, private router: Router,
               private paginationDataService: PaginationDataService
-              // private queryParamsService: QueryParamsService) {
   ) {
+    this.paginationData$ = this.paginationDataService.getPaginationDataListener();
   }
 
   ngOnInit(): void {
     this.initQueryParamsSub();
-    this.initPaginationDataSub();
   }
 
   initQueryParamsSub(): void {
@@ -34,14 +32,6 @@ export class PaginationComponent implements OnInit, OnDestroy {
       .subscribe(queryParams => {
         this.page = queryParams["page"] ? +queryParams["page"] : 1;
         // console.log(this.page);
-      });
-  }
-
-  initPaginationDataSub(): void {
-    this.paginationDataSub = this.paginationDataService.getPaginationDataListener()
-      .subscribe(paginationData => {
-        this.paginationData = paginationData;
-        // console.log(this.paginationData);
       });
   }
 
@@ -73,6 +63,5 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (!this.queryParamsSub.closed) this.queryParamsSub.unsubscribe();
-    if (!this.paginationDataSub.closed) this.paginationDataSub.unsubscribe();
   }
 }

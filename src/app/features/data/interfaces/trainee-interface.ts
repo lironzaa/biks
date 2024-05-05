@@ -16,3 +16,15 @@ export interface TraineeGrade {
   grade: number;
   subject: SubjectType;
 }
+
+export interface CreateTrainee {
+  name: string;
+  grade: number;
+  email: string;
+  dateJoined: string;
+  address: string;
+  city: string;
+  country: string;
+  zip: number;
+  subject: SubjectType;
+}

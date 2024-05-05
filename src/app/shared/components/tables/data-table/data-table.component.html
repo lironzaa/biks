@@ -16,22 +16,24 @@
       <app-spinner></app-spinner>
     </td>
   </tr>
-  <tr
-    *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
+  <ng-container *ngIf="paginationData$ | async; let paginationData">
+    <tr
+      *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
      trackBy: trackByItemId"
-    class="pointer">
-    <ng-container *ngIf="!isLoading && items.length > 0">
-      <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
-          [ngSwitch]="header.columnType">
-        <ng-container *ngSwitchCase="'date'">
-          {{ item[header.dataProperty] | asString | date:"dd/MM/yyyy" }}
-        </ng-container>
-        <ng-container *ngSwitchDefault>
-          {{ item[header.dataProperty] }}
-        </ng-container>
-      </td>
-    </ng-container>
-  </tr>
+      class="pointer">
+      <ng-container *ngIf="!isLoading && items.length > 0">
+        <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
+            [ngSwitch]="header.columnType">
+          <ng-container *ngSwitchCase="'date'">
+            {{ item[header.dataProperty] | asString | date:"dd/MM/yyyy" }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ item[header.dataProperty] }}
+          </ng-container>
+        </td>
+      </ng-container>
+    </tr>
+  </ng-container>
   <tr *ngIf="!isLoading && items.length === 0">
     <td colspan="12">
       <p>No items to display</p>

@@ -1,6 +1,6 @@
 import { Trainee } from "../interfaces/trainee-interface";
 import { createReducer, on } from "@ngrx/store";
-import { filterTrainees, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
+import { createTrainee, filterTrainees, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
 
 export interface TraineesState {
   trainees: Trainee[];
@@ -31,6 +31,11 @@ export const traineesReducer = createReducer(
     traineesOrigin: action.trainees,
     error: null,
     isLoading: false
+  })),
+  on(createTrainee, (state) => ({
+    ...state,
+    error: null,
+    isLoading: true
   })),
   on(traineesError, (state, action) => ({
     ...state,

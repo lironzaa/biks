@@ -1,21 +1,27 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { AbstractControl, ControlContainer, FormGroupDirective } from "@angular/forms";
+import { ChangeDetectionStrategy, Component, forwardRef, Input } from "@angular/core";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
+
+import { InputType } from "../../../types/input-type";
+import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
 
 @Component({
   selector: "app-text-input",
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TextInputComponent),
+      multi: true,
+    },
+  ],
   templateUrl: "./text-input.component.html",
   styleUrls: [ "./text-input.component.scss" ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
 })
-export class TextInputComponent {
-  @Input({ required: true }) formField: AbstractControl | null = null;
-  @Input({ required: true }) customFormControlName: string = "";
-  @Input({ required: true }) placeholder: string = "";
-  @Input() type: "text" | "number" = "text";
+export class TextInputComponent<T>
+  extends ControlValueAccessorDirective<T>
+  implements InputType {
+  @Input() placeholder?: string | undefined;
+  @Input() value?: string | number | undefined;
+  @Input() customErrorMessages: Record<string, string> = {};
+  @Input() name!: string;
 }

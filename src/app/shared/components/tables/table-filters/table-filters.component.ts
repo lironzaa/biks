@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 
+import { FormUtilitiesService } from "../../../services/form-utilities.service";
+
 @Component({
   selector: "app-table-filters",
   templateUrl: "./table-filters.component.html",
@@ -9,5 +11,8 @@ import { FormGroup } from "@angular/forms";
 })
 export class TableFiltersComponent {
   @Input() filtersForm!: FormGroup;
+
+  constructor(protected formUtilitiesService: FormUtilitiesService) {
+  }
 
 }

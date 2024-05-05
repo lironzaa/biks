@@ -1,4 +1,4 @@
-<div>
+<div class="d-flex">
   <div class="table-container">
     <ng-container *ngIf="trainees$ | async; let traineesState">
       <app-data-table
@@ -10,7 +10,21 @@
       />
     </ng-container>
   </div>
-  <div class="form-container">
-
+  <div class="form-div-container">
+    <div class="buttons-container">
+      <app-button
+        [text]="'Add'"
+        [color]="'primary'"
+        (buttonClicked)="addTrainee()"
+      />
+      <app-button
+        [text]="'Remove'"
+        [color]="'warn'"
+        (buttonClicked)="removeTrainee()"
+      />
+    </div>
+    <div class="form-container">
+      <app-trainee-form />
+    </div>
   </div>
 </div>

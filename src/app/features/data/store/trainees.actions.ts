@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { Trainee } from "../interfaces/trainee-interface";
+import { CreateTrainee, Trainee } from "../interfaces/trainee-interface";
 
 export const getTrainees = createAction(
   "[Trainees] Get Trainees]"
@@ -9,6 +9,11 @@ export const getTrainees = createAction(
 export const traineesFetched = createAction(
   "[Trainees] Trainees Fetched]",
   props<{ trainees: Trainee[] }>()
+);
+
+export const createTrainee = createAction(
+  "[Trainees] Create Trainee]",
+  props<{ traineeData: CreateTrainee }>()
 );
 
 export const traineesError = createAction(

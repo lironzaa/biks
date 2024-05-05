@@ -70,6 +70,14 @@ export class DataComponent implements OnInit, OnDestroy {
     return formValues;
   }
 
+  addTrainee(): void {
+
+  }
+
+  removeTrainee(): void {
+
+  }
+
   ngOnDestroy(): void {
     if (!this.filtersFormSub?.closed) this.filtersFormSub.unsubscribe();
   }

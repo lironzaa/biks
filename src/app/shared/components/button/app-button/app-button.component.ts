@@ -10,6 +10,7 @@ export class AppButtonComponent {
   @Input({ required: true }) color!: "warn" | "primary" | "accent";
   @Input({ required: true }) text = "";
   @Input() isDisabled = false;
+  @Input() type : "button" | "submit" = "button";
   @Output() buttonClicked = new EventEmitter();
 
   onButtonClick(): void {
