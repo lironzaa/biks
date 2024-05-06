@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 
 import * as fromApp from "../../../../core/store/app.reducer";
 import { createTrainee } from "../../store/trainees.actions";
-import { CreateTrainee } from "../../interfaces/trainee-interface";
+import { CreateTrainee, TraineeRow } from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
+import { selectTrainees } from "../../store/trainees.selectors";
+import { TraineesState } from "../../store/trainees.reducer";
 
 @Component({
   selector: "app-trainee-form",
@@ -15,20 +17,23 @@ import { SubjectTypeOptions } from "../../data/subject-type-options";
   styleUrl: "./trainee-form.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TraineeFormComponent {
+export class TraineeFormComponent implements OnInit {
   isEditMode = false;
+  selectedTraineeRow: TraineeRow | null = null;
+
+  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   traineeForm = this.fb.group({
-    "id": new FormControl<number | null>({ value: null, disabled: true }),
-    "name": new FormControl<string>(""),
-    "grade": new FormControl<number | null>(null),
-    "email": new FormControl<string>(""),
-    "dateJoined": new FormControl<string>(""),
-    "address": new FormControl<string>(""),
-    "city": new FormControl<string>(""),
-    "country": new FormControl<string>(""),
-    "zip": new FormControl<number | null>(null),
-    "subject": new FormControl<SubjectType | null>(null),
+    "id": new FormControl<string>({ value: "", disabled: true }),
+    "name": new FormControl<string>("", [ Validators.required ]),
+    "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    "email": new FormControl<string>("", [ Validators.required ]),
+    "dateJoined": new FormControl<string>("", [ Validators.required ]),
+    "address": new FormControl<string>("", [ Validators.required ]),
+    "city": new FormControl<string>("", [ Validators.required ]),
+    "country": new FormControl<string>("", [ Validators.required ]),
+    "zip": new FormControl<string>("", [ Validators.required, Validators.minLength(4), Validators.maxLength(5) ]),
+    "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
   });
 
   subjectTypeOptions = SubjectTypeOptions;
@@ -37,31 +42,59 @@ export class TraineeFormComponent {
               protected formUtilitiesService: FormUtilitiesService) {
   }
 
+  ngOnInit(): void {
+    this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
+      // this.traineesState = traineesState;
+      console.log(traineesState);
+      if (traineesState.selectedTraineesRow) {
+        this.isEditMode = true;
+        this.traineeForm.patchValue(traineesState.selectedTraineesRow);
+      } else {
+        this.isEditMode = false;
+        // this.traineeForm.reset();
+      }
+    });
+  }
+
+  addTrainee(): void {
+
+  }
+
+  removeTrainee(): void {
+
+  }
+
   onSubmitForm(): void {
     console.log(this.traineeForm.value);
-    this.formUtilitiesService.setIsFormSubmitted(true);
     if (this.traineeForm.valid) {
-      const formValue = this.traineeForm.value;
-      // const clientDate = new Date((formValue.eventDate) as string).toLocaleString([ "sv-SE" ]);
-
       if (!this.isEditMode) {
-        const trainee: CreateTrainee = {
-          name: formValue.name!,
-          grade: formValue.grade!,
-          email: formValue.email!,
-          dateJoined: formValue.dateJoined!,
-          address: formValue.address!,
-          city: formValue.city!,
-          country: formValue.country!,
-          zip: formValue.zip!,
-          subject: formValue.subject!
+        const traineeData: CreateTrainee = {
+          traineeData: {
+            name: this.traineeForm.value.name!,
+            email: this.traineeForm.value.email!,
+            dateJoined: this.traineeForm.value.dateJoined!,
+            address: this.traineeForm.value.address!,
+            city: this.traineeForm.value.city!,
+            country: this.traineeForm.value.country!,
+            zip: this.traineeForm.value.zip!,
+          },
+          gradeData: {
+            grade: this.traineeForm.value.grade!,
+            subject: this.traineeForm.value.subject!,
+            traineeId: ""
+          }
         };
-        this.store.dispatch(createTrainee({ traineeData: trainee }));
+        this.formUtilitiesService.setIsFormCompleted(true);
+        this.traineeForm.reset();
+        this.formDirective.resetForm();
+        this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         // this.store.dispatch(new ClientsActions.UpdateClient({
         //   clientId: this.clientId, client
         // }));
       }
+    } else {
+      this.formUtilitiesService.setIsFormSubmitAttempt(true);
     }
   }
 }

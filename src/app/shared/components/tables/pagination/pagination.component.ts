@@ -38,11 +38,11 @@ export class PaginationComponent implements OnInit, OnDestroy {
   navigateToPage(navigateType: "previousPage" | "nextPage"): void {
     switch (navigateType) {
       case "previousPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(20, this.page - 1));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.page - 1));
         this.navigate(this.page - 1);
         break;
       case "nextPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(20, this.page + 1));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.page + 1));
         this.navigate(this.page + 1);
         break;
     }

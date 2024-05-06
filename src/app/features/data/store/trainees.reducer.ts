@@ -1,10 +1,19 @@
-import { Trainee } from "../interfaces/trainee-interface";
+import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { createReducer, on } from "@ngrx/store";
-import { createTrainee, filterTrainees, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
+import {
+  createTrainee,
+  filterTrainees,
+  getTrainees,
+  setSelectedTraineeRow,
+  traineesError,
+  traineesFetched
+} from "./trainees.actions";
 
 export interface TraineesState {
   trainees: Trainee[];
   traineesOrigin: Trainee[];
+  traineesRows: TraineeRow[];
+  selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -12,6 +21,8 @@ export interface TraineesState {
 const initialState: TraineesState = {
   trainees: [],
   traineesOrigin: [],
+  traineesRows: [],
+  selectedTraineesRow: null,
   isLoading: false,
   error: null
 };
@@ -29,6 +40,7 @@ export const traineesReducer = createReducer(
     ...state,
     trainees: action.trainees,
     traineesOrigin: action.trainees,
+    traineesRows: action.traineeRows,
     error: null,
     isLoading: false
   })),
@@ -36,6 +48,12 @@ export const traineesReducer = createReducer(
     ...state,
     error: null,
     isLoading: true
+  })),
+  on(setSelectedTraineeRow, (state, action) => ({
+    ...state,
+    selectedTraineesRow: action.traineeRow,
+    error: null,
+    isLoading: false
   })),
   on(traineesError, (state, action) => ({
     ...state,

@@ -11,7 +11,7 @@ export class AppButtonComponent {
   @Input({ required: true }) text = "";
   @Input() isDisabled = false;
   @Input() type : "button" | "submit" = "button";
-  @Output() buttonClicked = new EventEmitter();
+  @Output() buttonClicked = new EventEmitter<void>();
 
   onButtonClick(): void {
     this.buttonClicked.emit();

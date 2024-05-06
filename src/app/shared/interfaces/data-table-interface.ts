@@ -13,5 +13,5 @@ export interface DataTableFiltersValues {
 }
 
 export interface DataTableItem {
-  [key: string]: string | number | [];
+  [key: string]: string;
 }

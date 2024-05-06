@@ -1,7 +1,7 @@
 import { SubjectType } from "../types/subject-type";
 
 export interface Trainee {
-  id: number;
+  id: string;
   name: string;
   grades: TraineeGrade[];
   email: string;
@@ -9,22 +9,45 @@ export interface Trainee {
   address: string;
   city: string;
   country: string;
-  zip: number;
+  zip: string;
 }
 
-export interface TraineeGrade {
-  grade: number;
-  subject: SubjectType;
-}
-
-export interface CreateTrainee {
+export interface TraineeRow {
+  id: string;
+  gradeId: string;
   name: string;
-  grade: number;
   email: string;
   dateJoined: string;
   address: string;
   city: string;
   country: string;
-  zip: number;
+  zip: string;
+  grade: string;
   subject: SubjectType;
+}
+
+export interface TraineeGrade {
+  id: string;
+  grade: string;
+  subject: SubjectType;
+  traineeId: string;
+}
+
+export interface CreateTrainee {
+  traineeData: {
+    name: string;
+    email: string;
+    dateJoined: string;
+    address: string;
+    city: string;
+    country: string;
+    zip: string;
+  }
+  gradeData : CreateTraineeGrade
+}
+
+export interface CreateTraineeGrade {
+  grade: string;
+  subject: SubjectType;
+  traineeId: string;
 }

@@ -1,10 +1,21 @@
+<div class="buttons-container">
+  <app-button
+    [text]="'Add'"
+    [color]="'primary'"
+    (buttonClicked)="addTrainee()"
+  />
+  <app-button
+    [text]="'Remove'"
+    [color]="'warn'"
+    (buttonClicked)="removeTrainee()"
+  />
+</div>
 <form [formGroup]="traineeForm" (ngSubmit)="onSubmitForm()">
   <div>
     <app-text-input
       [placeholder]="'Name'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
       [name]="'name'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'name')"
     />
   </div>
   <div>
@@ -13,7 +24,6 @@
       [placeholder]="'Grade'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
       [name]="'grade'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'grade')"
     />
   </div>
   <div>
@@ -22,7 +32,6 @@
       [placeholder]="'Email'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
       [name]="'email'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'email')"
     />
   </div>
   <div>
@@ -30,7 +39,6 @@
       [placeholder]="'Date Joined'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
       [name]="'dateJoined'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'dateJoined')"
     />
   </div>
   <div>
@@ -38,7 +46,6 @@
       [placeholder]="'Address'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
       [name]="'address'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'address')"
     />
   </div>
 
@@ -47,7 +54,6 @@
       [placeholder]="'City'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
       [name]="'city'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'city')"
     />
   </div>
   <div>
@@ -55,7 +61,6 @@
       [placeholder]="'Country'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
       [name]="'country'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'country')"
     />
   </div>
   <div>
@@ -64,7 +69,6 @@
       [placeholder]="'Zip'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
       [name]="'zip'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'zip')"
     />
   </div>
   <div>
@@ -73,7 +77,6 @@
       [placeholder]="'Subject'"
       [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
       [name]="'subject'"
-      [additionalValidators]="formUtilitiesService.getValidators(traineeForm, 'subject')"
     />
   </div>
   <app-button

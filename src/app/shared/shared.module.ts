@@ -12,7 +12,7 @@ import {
   MatDatepickerModule,
   MatDatepickerToggle
 } from "@angular/material/datepicker";
-import { MatNativeDateModule } from "@angular/material/core";
+import { MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
 
 import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
 import { DataTableComponent } from "./components/tables/data-table/data-table.component";
@@ -68,6 +68,9 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     MatDatepickerModule,
     MatInputModule
   ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: "en-GB" }
+  ]
 })
 export class SharedModule {
 }

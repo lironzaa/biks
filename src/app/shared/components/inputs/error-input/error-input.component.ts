@@ -18,10 +18,12 @@ export class ErrorInputComponent implements OnInit {
 
   error$!: Observable<string>;
   isFormSubmitted$: Observable<boolean>;
+  isFormCompleted$: Observable<boolean>;
   initialState = true;
 
   constructor(private formUtilitiesService: FormUtilitiesService) {
-    this.isFormSubmitted$ = this.formUtilitiesService.getIsFormSubmittedListener();
+    this.isFormSubmitted$ = this.formUtilitiesService.getFormSubmitAttemptListener();
+    this.isFormCompleted$ = this.formUtilitiesService.getIsFormCompletedListener();
   }
 
   ngOnInit(): void {
@@ -29,13 +31,17 @@ export class ErrorInputComponent implements OnInit {
   }
 
   initError$(): void {
-    const valuesChanges$: Observable<string> = this.control?.valueChanges.pipe(
+    const valueChange$: Observable<string> = this.control?.valueChanges.pipe(
       map((value) => value)
     ) || of("");
 
+    this.isFormCompleted$.subscribe(() => {
+      this.initialState = true;
+    })
+
     this.error$ = combineLatest([
-      valuesChanges$.pipe(startWith("")),
-      this.isFormSubmitted$.pipe(startWith(false))
+      valueChange$.pipe(startWith("")),
+      this.isFormSubmitted$.pipe(startWith(false)),
     ]).pipe(
       map(() => {
         if (this.initialState) {

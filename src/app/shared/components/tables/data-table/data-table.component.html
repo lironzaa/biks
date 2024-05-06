@@ -1,6 +1,6 @@
-<app-table-filters
-  [filtersForm]="filtersForm"
-/>
+<app-table-filters>
+  <ng-content></ng-content>
+</app-table-filters>
 
 <table class="table">
   <thead>
@@ -20,7 +20,7 @@
     <tr
       *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
      trackBy: trackByItemId"
-      class="pointer">
+      class="pointer" (click)="onTableRowClick(item)">
       <ng-container *ngIf="!isLoading && items.length > 0">
         <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
             [ngSwitch]="header.columnType">

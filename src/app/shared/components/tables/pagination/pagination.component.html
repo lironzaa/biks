@@ -1,5 +1,5 @@
 <div *ngIf="paginationData$ | async; let paginationData" class="pagination-container">
-  <div class="ms-4 mb-0 d-flex">
+  <div class="d-flex mb-2">
     <app-button
       [text]="'Previous'"
       [color]="'primary'"
@@ -17,6 +17,6 @@
     />
   </div>
   <div>
-    <span class="bold fs-4">סה"כ {{ paginationData.itemsCount }} רשומות</span>
+    <span>Showing {{paginationData.itemsPerPage * paginationData.currentPage}} of {{ paginationData.itemsCount }} results</span>
   </div>
 </div>

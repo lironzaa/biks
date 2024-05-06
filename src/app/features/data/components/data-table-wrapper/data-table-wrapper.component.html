@@ -1,0 +1,15 @@
+<ng-container *ngIf="traineesState$ | async; let traineesState">
+  <app-data-table
+    [dataTableConfig]="tableConfig"
+    [items]="traineesState.traineesRows"
+    [isLoading]="traineesState.isLoading"
+    [filtersForm]="dataFiltersForm"
+    (tableRowClicked)="onTableRowClick($event)"
+  >
+    <app-text-input
+      [placeholder]="'ID'"
+      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'id')"
+      [name]="'id'"
+    />
+  </app-data-table>
+</ng-container>

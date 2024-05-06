@@ -19,13 +19,14 @@ export class PaginationDataService {
     itemsPerPage: this.ITEMS_PER_PAGE
   });
 
-  calculatePaginationData(itemsCount: number, page: number): PaginationData {
+  calculatePaginationData(page: number, itemsCount?: number): PaginationData {
+    const updatedItemsCount = itemsCount ?? this.paginationData.value.itemsCount;
     return {
       currentPage: page,
-      itemsCount: itemsCount,
-      pagesCount: Math.ceil(itemsCount / this.ITEMS_PER_PAGE),
+      itemsCount: updatedItemsCount,
+      pagesCount: Math.ceil(updatedItemsCount / this.ITEMS_PER_PAGE),
       nextPage: page + 1,
-      hasNextPage: this.ITEMS_PER_PAGE * page < itemsCount,
+      hasNextPage: this.ITEMS_PER_PAGE * page < updatedItemsCount,
       previousPage: page - 1,
       hasPreviousPage: page > 1,
       itemsPerPage: this.ITEMS_PER_PAGE

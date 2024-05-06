@@ -1,30 +1,11 @@
 <div class="d-flex">
   <div class="table-container">
-    <ng-container *ngIf="trainees$ | async; let traineesState">
-      <app-data-table
-        [dataTableConfig]="tableConfig"
-        [items]="traineesState.trainees"
-        [itemsOrigin]="traineesState.traineesOrigin"
-        [isLoading]="traineesState.isLoading"
-        [filtersForm]="dataFiltersForm"
-      />
+    <ng-container *ngIf="traineesState$ | async; let traineesState">
+      <app-data-table-wrapper *ngIf="!traineesState.isLoading" />
+      <app-spinner *ngIf="traineesState.isLoading" />
     </ng-container>
   </div>
-  <div class="form-div-container">
-    <div class="buttons-container">
-      <app-button
-        [text]="'Add'"
-        [color]="'primary'"
-        (buttonClicked)="addTrainee()"
-      />
-      <app-button
-        [text]="'Remove'"
-        [color]="'warn'"
-        (buttonClicked)="removeTrainee()"
-      />
-    </div>
-    <div class="form-container">
-      <app-trainee-form />
-    </div>
+  <div class="form-container">
+    <app-trainee-form />
   </div>
 </div>

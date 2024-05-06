@@ -3,9 +3,7 @@ import {
   Inject,
   Injector,
   Input,
-  OnChanges,
   OnInit,
-  SimpleChanges,
 } from "@angular/core";
 import {
   ControlValueAccessor,
@@ -14,24 +12,19 @@ import {
   FormControlName,
   FormGroupDirective,
   NgControl,
-  ValidatorFn,
-  Validators,
 } from "@angular/forms";
 import { Subject, distinctUntilChanged, startWith, takeUntil, tap } from "rxjs";
-
-import { EMAIL_REGEX } from "../regex/regex";
 
 @Directive({
   standalone: true,
   selector: "[appControlValueAccessorDirective]",
 })
 export class ControlValueAccessorDirective<T>
-  implements ControlValueAccessor, OnChanges, OnInit {
+  implements ControlValueAccessor, OnInit {
   constructor(@Inject(Injector) private injector: Injector) {
   }
 
   @Input() type = "text";
-  @Input() additionalValidators: ValidatorFn[] = [];
   control: FormControl | undefined;
   private _isDisabled = false;
   private _destroy$ = new Subject<void>();
@@ -39,37 +32,6 @@ export class ControlValueAccessorDirective<T>
 
   ngOnInit(): void {
     this.setFormControl();
-    this.updateValidators();
-  }
-
-  protected getValidatorsForType(type: string): ValidatorFn[] | null {
-    switch (type) {
-      case "email":
-        return [ Validators.required, Validators.pattern(EMAIL_REGEX) ];
-      case "number":
-        return [ Validators.pattern(/^[0-9]*$/), Validators.required ];
-      case "text":
-      default:
-        return [ Validators.required ];
-    }
-  }
-
-  updateValidators(): void {
-    if (this.control) {
-      const typeValidators = this.getValidatorsForType(this.type) || [];
-      const combinedValidators = [
-        ...typeValidators,
-        ...this.additionalValidators,
-      ];
-      this.control.setValidators(combinedValidators);
-      this.control.updateValueAndValidity();
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.["type"] && this.control) {
-      this.updateValidators();
-    }
   }
 
   setFormControl() {
@@ -93,7 +55,7 @@ export class ControlValueAccessorDirective<T>
 
   writeValue(value: T): void {
     this.control
-      ? this.control.setValue(value)
+      ? this.control.setValue(value, { emitModelToViewChange: false })
       : (this.control = new FormControl(value));
   }
 
