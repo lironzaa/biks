@@ -6,7 +6,7 @@ import { of } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute } from "@angular/router";
 
-import { createTrainee, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
+import { createTrainee, editTrainee, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
 import { CreateTraineeGrade, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
@@ -81,6 +81,27 @@ export class TraineesEffects {
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee created successfully");
+                return getTrainees(queryParams as DataFiltersQueryParams);
+              }),
+              catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
+            );
+          }),
+          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
+        );
+      })
+    );
+  });
+
+  editTrainee = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(editTrainee),
+      switchMap((editTraineeData) => {
+        return this.http.put<CreateTraineeResponse>(`${ this.apiPrefix }/${editTraineeData.data.traineeData.id}`, editTraineeData.data.traineeData).pipe(
+          switchMap(() => {
+            return this.http.put<CreateGradeResponse>(`${ this.gradesApiPrefix }/${editTraineeData.data.gradeData.id}`, editTraineeData.data.gradeData).pipe(
+              map(() => {
+                const queryParams = this.route.snapshot.queryParams;
+                this.toastr.success("Trainee updated successfully");
                 return getTrainees(queryParams as DataFiltersQueryParams);
               }),
               catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))

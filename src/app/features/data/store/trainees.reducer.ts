@@ -2,6 +2,7 @@ import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { createReducer, on } from "@ngrx/store";
 import {
   createTrainee,
+  editTrainee,
   filterTrainees,
   getTrainees,
   setSelectedTraineeRow,
@@ -46,6 +47,12 @@ export const traineesReducer = createReducer(
   })),
   on(createTrainee, (state) => ({
     ...state,
+    error: null,
+    isLoading: true
+  })),
+  on(editTrainee, (state, action) => ({
+    ...state,
+    selectedTraineesRow: action.selectedTraineeRow,
     error: null,
     isLoading: true
   })),

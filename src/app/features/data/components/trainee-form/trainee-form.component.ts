@@ -3,8 +3,8 @@ import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angul
 import { Store } from "@ngrx/store";
 
 import * as fromApp from "../../../../core/store/app.reducer";
-import { createTrainee } from "../../store/trainees.actions";
-import { CreateTrainee, TraineeRow } from "../../interfaces/trainee-interface";
+import { createTrainee, editTrainee } from "../../store/trainees.actions";
+import { CreateTrainee, EditTrainee, TraineeRow } from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
@@ -19,12 +19,11 @@ import { TraineesState } from "../../store/trainees.reducer";
 })
 export class TraineeFormComponent implements OnInit {
   isEditMode = false;
-  selectedTraineeRow: TraineeRow | null = null;
+  traineesState!: TraineesState;
 
   @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   traineeForm = this.fb.group({
-    "id": new FormControl<string>({ value: "", disabled: true }),
     "name": new FormControl<string>("", [ Validators.required ]),
     "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "email": new FormControl<string>("", [ Validators.required ]),
@@ -44,11 +43,11 @@ export class TraineeFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
-      // this.traineesState = traineesState;
-      console.log(traineesState);
-      if (traineesState.selectedTraineesRow) {
+      this.traineesState = traineesState;
+      console.log(this.traineesState);
+      if (this.traineesState.selectedTraineesRow) {
         this.isEditMode = true;
-        this.traineeForm.patchValue(traineesState.selectedTraineesRow);
+        this.traineeForm.patchValue(this.traineesState.selectedTraineesRow);
       } else {
         this.isEditMode = false;
         // this.traineeForm.reset();
@@ -65,36 +64,81 @@ export class TraineeFormComponent implements OnInit {
   }
 
   onSubmitForm(): void {
-    console.log(this.traineeForm.value);
     if (this.traineeForm.valid) {
       if (!this.isEditMode) {
-        const traineeData: CreateTrainee = {
-          traineeData: {
-            name: this.traineeForm.value.name!,
-            email: this.traineeForm.value.email!,
-            dateJoined: this.traineeForm.value.dateJoined!,
-            address: this.traineeForm.value.address!,
-            city: this.traineeForm.value.city!,
-            country: this.traineeForm.value.country!,
-            zip: this.traineeForm.value.zip!,
-          },
-          gradeData: {
-            grade: this.traineeForm.value.grade!,
-            subject: this.traineeForm.value.subject!,
-            traineeId: ""
-          }
-        };
-        this.formUtilitiesService.setIsFormCompleted(true);
-        this.traineeForm.reset();
-        this.formDirective.resetForm();
+        const traineeData: CreateTrainee = this.populateCreateTraineeData();
+        this.resetForm();
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
-        // this.store.dispatch(new ClientsActions.UpdateClient({
-        //   clientId: this.clientId, client
-        // }));
+        const editTraineeData: EditTrainee = this.populateEditTraineeData();
+        const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
+        this.resetForm();
+        this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     } else {
       this.formUtilitiesService.setIsFormSubmitAttempt(true);
     }
+  }
+
+  populateCreateTraineeData(): CreateTrainee {
+    return {
+      traineeData: {
+        name: this.traineeForm.value.name!,
+        email: this.traineeForm.value.email!,
+        dateJoined: this.traineeForm.value.dateJoined!,
+        address: this.traineeForm.value.address!,
+        city: this.traineeForm.value.city!,
+        country: this.traineeForm.value.country!,
+        zip: this.traineeForm.value.zip!,
+      },
+      gradeData: {
+        grade: this.traineeForm.value.grade!,
+        subject: this.traineeForm.value.subject!,
+        traineeId: ""
+      }
+    };
+  }
+
+  populateEditTraineeData(): EditTrainee {
+    return {
+      traineeData: {
+        id: this.traineesState.selectedTraineesRow!.id,
+        name: this.traineeForm.value.name!,
+        email: this.traineeForm.value.email!,
+        dateJoined: this.traineeForm.value.dateJoined!,
+        address: this.traineeForm.value.address!,
+        city: this.traineeForm.value.city!,
+        country: this.traineeForm.value.country!,
+        zip: this.traineeForm.value.zip!,
+      },
+      gradeData: {
+        id: this.traineesState.selectedTraineesRow!.gradeId,
+        grade: this.traineeForm.value.grade!,
+        subject: this.traineeForm.value.subject!,
+        traineeId: this.traineesState.selectedTraineesRow!.id!
+      }
+    };
+  }
+
+  populateSelectedTraineeRow(): TraineeRow {
+    return {
+      id: this.traineesState.selectedTraineesRow!.id,
+      gradeId: this.traineesState.selectedTraineesRow!.gradeId,
+      name: this.traineeForm.value.name!,
+      email: this.traineeForm.value.email!,
+      dateJoined: this.traineeForm.value.dateJoined!,
+      address: this.traineeForm.value.address!,
+      city: this.traineeForm.value.city!,
+      country: this.traineeForm.value.country!,
+      zip: this.traineeForm.value.zip!,
+      grade: this.traineeForm.value.grade!,
+      subject: this.traineeForm.value.subject!,
+    }
+  }
+
+  resetForm(): void {
+    this.formUtilitiesService.setIsFormCompleted(true);
+    this.traineeForm.reset();
+    this.formDirective.resetForm();
   }
 }

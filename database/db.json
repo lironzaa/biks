@@ -2,13 +2,13 @@
   "trainees": [
     {
       "id": "1",
-      "name": "John Doe",
-      "email": "john.doe@example.com",
-      "dateJoined": "2023-01-15T00:00:00Z",
-      "address": "123 Main St",
-      "city": "Anytown",
-      "country": "USA",
-      "zip": "12345"
+      "name": "John Doeee",
+      "email": "john.doee@example.com",
+      "dateJoined": "2023-01-25T22:00:00.000Z",
+      "address": "123 Main Stt",
+      "city": "Anytownn",
+      "country": "USAA",
+      "zip": "12341"
     },
     {
       "id": "2",
@@ -424,13 +424,13 @@
   "grades": [
     {
       "id": "1",
-      "grade": "90",
+      "grade": "70",
       "subject": "Math",
       "traineeId": "1"
     },
     {
       "id": "2",
-      "grade": "85",
+      "grade": "90",
       "subject": "Algebra",
       "traineeId": "1"
     },

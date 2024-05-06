@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { CreateTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
+import { CreateTrainee, EditTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
 
 export const getTrainees = createAction(
@@ -16,6 +16,11 @@ export const traineesFetched = createAction(
 export const createTrainee = createAction(
   "[Trainees] Create Trainee]",
   props<{ data: CreateTrainee }>()
+);
+
+export const editTrainee = createAction(
+  "[Trainees] Edit Trainee]",
+  props<{ data: EditTrainee, selectedTraineeRow: TraineeRow }>()
 );
 
 export const setSelectedTraineeRow = createAction(

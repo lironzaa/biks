@@ -43,10 +43,31 @@ export interface CreateTrainee {
     country: string;
     zip: string;
   }
-  gradeData : CreateTraineeGrade
+  gradeData: CreateTraineeGrade;
 }
 
 export interface CreateTraineeGrade {
+  grade: string;
+  subject: SubjectType;
+  traineeId: string;
+}
+
+export interface EditTrainee {
+  traineeData: {
+    id: string;
+    name: string;
+    email: string;
+    dateJoined: string;
+    address: string;
+    city: string;
+    country: string;
+    zip: string;
+  }
+  gradeData: EditTraineeGrade;
+}
+
+export interface EditTraineeGrade {
+  id: string;
   grade: string;
   subject: SubjectType;
   traineeId: string;
