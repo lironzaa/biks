@@ -17,6 +17,9 @@
     />
   </div>
   <div>
-    <span>Showing {{paginationData.itemsPerPage * paginationData.currentPage}} of {{ paginationData.itemsCount }} results</span>
+    <span>Showing
+      <span *ngIf="paginationData.hasNextPage">{{paginationData.itemsPerPage * paginationData.currentPage}}</span>
+      <span *ngIf="!paginationData.hasNextPage">{{paginationData.itemsCount}}</span>
+      of {{ paginationData.itemsCount }} results</span>
   </div>
 </div>

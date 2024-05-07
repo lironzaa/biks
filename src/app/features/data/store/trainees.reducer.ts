@@ -12,8 +12,8 @@ import {
 
 export interface TraineesState {
   trainees: Trainee[];
-  traineesOrigin: Trainee[];
   traineesRows: TraineeRow[];
+  traineesRowsOrigin: TraineeRow[];
   selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
   error: string | null;
@@ -21,8 +21,8 @@ export interface TraineesState {
 
 const initialState: TraineesState = {
   trainees: [],
-  traineesOrigin: [],
   traineesRows: [],
+  traineesRowsOrigin: [],
   selectedTraineesRow: null,
   isLoading: false,
   error: null
@@ -33,15 +33,15 @@ export const traineesReducer = createReducer(
   on(getTrainees, (state) => ({
     ...state,
     trainees: [],
-    traineesOrigin: [],
+    traineesRowsOrigin: [],
     error: null,
     isLoading: true
   })),
   on(traineesFetched, (state, action) => ({
     ...state,
     trainees: action.trainees,
-    traineesOrigin: action.trainees,
     traineesRows: action.traineeRows,
+    traineesRowsOrigin: action.traineeRows,
     error: null,
     isLoading: false
   })),
@@ -64,14 +64,12 @@ export const traineesReducer = createReducer(
   })),
   on(traineesError, (state, action) => ({
     ...state,
-    trainees: [],
-    traineesOrigin: [],
     error: action.errorMessage,
     isLoading: false
   })),
   on(filterTrainees, (state, action) => ({
     ...state,
-    trainees: action.trainees,
+    traineesRows: action.traineesRows,
     error: null,
     isLoading: false
   })),

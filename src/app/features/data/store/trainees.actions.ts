@@ -25,7 +25,12 @@ export const editTrainee = createAction(
 
 export const setSelectedTraineeRow = createAction(
   "[Trainees] Set Selected Trainee Row]",
-  props<{ traineeRow: TraineeRow }>()
+  props<{ traineeRow: TraineeRow | null }>()
+);
+
+export const deleteTrainee = createAction(
+  "[Trainees] Delete Trainee]",
+  props<{ id: string }>()
 );
 
 export const traineesError = createAction(
@@ -35,5 +40,5 @@ export const traineesError = createAction(
 
 export const filterTrainees = createAction(
   "[Trainees] Filter Trainees]",
-  props<{ trainees: Trainee[] }>()
+  props<{ traineesRows: TraineeRow[] }>()
 );

@@ -6,10 +6,34 @@
     [filtersForm]="dataFiltersForm"
     (tableRowClicked)="onTableRowClick($event)"
   >
-    <app-text-input
-      [placeholder]="'ID'"
-      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'id')"
-      [name]="'id'"
-    />
+    <div class="search-container">
+      <app-text-input
+        [placeholder]="'ID'"
+        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'id')"
+        [name]="'id'"
+      />
+      <app-text-input
+        [placeholder]="'Grade'"
+        [type]="'number'"
+        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'grade')"
+        [name]="'grade'"
+      />
+      <app-select-input
+        [options]="gradeRangeOptions"
+        [placeholder]="'Grade range'"
+        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'gradeRange')"
+        [name]="'gradeRange'"
+      />
+      <app-date-input
+        [placeholder]="'Start Date'"
+        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'startDate')"
+        [name]="'startDate'"
+      />
+      <app-date-input
+        [placeholder]="'End Date'"
+        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'endDate')"
+        [name]="'endDate'"
+      />
+    </div>
   </app-data-table>
 </ng-container>

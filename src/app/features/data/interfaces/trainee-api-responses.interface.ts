@@ -1,6 +1,6 @@
 import { SubjectType } from "../types/subject-type";
 
-export interface CreateTraineeResponse {
+export interface CreateUpdateDeleteTraineeResponse {
   id: string;
   name: string;
   email: string;
@@ -11,7 +11,7 @@ export interface CreateTraineeResponse {
   zip: string;
 }
 
-export interface CreateGradeResponse {
+export interface CreateOrUpdateGradeResponse {
   id: string;
   grade: string;
   subject: SubjectType;

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from "rxjs";
 import { map } from "rxjs/operators";
+import { ToastrService } from "ngx-toastr";
 
 import { filterTrainees, setSelectedTraineeRow } from "../../store/trainees.actions";
 import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-params.interface";
@@ -12,9 +13,9 @@ import { selectTrainees } from "../../store/trainees.selectors";
 import { TraineesState } from "../../store/trainees.reducer";
 import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { dataTableConfig } from "../../data/data-table-config";
-import { QueryParamsService } from "../../../../shared/services/query-params.service";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { TraineeRow } from "../../interfaces/trainee-interface";
+import { GradeRangeOptions } from "../../data/grade-range-options";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -26,69 +27,35 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
   traineesState$: Observable<TraineesState>;
   tableConfig = dataTableConfig;
   traineesState!: TraineesState;
+  gradeRangeOptions = GradeRangeOptions;
 
   dataFiltersForm = this.fb.group({
     "id": new FormControl<string>(""),
     "grade": new FormControl<string>(""),
-    // "date": new FormControl<string | []>(""),
-    "date": new FormControl<string>(""),
+    "gradeRange": new FormControl<string>(""),
+    "startDate": new FormControl<string | Date>(""),
+    "endDate": new FormControl<string | Date>(""),
   });
 
   filtersFormSub!: Subscription;
   queryParamsSub!: Subscription;
+  storeSub!: Subscription;
 
   constructor(private store: Store<fromApp.AppState>, private fb: FormBuilder,
               private router: Router, private route: ActivatedRoute,
-              private queryParamsService: QueryParamsService, protected formUtilitiesService: FormUtilitiesService) {
+              protected formUtilitiesService: FormUtilitiesService, private toastr: ToastrService) {
     this.traineesState$ = store.select(selectTrainees);
   }
 
   ngOnInit(): void {
-    this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
+    // console.log("DataTableWrapperComponent on init");
+    this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
       this.traineesState = traineesState;
       // console.log(this.traineesState);
     });
-    this.initFiltersFormSub();
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
-  }
-
-  patchFiltersFormValue(): void {
-    const queryParamsValue = { ...this.route.snapshot.queryParams };
-    // if (queryParamsValue['eventDate']) {
-    //   queryParamsValue['eventDate'] = !Array.isArray(queryParamsValue['eventDate']) ? new Date(queryParamsValue['eventDate']) : [ new Date(queryParamsValue['eventDate'][0]), new Date(queryParamsValue['eventDate'][1]) ];
-    // }
-    this.dataFiltersForm.patchValue(queryParamsValue);
-  }
-
-  initQueryParamsSub(): void {
-    this.queryParamsSub = this.queryParamsService.getQueryParamChangedListener().subscribe(queryParams => {
-      const isApplyFilters = this.isApplyFilters(queryParams);
-      if (isApplyFilters) this.applyFilters(queryParams);
-    })
-  }
-
-  isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
-    for (const filter in queryParams) {
-      if (filter === "id" || filter === "grade" || filter === "date") {
-        return true;
-      }
-    }
-    this.store.dispatch(filterTrainees({ trainees: this.traineesState.traineesOrigin }));
-    return false;
-  }
-
-  applyFilters(queryParams: DataFiltersQueryParams): void {
-    console.log(this.traineesState.traineesOrigin);
-    const filteredItems = this.traineesState.traineesOrigin.filter(item => {
-      const idMatch = item.id === queryParams.id;
-      console.log(idMatch);
-      // const categoryMatch = !categoryFilter || item.category.toLowerCase().includes(categoryFilter.toLowerCase());
-      return idMatch;
-      // return idMatch && categoryMatch;
-    })
-    console.log(filteredItems);
-    this.store.dispatch(filterTrainees({ trainees: filteredItems }));
+    this.initFiltersFormSub();
   }
 
   initFiltersFormSub(): void {
@@ -97,22 +64,109 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
         debounceTime(1000),
         distinctUntilChanged(),
         map(formValues => this.formatSearchFormValues(formValues))
-      ).subscribe(queryParams => {
+      ).subscribe(formattedSearchValues => {
+        const queryParams = formattedSearchValues.formValues;
+        const isResetPage = formattedSearchValues.isResetPage;
+        // console.log(queryParams);
+        // console.log("isResetPage " + isResetPage);
         this.router.navigate([], {
           relativeTo: this.route,
-          queryParams: { ...queryParams, page: 1 },
+          queryParams: { ...queryParams, page: isResetPage ? 1 : this.route.snapshot.queryParams.page },
           queryParamsHandling: "merge",
         });
       })
   }
 
-  formatSearchFormValues(formValues: DataTableFiltersValues): DataTableFiltersValues {
-    for (const value in formValues) {
-      // if (Array.isArray(formValues[value]) && formValues[value][0] instanceof Date) formValues[value] = [ formValues[value][0].toLocaleString([ "sv-SE" ]).split(" ")[0], formValues[value][1].toLocaleString([ "sv-SE" ]).split(" ")[0] ];
-      // if (formValues[value] instanceof Date) formValues[value] = new Date(formValues[value]).toLocaleString([ "sv-SE" ]).split(" ")[0];
-      if (formValues[value] === "") formValues[value] = null;
+  patchFiltersFormValue(): void {
+    const queryParamsValue: DataFiltersQueryParams = { ...this.route.snapshot.queryParams };
+    // console.log(queryParamsValue);
+    if (queryParamsValue.startDate) queryParamsValue.startDate = new Date(queryParamsValue.startDate);
+    if (queryParamsValue.endDate) queryParamsValue.endDate = new Date(queryParamsValue.endDate);
+    this.dataFiltersForm.patchValue(queryParamsValue);
+  }
+
+  initQueryParamsSub(): void {
+    this.queryParamsSub = this.route.queryParams.subscribe((queryParams) => {
+      // console.log(queryParams);
+      const isApplyFilters = this.isApplyFilters(queryParams);
+      // console.log(isApplyFilters);
+      if (isApplyFilters) this.applyFilters(queryParams);
+    });
+  }
+
+  isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
+    for (const filter in queryParams) {
+      if (filter === "id" || filter === "grade" || filter === "startDate" || filter === "endDate") {
+        return true;
+      }
     }
-    return formValues;
+    // const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesState.traineesRowsOrigin.length);
+    // this.paginationDataService.setPaginationData(paginationData);
+    // console.log(paginationData);
+    this.store.dispatch(filterTrainees({ traineesRows: this.traineesState.traineesRowsOrigin }));
+    return false;
+  }
+
+  applyFilters(queryParams: DataFiltersQueryParams): void {
+    // console.log(queryParams);
+    const filteredItems = this.traineesState.traineesRowsOrigin.filter(item => {
+      let idMatch = true;
+      let gradeMatch = true;
+      let dateMatch = true;
+
+      if (queryParams.id !== undefined) {
+        idMatch = item.id === queryParams.id;
+      }
+
+      if (queryParams.grade !== undefined) {
+        if (queryParams.gradeRange === undefined) {
+          gradeMatch = item.grade === queryParams.grade;
+        } else {
+          gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, queryParams.grade);
+        }
+      }
+
+      if (queryParams.startDate !== undefined && queryParams.endDate !== undefined) {
+        const itemDate = new Date(item.dateJoined);
+        dateMatch = new Date(queryParams.startDate) <= itemDate && itemDate <= new Date(queryParams.endDate);
+      }
+
+      return idMatch && gradeMatch && dateMatch;
+    })
+    console.log(filteredItems);
+    // const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
+    // this.paginationDataService.setPaginationData(paginationData);
+    this.store.dispatch(filterTrainees({ traineesRows: filteredItems }));
+  }
+
+  compareAccordingToOperator(grade: string, gradeRange: string, queryParamsGrade: string): boolean {
+    switch (gradeRange) {
+      case ">":
+        return grade > queryParamsGrade!;
+      case "<":
+        return grade < queryParamsGrade!;
+      case "===":
+        return grade === queryParamsGrade!;
+      default:
+        this.toastr.error("An error occurred");
+        return false;
+    }
+  }
+
+  formatSearchFormValues(formValues: DataTableFiltersValues): {
+    formValues: DataTableFiltersValues;
+    isResetPage: boolean
+  } {
+    console.log(formValues);
+    let isResetPage = true;
+    for (const value in formValues) {
+      if (formValues[value] === "") {
+        formValues[value] = null;
+        isResetPage = false;
+      }
+    }
+    console.log(formValues);
+    return { formValues, isResetPage };
   }
 
   onTableRowClick(item: DataTableItem): void {
@@ -123,5 +177,6 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (!this.filtersFormSub?.closed) this.filtersFormSub.unsubscribe();
     if (!this.queryParamsSub?.closed) this.queryParamsSub.unsubscribe();
+    if (!this.storeSub?.closed) this.storeSub.unsubscribe();
   }
 }

@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
+import { Subscription } from "rxjs";
 
 import * as fromApp from "../../../../core/store/app.reducer";
-import { createTrainee, editTrainee } from "../../store/trainees.actions";
+import { createTrainee, deleteTrainee, editTrainee, setSelectedTraineeRow } from "../../store/trainees.actions";
 import { CreateTrainee, EditTrainee, TraineeRow } from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
@@ -17,7 +18,7 @@ import { TraineesState } from "../../store/trainees.reducer";
   styleUrl: "./trainee-form.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TraineeFormComponent implements OnInit {
+export class TraineeFormComponent implements OnInit, OnDestroy {
   isEditMode = false;
   traineesState!: TraineesState;
 
@@ -37,30 +38,34 @@ export class TraineeFormComponent implements OnInit {
 
   subjectTypeOptions = SubjectTypeOptions;
 
+  storeSub!: Subscription;
+
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
               protected formUtilitiesService: FormUtilitiesService) {
   }
 
   ngOnInit(): void {
-    this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
+    this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
       this.traineesState = traineesState;
-      console.log(this.traineesState);
+      // console.log(this.traineesState);
       if (this.traineesState.selectedTraineesRow) {
         this.isEditMode = true;
+        console.log(this.traineesState.selectedTraineesRow);
         this.traineeForm.patchValue(this.traineesState.selectedTraineesRow);
       } else {
         this.isEditMode = false;
-        // this.traineeForm.reset();
+        this.traineeForm.reset();
       }
     });
   }
 
   addTrainee(): void {
-
+    this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
   removeTrainee(): void {
-
+    this.store.dispatch(deleteTrainee({ id: this.traineesState.selectedTraineesRow!.id }));
+    this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
   onSubmitForm(): void {
@@ -68,6 +73,7 @@ export class TraineeFormComponent implements OnInit {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
         this.resetForm();
+        console.log(traineeData);
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
@@ -137,8 +143,13 @@ export class TraineeFormComponent implements OnInit {
   }
 
   resetForm(): void {
+    this.formUtilitiesService.setIsFormSubmitAttempt(false);
     this.formUtilitiesService.setIsFormCompleted(true);
     this.traineeForm.reset();
     this.formDirective.resetForm();
+  }
+
+  ngOnDestroy(): void {
+    if (!this.storeSub.closed) this.storeSub.unsubscribe();
   }
 }

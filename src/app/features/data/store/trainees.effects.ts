@@ -6,12 +6,19 @@ import { of } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute } from "@angular/router";
 
-import { createTrainee, editTrainee, getTrainees, traineesError, traineesFetched } from "./trainees.actions";
+import {
+  createTrainee,
+  deleteTrainee,
+  editTrainee,
+  getTrainees,
+  traineesError,
+  traineesFetched
+} from "./trainees.actions";
 import { CreateTraineeGrade, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
-import { CreateGradeResponse, CreateTraineeResponse } from "../interfaces/trainee-api-responses.interface";
+import { CreateOrUpdateGradeResponse, CreateUpdateDeleteTraineeResponse } from "../interfaces/trainee-api-responses.interface";
 
 @Injectable()
 export class TraineesEffects {
@@ -53,10 +60,8 @@ export class TraineesEffects {
       switchMap((getTraineesData) => {
         return this.http.get<Trainee[]>(`${ this.apiPrefix }?_embed=grades`).pipe(
           map(trainees => {
-            console.log(trainees);
             const traineeRows: TraineeRow[] = [];
             this.mapTraineeRows(trainees, traineeRows);
-            console.log(traineeRows);
             const calculatedPage = getTraineesData.page ? +getTraineesData.page : 1;
             const paginationData = this.paginationDataService.calculatePaginationData(calculatedPage, traineeRows.length);
             this.paginationDataService.setPaginationData(paginationData);
@@ -71,13 +76,14 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(createTrainee),
       switchMap((createTraineeData) => {
-        return this.http.post<CreateTraineeResponse>(`${ this.apiPrefix }`, createTraineeData.data.traineeData).pipe(
+        console.log(createTraineeData);
+        return this.http.post<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }`, createTraineeData.data.traineeData).pipe(
           switchMap((createdTrainee) => {
             const updatedGradeData: CreateTraineeGrade = {
               ...createTraineeData.data.gradeData,
               traineeId: createdTrainee.id
             };
-            return this.http.post<CreateGradeResponse>(`${ this.gradesApiPrefix }`, updatedGradeData).pipe(
+            return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, updatedGradeData).pipe(
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee created successfully");
@@ -96,9 +102,9 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(editTrainee),
       switchMap((editTraineeData) => {
-        return this.http.put<CreateTraineeResponse>(`${ this.apiPrefix }/${editTraineeData.data.traineeData.id}`, editTraineeData.data.traineeData).pipe(
+        return this.http.put<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${editTraineeData.data.traineeData.id}`, editTraineeData.data.traineeData).pipe(
           switchMap(() => {
-            return this.http.put<CreateGradeResponse>(`${ this.gradesApiPrefix }/${editTraineeData.data.gradeData.id}`, editTraineeData.data.gradeData).pipe(
+            return this.http.put<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }/${editTraineeData.data.gradeData.id}`, editTraineeData.data.gradeData).pipe(
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee updated successfully");
@@ -111,6 +117,21 @@ export class TraineesEffects {
         );
       })
     );
+  });
+
+  deleteTrainee = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(deleteTrainee),
+      switchMap((deleteTraineeData) => {
+        return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${deleteTraineeData.id}`).pipe(
+          map(() => {
+            const queryParams = this.route.snapshot.queryParams;
+            console.log(queryParams);
+            return getTrainees(queryParams as DataFiltersQueryParams);
+          }),
+          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
+        );
+      }));
   });
 
   handleError(errorMessage: string) {
