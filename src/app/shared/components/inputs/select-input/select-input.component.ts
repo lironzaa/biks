@@ -25,6 +25,7 @@ export class SelectInputComponent<T>
   @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+  @Input() isMultiple = false;
 
   trackByOptionName(index: number, option: string) {
     return option;

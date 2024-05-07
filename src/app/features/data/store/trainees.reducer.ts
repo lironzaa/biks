@@ -1,14 +1,16 @@
 import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { createReducer, on } from "@ngrx/store";
+
 import {
   createTrainee,
   editTrainee,
   filterTrainees,
-  getTrainees,
+  getTrainees, setSelectedSubjects,
   setSelectedTraineeRow,
   traineesError,
-  traineesFetched
+  traineesFetched,
 } from "./trainees.actions";
+import { SubjectType } from "../types/subject-type";
 
 export interface TraineesState {
   trainees: Trainee[];
@@ -17,6 +19,7 @@ export interface TraineesState {
   selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
   error: string | null;
+  selectedSubjects: SubjectType[];
 }
 
 const initialState: TraineesState = {
@@ -25,7 +28,8 @@ const initialState: TraineesState = {
   traineesRowsOrigin: [],
   selectedTraineesRow: null,
   isLoading: false,
-  error: null
+  error: null,
+  selectedSubjects: [],
 };
 
 export const traineesReducer = createReducer(
@@ -72,5 +76,11 @@ export const traineesReducer = createReducer(
     traineesRows: action.traineesRows,
     error: null,
     isLoading: false
+  })),
+  on(setSelectedSubjects, (state, { selectedSubjects }) => ({
+    ...state,
+    selectedSubjects: selectedSubjects,
+    error: null,
+    isLoading: false,
   })),
 )

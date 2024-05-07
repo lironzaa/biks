@@ -1,0 +1,34 @@
+<div class="d-flex-center">
+  <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+    <app-select-input
+      [options]="traineesStateIds"
+      [placeholder]="'Select trainees ids'"
+      [formControl]="formUtilitiesService.getControl(analysisForm, 'ids')"
+      [name]="'ids'"
+      [isMultiple]="true"
+    />
+  </ng-container>
+</div>
+<div class="d-flex-center">
+  <app-select-input
+    [options]="subjectTypeOptions"
+    [placeholder]="'Select Subjects'"
+    [formControl]="formUtilitiesService.getControl(analysisForm, 'subjects')"
+    [name]="'subjects'"
+    [isMultiple]="true"
+  />
+</div>
+<div class="charts-container">
+  <div class="chart">
+  </div>
+  <div class="chart">
+    <ng-container *ngIf="gradesAveragesForSelectedSubjects$ | async; let gradesAverages">
+      <app-chart
+        [data]="gradesAverages"
+        [graphLabel]="'Grades averages per subject'"
+        [labels]="['Grades averages']"
+      />
+    </ng-container>
+  </div>
+</div>
+

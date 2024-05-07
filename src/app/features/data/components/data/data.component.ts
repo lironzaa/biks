@@ -1,13 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 
 import * as fromApp from "../../../../core/store/app.reducer";
-import { getTrainees } from "../../store/trainees.actions";
 import { selectTrainees } from "../../store/trainees.selectors";
 import { TraineesState } from "../../store/trainees.reducer";
-import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-params.interface";
 
 @Component({
   selector: "app-data",
@@ -15,14 +12,10 @@ import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-para
   styleUrl: "./data.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DataComponent implements OnInit {
+export class DataComponent {
   traineesState$: Observable<TraineesState>;
 
-  constructor(private store: Store<fromApp.AppState>, private route: ActivatedRoute) {
+  constructor(private store: Store<fromApp.AppState>) {
     this.traineesState$ = store.select(selectTrainees);
-  }
-
-  ngOnInit(): void {
-    this.store.dispatch(getTrainees(this.route.snapshot.queryParams as DataFiltersQueryParams));
   }
 }

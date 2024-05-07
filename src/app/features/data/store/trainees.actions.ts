@@ -2,6 +2,7 @@ import { createAction, props } from "@ngrx/store";
 
 import { CreateTrainee, EditTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
+import { SubjectType } from "../types/subject-type";
 
 export const getTrainees = createAction(
   "[Trainees] Get Trainees]",
@@ -41,4 +42,9 @@ export const traineesError = createAction(
 export const filterTrainees = createAction(
   "[Trainees] Filter Trainees]",
   props<{ traineesRows: TraineeRow[] }>()
+);
+
+export const setSelectedSubjects = createAction(
+  "[Trainees] Set Selected Subjects",
+  props<{ selectedSubjects: SubjectType[] }>()
 );

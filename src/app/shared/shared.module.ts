@@ -13,6 +13,7 @@ import {
   MatDatepickerToggle
 } from "@angular/material/datepicker";
 import { MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
+import { BaseChartDirective } from "ng2-charts";
 
 import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
 import { DataTableComponent } from "./components/tables/data-table/data-table.component";
@@ -23,6 +24,7 @@ import { TableFiltersComponent } from "./components/tables/table-filters/table-f
 import { ErrorInputComponent } from "./components/inputs/error-input/error-input.component";
 import { SelectInputComponent } from "./components/inputs/select-input/select-input.component";
 import { DateInputComponent } from "./components/inputs/date-input/date-input.component";
+import { ChartComponent } from "./components/charts/chart/chart.component";
 
 import { AsStringPipe } from "./pipes/as-string.pipe";
 
@@ -38,6 +40,7 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     ErrorInputComponent,
     SelectInputComponent,
     DateInputComponent,
+    ChartComponent,
   ],
   exports: [
     DataTableComponent,
@@ -46,11 +49,13 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     TextInputComponent,
     AppButtonComponent,
     SelectInputComponent,
-    DateInputComponent
+    DateInputComponent,
+    ChartComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    BaseChartDirective,
 
     // Mat Modules
     MatLabel,
@@ -66,7 +71,7 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     MatHint,
     MatNativeDateModule,
     MatDatepickerModule,
-    MatInputModule
+    MatInputModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: "en-GB" }

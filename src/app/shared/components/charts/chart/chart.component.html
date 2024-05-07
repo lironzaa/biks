@@ -1,0 +1,15 @@
+<div>
+  <p class="text-center main-text bold">{{ graphLabel }}</p>
+  <canvas
+    baseChart
+    class="chart"
+    [data]="barChartData"
+    [options]="barChartOptions"
+    [plugins]="barChartPlugins"
+    [type]="barChartType"
+  >
+  </canvas>
+  <div *ngIf="barChartData.datasets.length===0" class="d-flex-center">
+    <p>Select subjects to display graph</p>
+  </div>
+</div>

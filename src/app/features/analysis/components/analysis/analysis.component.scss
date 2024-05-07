@@ -1,0 +1,9 @@
+.charts-container {
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+
+  .chart {
+    width: 50%;
+  }
+}

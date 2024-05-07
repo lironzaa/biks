@@ -21,8 +21,7 @@ import { TraineesState } from "../../store/trainees.reducer";
 export class TraineeFormComponent implements OnInit, OnDestroy {
   isEditMode = false;
   traineesState!: TraineesState;
-
-  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
+  subjectTypeOptions = SubjectTypeOptions;
 
   traineeForm = this.fb.group({
     "name": new FormControl<string>("", [ Validators.required ]),
@@ -36,9 +35,9 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
   });
 
-  subjectTypeOptions = SubjectTypeOptions;
-
   storeSub!: Subscription;
+
+  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
               protected formUtilitiesService: FormUtilitiesService) {
