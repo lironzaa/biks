@@ -7,7 +7,7 @@ import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute } from "@angular/router";
 
 import {
-  createTrainee,
+  createTrainee, createTraineeGrade,
   deleteTrainee,
   editTrainee,
   getTrainees,
@@ -18,7 +18,10 @@ import { CreateTraineeGrade, Trainee, TraineeRow } from "../interfaces/trainee-i
 import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
-import { CreateOrUpdateGradeResponse, CreateUpdateDeleteTraineeResponse } from "../interfaces/trainee-api-responses.interface";
+import {
+  CreateOrUpdateGradeResponse,
+  CreateUpdateDeleteTraineeResponse
+} from "../interfaces/trainee-api-responses.interface";
 
 @Injectable()
 export class TraineesEffects {
@@ -102,9 +105,9 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(editTrainee),
       switchMap((editTraineeData) => {
-        return this.http.put<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${editTraineeData.data.traineeData.id}`, editTraineeData.data.traineeData).pipe(
+        return this.http.put<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${ editTraineeData.data.traineeData.id }`, editTraineeData.data.traineeData).pipe(
           switchMap(() => {
-            return this.http.put<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }/${editTraineeData.data.gradeData.id}`, editTraineeData.data.gradeData).pipe(
+            return this.http.put<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }/${ editTraineeData.data.gradeData.id }`, editTraineeData.data.gradeData).pipe(
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee updated successfully");
@@ -123,7 +126,22 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(deleteTrainee),
       switchMap((deleteTraineeData) => {
-        return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${deleteTraineeData.id}`).pipe(
+        return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${ deleteTraineeData.id }`).pipe(
+          map(() => {
+            const queryParams = this.route.snapshot.queryParams;
+            return getTrainees(queryParams as DataFiltersQueryParams);
+          }),
+          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
+        );
+      }));
+  });
+
+  createTraineeGrade = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(createTraineeGrade),
+      switchMap((createTraineeGrade) => {
+        console.log(createTraineeGrade);
+        return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, createTraineeGrade.data).pipe(
           map(() => {
             const queryParams = this.route.snapshot.queryParams;
             console.log(queryParams);

@@ -21,14 +21,14 @@
       "zip": "67890"
     },
     {
-      "id": "3",
-      "name": "Alice Johnson",
-      "email": "alice.johnson@example.com",
-      "dateJoined": "2023-03-10T00:00:00Z",
-      "address": "789 Oak St",
-      "city": "Villageville",
+      "id": "2",
+      "name": "Jonny Smith",
+      "email": "Jonny.smith@example.com",
+      "dateJoined": "2023-02-20T00:00:00Z",
+      "address": "456 Elm St",
+      "city": "Smallville",
       "country": "USA",
-      "zip": "13579"
+      "zip": "67120"
     },
     {
       "id": "4",
@@ -199,62 +199,12 @@
       "city": "Sunrise",
       "country": "USA",
       "zip": "98765"
-    },
-    {
-      "id": "bef9",
-      "name": "Liron Zalait",
-      "email": "lironzaa@gmail.com",
-      "dateJoined": "2024-05-08T21:00:00.000Z",
-      "address": "Yehuda Hanasi 16 apartment 8",
-      "city": "Ramat Gan",
-      "country": "Israel",
-      "zip": "52376"
-    },
-    {
-      "id": "bef2",
-      "name": "Liron Zalait",
-      "email": "lironzaa@gmail.com",
-      "dateJoined": "2024-05-08T21:00:00.000Z",
-      "address": "Yehuda Hanasi 16 apartment 8",
-      "city": "Ramat Gan",
-      "country": "Israel",
-      "zip": "52376"
-    },
-    {
-      "id": "bef3",
-      "name": "Liron Zalait",
-      "email": "lironzaa@gmail.com",
-      "dateJoined": "2024-05-08T21:00:00.000Z",
-      "address": "Yehuda Hanasi 16 apartment 8",
-      "city": "Ramat Gan",
-      "country": "Israel",
-      "zip": "52376"
-    },
-    {
-      "id": "46cd",
-      "name": "Liron Zalait",
-      "email": "lironzaa@gmail.com",
-      "dateJoined": "2024-05-09T21:00:00.000Z",
-      "address": "Yehuda Hanasi 16 apartment 8",
-      "city": "Ramat Gan",
-      "country": "Israel",
-      "zip": "52376"
-    },
-    {
-      "id": "e6dc",
-      "name": "Liron Zalait",
-      "email": "lironzaa@gmail.com",
-      "dateJoined": "2024-05-14T21:00:00.000Z",
-      "address": "Yehuda Hanasi 16 apartment 8",
-      "city": "Ramat Gan",
-      "country": "Israel",
-      "zip": "52376"
     }
   ],
   "grades": [
     {
       "id": "1",
-      "grade": "70",
+      "grade": "80",
       "subject": "Math",
       "traineeId": "1"
     },
@@ -491,198 +441,6 @@
       "grade": "88",
       "subject": "Algebra",
       "traineeId": "20"
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": "bef9"
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": "bef2"
-    },
-    {
-      "id": "d42a",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": "bef3"
-    },
-    {
-      "id": "a4fa",
-      "grade": "80",
-      "subject": "Algebra",
-      "traineeId": null
-    },
-    {
-      "id": "e75f",
-      "grade": "100",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "cae4",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "2b27",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "49aa",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "193c",
-      "grade": "100",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "b5d9",
-      "grade": "50",
-      "subject": "Algebra",
-      "traineeId": null
-    },
-    {
-      "id": "0f9f",
-      "grade": "40",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "de51",
-      "grade": "50",
-      "subject": "Algebra",
-      "traineeId": null
-    },
-    {
-      "id": "37d8",
-      "grade": "40",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "9753",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "3fc8",
-      "grade": "40",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "facb",
-      "grade": "99",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "8817",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "0ec3",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "9740",
-      "grade": "40",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "68f0",
-      "grade": "5",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "1e33",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "775f",
-      "grade": "3",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "4dac",
-      "grade": "30",
-      "subject": "Algebra",
-      "traineeId": null
-    },
-    {
-      "id": "3009",
-      "grade": "5",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "6323",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "ec71",
-      "grade": "50",
-      "subject": "Math",
-      "traineeId": null
-    },
-    {
-      "id": "6dbc",
-      "grade": "10",
-      "subject": "Math",
-      "traineeId": "46cd"
-    },
-    {
-      "id": "4620",
-      "grade": "80",
-      "subject": "Math",
-      "traineeId": "e6dc"
     }
   ]
 }

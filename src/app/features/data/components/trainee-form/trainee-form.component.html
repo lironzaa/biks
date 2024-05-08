@@ -1,87 +1,122 @@
 <div class="buttons-container">
   <app-button
-    [text]="'Add'"
+    [text]="'Add trainee'"
     [color]="'primary'"
     (buttonClicked)="addTrainee()"
   />
   <app-button
-    [text]="'Remove'"
+    [text]="'Delete trainee'"
     [color]="'warn'"
     (buttonClicked)="removeTrainee()"
+    [isDisabled]="!isEditMode"
+  />
+  <app-button
+    *ngIf="isEditMode"
+    [text]="'Add grade'"
+    [color]="'accent'"
+    (buttonClicked)="addGrade()"
   />
 </div>
-<form [formGroup]="traineeForm" (ngSubmit)="onSubmitForm()">
-  <div>
-    <app-text-input
-      [placeholder]="'Name'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
-      [name]="'name'"
-    />
-  </div>
-  <div>
-    <app-text-input
-      [type]="'number'"
-      [placeholder]="'Grade'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
-      [name]="'grade'"
-    />
-  </div>
-  <div>
-    <app-text-input
-      [type]="'email'"
-      [placeholder]="'Email'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
-      [name]="'email'"
-    />
-  </div>
-  <div>
-    <app-date-input
-      [placeholder]="'Date Joined'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
-      [name]="'dateJoined'"
-    />
-  </div>
-  <div>
-    <app-text-input
-      [placeholder]="'Address'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
-      [name]="'address'"
-    />
-  </div>
+<div class="forms-container">
+  <form [formGroup]="traineeForm" (ngSubmit)="onSubmitTraineeForm()">
+    <p>{{ isEditMode ? 'Edit' : 'Create' }} Form</p>
+    <div>
+      <app-text-input
+        [placeholder]="'Name'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
+        [name]="'name'"
+      />
+    </div>
+    <div>
+      <app-text-input
+        [type]="'number'"
+        [placeholder]="'Grade'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
+        [name]="'grade'"
+      />
+    </div>
+    <div>
+      <app-text-input
+        [type]="'email'"
+        [placeholder]="'Email'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
+        [name]="'email'"
+      />
+    </div>
+    <div>
+      <app-date-input
+        [placeholder]="'Date Joined'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
+        [name]="'dateJoined'"
+      />
+    </div>
+    <div>
+      <app-text-input
+        [placeholder]="'Address'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
+        [name]="'address'"
+      />
+    </div>
 
-  <div>
-    <app-text-input
-      [placeholder]="'City'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
-      [name]="'city'"
+    <div>
+      <app-text-input
+        [placeholder]="'City'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
+        [name]="'city'"
+      />
+    </div>
+    <div>
+      <app-text-input
+        [placeholder]="'Country'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
+        [name]="'country'"
+      />
+    </div>
+    <div>
+      <app-text-input
+        [type]="'number'"
+        [placeholder]="'Zip'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
+        [name]="'zip'"
+      />
+    </div>
+    <div>
+      <app-select-input
+        [options]="subjectTypeOptions"
+        [placeholder]="'Subject'"
+        [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
+        [name]="'subject'"
+      />
+    </div>
+    <app-button
+      [text]="isEditMode ? 'Edit' : 'Create'"
+      [color]="'primary'"
+      [type]="'submit'"
     />
-  </div>
-  <div>
-    <app-text-input
-      [placeholder]="'Country'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
-      [name]="'country'"
+  </form>
+
+  <form *ngIf="isAddGradeForm" [formGroup]="gradeForm" (ngSubmit)="onSubmitGradeForm()">
+    <p>Add Grade Form</p>
+    <div>
+      <app-text-input
+        [type]="'number'"
+        [placeholder]="'Grade'"
+        [formControl]="formUtilitiesService.getControl(gradeForm, 'grade')"
+        [name]="'grade'"
+      />
+    </div>
+    <div>
+      <app-select-input
+        [options]="subjectTypeOptions"
+        [placeholder]="'Subject'"
+        [formControl]="formUtilitiesService.getControl(gradeForm, 'subject')"
+        [name]="'subject'"
+      />
+    </div>
+    <app-button
+      [text]="'Add grade'"
+      [color]="'primary'"
+      [type]="'submit'"
     />
-  </div>
-  <div>
-    <app-text-input
-      [type]="'number'"
-      [placeholder]="'Zip'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
-      [name]="'zip'"
-    />
-  </div>
-  <div>
-    <app-select-input
-      [options]="subjectTypeOptions"
-      [placeholder]="'Subject'"
-      [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
-      [name]="'subject'"
-    />
-  </div>
-  <app-button
-    [text]="isEditMode ? 'Edit' : 'Create'"
-    [color]="'primary'"
-    [type]="'submit'"
-  />
-</form>
+  </form>
+</div>

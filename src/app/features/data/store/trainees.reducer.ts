@@ -3,6 +3,7 @@ import { createReducer, on } from "@ngrx/store";
 
 import {
   createTrainee,
+  createTraineeGrade,
   editTrainee,
   filterTrainees,
   getTrainees,
@@ -74,6 +75,11 @@ export const traineesReducer = createReducer(
     ...state,
     error: errorMessage,
     isLoading: false
+  })),
+  on(createTraineeGrade, (state) => ({
+    ...state,
+    error: null,
+    isLoading: true
   })),
   on(filterTrainees, (state, { traineesRows }) => ({
     ...state,

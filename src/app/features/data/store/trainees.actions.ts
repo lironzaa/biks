@@ -1,6 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 
-import { CreateTrainee, EditTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
+import { CreateTrainee, CreateTraineeGrade, EditTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
 import { SubjectType } from "../types/subject-type";
 
@@ -37,6 +37,11 @@ export const deleteTrainee = createAction(
 export const traineesError = createAction(
   "[Trainees] Trainees Error]",
   props<{ errorMessage: string }>()
+);
+
+export const createTraineeGrade = createAction(
+  "[Trainees] Create Trainee Grade]",
+  props<{ data: CreateTraineeGrade }>()
 );
 
 export const filterTrainees = createAction(

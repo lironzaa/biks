@@ -4,8 +4,14 @@ import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
 
 import * as fromApp from "../../../../core/store/app.reducer";
-import { createTrainee, deleteTrainee, editTrainee, setSelectedTraineeRow } from "../../store/trainees.actions";
-import { CreateTrainee, EditTrainee, TraineeRow } from "../../interfaces/trainee-interface";
+import {
+  createTrainee,
+  createTraineeGrade,
+  deleteTrainee,
+  editTrainee,
+  setSelectedTraineeRow
+} from "../../store/trainees.actions";
+import { CreateTrainee, CreateTraineeGrade, EditTrainee, TraineeRow } from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
@@ -22,6 +28,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   isEditMode = false;
   traineesState!: TraineesState;
   subjectTypeOptions = SubjectTypeOptions;
+  isAddGradeForm = false;
 
   traineeForm = this.fb.group({
     "name": new FormControl<string>("", [ Validators.required ]),
@@ -33,6 +40,12 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     "country": new FormControl<string>("", [ Validators.required ]),
     "zip": new FormControl<string>("", [ Validators.required, Validators.minLength(4), Validators.maxLength(5) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
+  });
+
+  gradeForm = this.fb.group({
+    "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
+    "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
   storeSub!: Subscription;
@@ -67,17 +80,24 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
-  onSubmitForm(): void {
+  addGrade(): void {
+    this.isAddGradeForm = true;
+    this.gradeForm.get("traineeId")?.setValue(this.traineesState.selectedTraineesRow!.id);
+    console.log(this.gradeForm.value);
+  }
+
+  onSubmitTraineeForm(): void {
+    this.isAddGradeForm = false;
     if (this.traineeForm.valid) {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
-        this.resetForm();
+        this.resetTraineeForm();
         console.log(traineeData);
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
         const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
-        this.resetForm();
+        this.resetTraineeForm();
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     } else {
@@ -141,11 +161,32 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetForm(): void {
+  resetTraineeForm(): void {
     this.formUtilitiesService.setIsFormSubmitAttempt(false);
     this.formUtilitiesService.setIsFormCompleted(true);
     this.traineeForm.reset();
     this.formDirective.resetForm();
+  }
+
+  onSubmitGradeForm(): void {
+    console.log(this.gradeForm);
+    if (this.gradeForm.valid) {
+      const gradeData: CreateTraineeGrade = this.populateCreateGradeData();
+      this.gradeForm.reset();
+      this.isAddGradeForm = false;
+      console.log(gradeData);
+      this.store.dispatch(createTraineeGrade({ data: gradeData }));
+    } else {
+      this.formUtilitiesService.setIsFormSubmitAttempt(true);
+    }
+  }
+
+  populateCreateGradeData(): CreateTraineeGrade {
+    return {
+      grade: this.gradeForm.value.grade!,
+      subject: this.gradeForm.value.subject!,
+      traineeId: this.gradeForm.value.traineeId!
+    };
   }
 
   ngOnDestroy(): void {
