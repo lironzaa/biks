@@ -2,10 +2,17 @@ import { TraineesState } from "./trainees.reducer";
 
 import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis/analysis-charts-interface";
 
-export const selectTrainees = (state: { trainees: TraineesState }) => state.trainees;
+export const selectTraineesState = (state: { trainees: TraineesState }) => state.trainees;
+
 export const selectTraineesIds = (state: {
   trainees: TraineesState
-}) => state.trainees.trainees.map(trainee => trainee.id);
+}) => state.trainees.traineesOrigin.map(trainee => trainee.id);
+
+export const selectTraineesRowsOrigin = (state: { trainees: TraineesState }) => state.trainees.traineesRowsOrigin;
+
+export const selectTraineesOrigin = (state: { trainees: TraineesState }) => state.trainees.traineesOrigin;
+
+export const selectSelectedTraineesRow = (state: { trainees: TraineesState }) => state.trainees.selectedTraineesRow;
 
 export const selectGradesAveragesForSelectedSubjects = (state: { trainees: TraineesState }) => {
   const subjectsAverages: ChartSubjectsGradesAverages = {};

@@ -44,9 +44,14 @@ export const createTraineeGrade = createAction(
   props<{ data: CreateTraineeGrade }>()
 );
 
+export const filterTraineesRows = createAction(
+  "[Trainees] Filter Trainees Rows]",
+  props<{ traineesRows: TraineeRow[] }>()
+);
+
 export const filterTrainees = createAction(
   "[Trainees] Filter Trainees]",
-  props<{ traineesRows: TraineeRow[] }>()
+  props<{ trainees: Trainee[] }>()
 );
 
 export const setSelectedSubjects = createAction(

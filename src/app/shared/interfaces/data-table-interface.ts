@@ -9,9 +9,9 @@ export interface DataTableColumn {
 }
 
 export interface DataTableFiltersValues {
-  [key: string]: string | Date | null;
+  [key: string]: unknown;
 }
 
 export interface DataTableItem {
-  [key: string]: string;
+  [key: string]: string | number;
 }

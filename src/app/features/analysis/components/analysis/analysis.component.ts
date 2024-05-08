@@ -9,10 +9,8 @@ import * as fromApp from "../../../../core/store/app.reducer";
 import {
   selectGradesAveragesForSelectedSubjects,
   selectGradesAveragesForSelectedTrainees,
-  // selectTrainees,
   selectTraineesIds
 } from "../../../data/store/trainees.selectors";
-// import { TraineesState } from "../../../data/store/trainees.reducer";
 import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
 import { SubjectType } from "../../../data/types/subject-type";
 import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis-charts-interface";
@@ -27,7 +25,6 @@ export class AnalysisComponent implements OnInit, OnDestroy {
   traineesStateIds$: Observable<string[]>;
   traineesGradesAverages$: Observable<ChartTraineesGradesAverages[]>;
   subjectsGradesAverages$: Observable<ChartSubjectsGradesAverages>;
-  // traineesState!: TraineesState;
   subjectTypeOptions = SubjectTypeOptions;
 
   analysisForm = this.fb.group({
@@ -35,7 +32,6 @@ export class AnalysisComponent implements OnInit, OnDestroy {
     "subjects": new FormControl<SubjectType[]>([]),
   });
 
-  // storeSub!: Subscription;
   idsSub: Subscription | undefined;
   subjectsSub: Subscription | undefined;
 
@@ -47,10 +43,6 @@ export class AnalysisComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
-    // this.traineesState = traineesState;
-    // console.log(traineesState);
-    // });
     this.idsSub = this.analysisForm.get("ids")?.valueChanges.pipe(
       distinctUntilChanged()
     ).subscribe((selectedIds) => {
@@ -68,7 +60,6 @@ export class AnalysisComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // if (!this.storeSub.closed) this.storeSub.unsubscribe();
     if (this.idsSub && !this.idsSub.closed) this.idsSub.unsubscribe();
     if (this.subjectsSub && !this.subjectsSub.closed) this.subjectsSub.unsubscribe();
   }

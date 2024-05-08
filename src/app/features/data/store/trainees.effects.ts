@@ -15,7 +15,7 @@ import {
   traineesError,
   traineesFetched
 } from "./trainees.actions";
-import { CreateTraineeGrade, Trainee, TraineeRow } from "../interfaces/trainee-interface";
+import { CreateTraineeGrade, FormattedTrainees, Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
@@ -37,26 +37,40 @@ export class TraineesEffects {
   ) {
   }
 
-  mapTraineeRows(trainees: Trainee[], traineeRows: TraineeRow[]) {
-    trainees.flatMap(trainee => {
+  mapTraineeRows(trainees: Trainee[]): FormattedTrainees {
+    const traineeRows: TraineeRow[] = [];
+
+    const formattedTrainees: Trainee[] = trainees.map(trainee => {
+      const gradesTotal = trainee.grades.reduce((total, grade) => total + parseFloat(grade.grade), 0);
+      const average = (gradesTotal / trainee.grades.length);
       trainee.grades.map(grade => {
         traineeRows.push({
-            id: trainee.id,
-            gradeId: grade.id,
-            name: trainee.name,
-            email: trainee.email,
-            dateJoined: trainee.dateJoined,
-            address: trainee.address,
-            city: trainee.city,
-            country: trainee.country,
-            zip: trainee.zip,
-            grade: grade.grade,
-            gradeDate: grade.date,
-            subject: grade.subject,
-          }
-        )
-      })
-    })
+          id: trainee.id,
+          gradeId: grade.id,
+          name: trainee.name,
+          email: trainee.email,
+          dateJoined: trainee.dateJoined,
+          address: trainee.address,
+          city: trainee.city,
+          country: trainee.country,
+          zip: trainee.zip,
+          grade: grade.grade,
+          gradeDate: grade.date,
+          subject: grade.subject,
+        });
+      });
+      return {
+        ...trainee,
+        average: average,
+        dynamicTrClass: average > 65 ? "bg-primary" : "bg-danger",
+        exams: trainee.grades.length,
+      };
+    });
+
+    return {
+      traineeRows: traineeRows,
+      trainees: formattedTrainees
+    }
   }
 
   getTrainees = createEffect(() => {
@@ -65,12 +79,14 @@ export class TraineesEffects {
       switchMap((getTraineesData) => {
         return this.http.get<Trainee[]>(`${ this.apiPrefix }?_embed=grades`).pipe(
           map(trainees => {
-            const traineeRows: TraineeRow[] = [];
-            this.mapTraineeRows(trainees, traineeRows);
+            const formattedTrainees: FormattedTrainees = this.mapTraineeRows(trainees)
             const calculatedPage = getTraineesData.page ? +getTraineesData.page : 1;
-            const paginationData = this.paginationDataService.calculatePaginationData(calculatedPage, traineeRows.length);
+            const paginationData = this.paginationDataService.calculatePaginationData(calculatedPage, formattedTrainees.traineeRows.length);
             this.paginationDataService.setPaginationData(paginationData);
-            return traineesFetched({ trainees, traineeRows });
+            return traineesFetched({
+              trainees: formattedTrainees.trainees,
+              traineeRows: formattedTrainees.traineeRows
+            });
           }),
           catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
         );
@@ -81,7 +97,6 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(createTrainee),
       switchMap((createTraineeData) => {
-        console.log(createTraineeData);
         return this.http.post<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }`, createTraineeData.data.traineeData).pipe(
           switchMap((createdTrainee) => {
             const updatedGradeData: CreateTraineeGrade = {
@@ -142,11 +157,9 @@ export class TraineesEffects {
     return this.actions$.pipe(
       ofType(createTraineeGrade),
       switchMap((createTraineeGrade) => {
-        console.log(createTraineeGrade);
         return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, createTraineeGrade.data).pipe(
           map(() => {
             const queryParams = this.route.snapshot.queryParams;
-            console.log(queryParams);
             return getTrainees(queryParams as DataFiltersQueryParams);
           }),
           catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))

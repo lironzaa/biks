@@ -6,6 +6,7 @@ import {
   createTraineeGrade,
   editTrainee,
   filterTrainees,
+  filterTraineesRows,
   getTrainees,
   setSelectedSubjects,
   setSelectedTraineeRow,
@@ -17,6 +18,7 @@ import { SubjectType } from "../types/subject-type";
 
 export interface TraineesState {
   trainees: Trainee[];
+  traineesOrigin: Trainee[];
   traineesRows: TraineeRow[];
   traineesRowsOrigin: TraineeRow[];
   selectedTraineesRow: TraineeRow | null;
@@ -28,6 +30,7 @@ export interface TraineesState {
 
 const initialState: TraineesState = {
   trainees: [],
+  traineesOrigin: [],
   traineesRows: [],
   traineesRowsOrigin: [],
   selectedTraineesRow: null,
@@ -49,6 +52,7 @@ export const traineesReducer = createReducer(
   on(traineesFetched, (state, { trainees, traineeRows }) => ({
     ...state,
     trainees: trainees,
+    traineesOrigin: trainees,
     traineesRows: traineeRows,
     traineesRowsOrigin: traineeRows,
     error: null,
@@ -81,9 +85,15 @@ export const traineesReducer = createReducer(
     error: null,
     isLoading: true
   })),
-  on(filterTrainees, (state, { traineesRows }) => ({
+  on(filterTraineesRows, (state, { traineesRows }) => ({
     ...state,
     traineesRows: traineesRows,
+    error: null,
+    isLoading: false
+  })),
+  on(filterTrainees, (state, { trainees }) => ({
+    ...state,
+    trainees: trainees,
     error: null,
     isLoading: false
   })),

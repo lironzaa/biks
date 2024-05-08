@@ -2,35 +2,47 @@
   <ng-container *ngIf="traineesState$ | async; let traineesState">
     <app-data-table
       [dataTableConfig]="monitorTableConfig"
-      [items]="traineesState.traineesRows"
+      [items]="traineesState.trainees"
       [isLoading]="traineesState.isLoading"
       [filtersForm]="monitorFiltersForm"
     >
-      <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
-        <app-select-input
-          class="w-100"
-          [options]="traineesStateIds"
-          [placeholder]="'Select trainees ids'"
-          [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'ids')"
-          [name]="'ids'"
-          [isMultiple]="true"
-          [isFullWidth]="true"
-        />
-      </ng-container>
-      <div class="search-container">
+      <div class="mb-3">
+        <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+          <app-select-input
+            class="w-100"
+            [options]="traineesStateIds"
+            [placeholder]="'Select trainees ids'"
+            [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'ids')"
+            [name]="'ids'"
+            [isMultiple]="true"
+            [isFullWidth]="true"
+          />
+        </ng-container>
         <app-text-input
           class="w-100"
           [placeholder]="'Names'"
-          [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'names')"
-          [name]="'names'"
+          [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'name')"
+          [name]="'name'"
           [isFullWidth]="true"
         />
-        <!--      <app-text-input-->
-        <!--        [placeholder]="'Grade'"-->
-        <!--        [type]="'number'"-->
-        <!--        [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'grade')"-->
-        <!--        [name]="'grade'"-->
-        <!--      />-->
+        <div class="d-flex">
+          <app-checkbox-input
+            [option]="monitorStateOptions[0]"
+            [placeholder]="'State'"
+            [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'isPassed')"
+            [name]="'isPassed'"
+          />
+          <app-checkbox-input
+            [option]="monitorStateOptions[1]"
+            [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'isFailed')"
+            [name]="'isFailed'"
+          />
+        </div>
+        <app-button
+          [text]="'Reset filters'"
+          [color]="'primary'"
+          (buttonClicked)="resetFilters()"
+        />
       </div>
     </app-data-table>
   </ng-container>

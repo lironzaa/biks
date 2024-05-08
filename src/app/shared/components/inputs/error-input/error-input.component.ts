@@ -44,17 +44,10 @@ export class ErrorInputComponent implements OnInit {
       this.isFormSubmitted$.pipe(startWith(false)),
     ]).pipe(
       map(([ , isFormSubmitted ]) => {
-        // console.log(this.initialState);
         if (this.initialState) {
-          // console.log("in intial state");
           this.initialState = false;
           return "";
         }
-        // console.log("pristine " + this.control?.pristine);
-        // console.log("valid " + this.control?.valid);
-        // console.log("touched " + this.control?.touched);
-        // console.log("dirty " + this.control?.dirty);
-        // console.log(this.control?.errors);
         return (!this.control?.pristine || isFormSubmitted) && this.control?.errors ? this.getErrorMessage(this.control?.errors as ValidationErrors) : "";
       })
     );

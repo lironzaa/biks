@@ -10,6 +10,9 @@ export interface Trainee {
   city: string;
   country: string;
   zip: string;
+  average: number;
+  exams: number;
+  dynamicTrClass?: string;
 }
 
 export interface TraineeRow {
@@ -25,6 +28,11 @@ export interface TraineeRow {
   grade: string;
   gradeDate: string;
   subject: SubjectType;
+}
+
+export interface FormattedTrainees {
+  traineeRows: TraineeRow[];
+  trainees: Trainee[]
 }
 
 export interface TraineeGrade {
@@ -73,5 +81,6 @@ export interface EditTraineeGrade {
   id: string;
   grade: string;
   subject: SubjectType;
+  date: string;
   traineeId: string;
 }

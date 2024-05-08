@@ -16,8 +16,7 @@ import { CreateTrainee, CreateTraineeGrade, EditTrainee, TraineeRow } from "../.
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
-import { selectTrainees } from "../../store/trainees.selectors";
-import { TraineesState } from "../../store/trainees.reducer";
+import { selectSelectedTraineesRow } from "../../store/trainees.selectors";
 import {
   ConfirmationDialogComponent
 } from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
@@ -30,7 +29,7 @@ import {
 })
 export class TraineeFormComponent implements OnInit, OnDestroy {
   isEditMode = false;
-  traineesState!: TraineesState;
+  selectedTraineesRow: TraineeRow | null = null;
   subjectTypeOptions = SubjectTypeOptions;
   isAddGradeForm = false;
 
@@ -62,13 +61,11 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
-      this.traineesState = traineesState;
-      // console.log(this.traineesState);
-      if (this.traineesState.selectedTraineesRow) {
+    this.storeSub = this.store.select(selectSelectedTraineesRow).subscribe(selectedTraineesRow => {
+      this.selectedTraineesRow = selectedTraineesRow;
+      if (this.selectedTraineesRow) {
         this.isEditMode = true;
-        console.log(this.traineesState.selectedTraineesRow);
-        this.traineeForm.patchValue(this.traineesState.selectedTraineesRow);
+        this.traineeForm.patchValue(this.selectedTraineesRow);
       } else {
         this.isEditMode = false;
         this.traineeForm.reset();
@@ -98,7 +95,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.store.dispatch(deleteTrainee({ id: this.traineesState.selectedTraineesRow!.id }));
+        this.store.dispatch(deleteTrainee({ id: this.selectedTraineesRow!.id }));
         this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
       }
     });
@@ -106,8 +103,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
 
   addGrade(): void {
     this.isAddGradeForm = true;
-    this.gradeForm.get("traineeId")?.setValue(this.traineesState.selectedTraineesRow!.id);
-    console.log(this.gradeForm.value);
+    this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
   }
 
   onSubmitTraineeForm(): void {
@@ -116,7 +112,6 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
         this.resetTraineeForm();
-        console.log(traineeData);
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
@@ -152,7 +147,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   populateEditTraineeData(): EditTrainee {
     return {
       traineeData: {
-        id: this.traineesState.selectedTraineesRow!.id,
+        id: this.selectedTraineesRow!.id,
         name: this.traineeForm.value.name!,
         email: this.traineeForm.value.email!,
         dateJoined: this.traineeForm.value.dateJoined!,
@@ -162,18 +157,19 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
         zip: this.traineeForm.value.zip!,
       },
       gradeData: {
-        id: this.traineesState.selectedTraineesRow!.gradeId,
+        id: this.selectedTraineesRow!.gradeId,
         grade: this.traineeForm.value.grade!,
         subject: this.traineeForm.value.subject!,
-        traineeId: this.traineesState.selectedTraineesRow!.id!
+        date: this.traineeForm.value.dateJoined!,
+        traineeId: this.selectedTraineesRow!.id!
       }
     };
   }
 
   populateSelectedTraineeRow(): TraineeRow {
     return {
-      id: this.traineesState.selectedTraineesRow!.id,
-      gradeId: this.traineesState.selectedTraineesRow!.gradeId,
+      id: this.selectedTraineesRow!.id,
+      gradeId: this.selectedTraineesRow!.gradeId,
       name: this.traineeForm.value.name!,
       email: this.traineeForm.value.email!,
       dateJoined: this.traineeForm.value.dateJoined!,
@@ -182,7 +178,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
       country: this.traineeForm.value.country!,
       zip: this.traineeForm.value.zip!,
       grade: this.traineeForm.value.grade!,
-      gradeDate: this.traineesState.selectedTraineesRow!.gradeDate!,
+      gradeDate: this.selectedTraineesRow!.gradeDate!,
       subject: this.traineeForm.value.subject!,
     }
   }
@@ -195,12 +191,10 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmitGradeForm(): void {
-    console.log(this.gradeForm);
     if (this.gradeForm.valid) {
       const gradeData: CreateTraineeGrade = this.populateCreateGradeData();
       this.gradeForm.reset();
       this.isAddGradeForm = false;
-      console.log(gradeData);
       this.store.dispatch(createTraineeGrade({ data: gradeData }));
     } else {
       this.formUtilitiesService.setIsFormSubmitAttempt(true);

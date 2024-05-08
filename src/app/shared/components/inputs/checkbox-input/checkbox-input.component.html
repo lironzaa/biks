@@ -1,0 +1,11 @@
+<ng-container *ngIf="control">
+  <section>
+    <mat-label>{{ placeholder }}</mat-label>
+      <mat-checkbox [formControl]="control" class="example-margin">{{ option.key }}
+      </mat-checkbox>
+  </section>
+  <app-error-input
+    [formContained]="control"
+    [controlName]="name"
+  ></app-error-input>
+</ng-container>

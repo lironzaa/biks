@@ -6,10 +6,10 @@ import { debounceTime, distinctUntilChanged, Observable, Subscription } from "rx
 import { map } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 
-import { filterTrainees, setSelectedTraineeRow } from "../../store/trainees.actions";
+import { filterTraineesRows, setSelectedTraineeRow } from "../../store/trainees.actions";
 import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-params.interface";
 import * as fromApp from "../../../../core/store/app.reducer";
-import { selectTrainees } from "../../store/trainees.selectors";
+import { selectTraineesRowsOrigin, selectTraineesState } from "../../store/trainees.selectors";
 import { TraineesState } from "../../store/trainees.reducer";
 import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { dataTableConfig } from "../../data/data-table-config";
@@ -29,7 +29,7 @@ import { GradeRangeEnum } from "../../enums/grade-range-enum";
 export class DataTableWrapperComponent implements OnInit, OnDestroy {
   traineesState$: Observable<TraineesState>;
   tableConfig = dataTableConfig;
-  traineesState!: TraineesState;
+  traineesRowsOrigin!: TraineeRow[];
   gradeRangeOptions = GradeRangeOptions;
   isInitialRender = true;
   isResetPage = false;
@@ -50,15 +50,12 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
               private router: Router, private route: ActivatedRoute,
               protected formUtilitiesService: FormUtilitiesService, private toastr: ToastrService,
               private paginationDataService: PaginationDataService) {
-    this.traineesState$ = store.select(selectTrainees);
+    this.traineesState$ = store.select(selectTraineesState);
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTrainees)
-      .subscribe((traineesState: TraineesState) => {
-        this.traineesState = traineesState;
-        console.log(this.traineesState);
-      });
+    this.storeSub = this.store.select(selectTraineesRowsOrigin)
+      .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
@@ -77,7 +74,7 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
       if (isApplyFilters) {
         this.applyFilters(queryParams);
       } else {
-        const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesState.traineesRowsOrigin.length);
+        const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesRowsOrigin.length);
         this.paginationDataService.setPaginationData(paginationData);
       }
     });
@@ -90,16 +87,23 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
       }
     }
     if (this.isResetPage) {
-      const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesState.traineesRowsOrigin.length);
+      const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesRowsOrigin.length);
       this.paginationDataService.setPaginationData(paginationData);
       this.isResetPage = false;
     }
-    this.store.dispatch(filterTrainees({ traineesRows: this.traineesState.traineesRowsOrigin }));
+    this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
     return false;
   }
 
   applyFilters(queryParams: DataFiltersQueryParams): void {
-    const filteredItems = this.traineesState.traineesRowsOrigin.filter(item => {
+    let startDate: Date;
+    let endDate: Date;
+    const isFilterByDate = queryParams.startDate !== undefined && queryParams.endDate !== undefined;
+    if (isFilterByDate) {
+      startDate = new Date(queryParams.startDate!);
+      endDate = new Date(queryParams.endDate!);
+    }
+    const filteredItems = this.traineesRowsOrigin.filter(item => {
       let idMatch = true;
       let gradeMatch = true;
       let dateMatch = true;
@@ -116,16 +120,18 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
         }
       }
 
-      if (queryParams.startDate !== undefined && queryParams.endDate !== undefined) {
-        const itemDate = new Date(item.dateJoined);
-        dateMatch = new Date(queryParams.startDate) <= itemDate && itemDate <= new Date(queryParams.endDate);
+      if (isFilterByDate) {
+        const itemDate = new Date(item.gradeDate);
+        dateMatch = startDate <= itemDate && itemDate <= endDate;
       }
 
       return idMatch && gradeMatch && dateMatch;
     })
-    const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
-    this.paginationDataService.setPaginationData(paginationData);
-    this.store.dispatch(filterTrainees({ traineesRows: filteredItems }));
+    if (queryParams.page === "1") {
+      const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
+      this.paginationDataService.setPaginationData(paginationData);
+    }
+    this.store.dispatch(filterTraineesRows({ traineesRows: filteredItems }));
   }
 
   initFiltersFormSub(): void {

@@ -29,10 +29,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   initQueryParamsSub(): void {
     this.queryParamsSub = this.route.queryParams
-      .subscribe(queryParams => {
-        this.page = queryParams["page"] ? +queryParams["page"] : 1;
-        // console.log(this.page);
-      });
+      .subscribe(queryParams => this.page = queryParams["page"] ? +queryParams["page"] : 1);
   }
 
   navigateToPage(navigateType: "previousPage" | "nextPage"): void {

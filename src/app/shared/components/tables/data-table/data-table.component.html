@@ -17,13 +17,12 @@
     </td>
   </tr>
   <ng-container *ngIf="paginationData$ | async; let paginationData">
-    <tr
-      *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
-     trackBy: trackByItemId"
-      class="pointer" (click)="onTableRowClick(item)">
+    <tr [className]="item.dynamicTrClass"
+        *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
+     trackBy: trackByItemId" (click)="onTableRowClick(item)">
       <ng-container *ngIf="!isLoading && items.length > 0">
         <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
-            [ngSwitch]="header.columnType">
+            [ngSwitch]="header.columnType" [ngClass]="{'pointer': isPointer}">
           <ng-container *ngSwitchCase="'date'">
             {{ item[header.dataProperty] | asString | date:"dd/MM/yyyy" }}
           </ng-container>

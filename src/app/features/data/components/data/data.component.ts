@@ -3,7 +3,7 @@ import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 
 import * as fromApp from "../../../../core/store/app.reducer";
-import { selectTrainees } from "../../store/trainees.selectors";
+import { selectTraineesState } from "../../store/trainees.selectors";
 import { TraineesState } from "../../store/trainees.reducer";
 
 @Component({
@@ -16,6 +16,6 @@ export class DataComponent {
   traineesState$: Observable<TraineesState>;
 
   constructor(private store: Store<fromApp.AppState>) {
-    this.traineesState$ = store.select(selectTrainees);
+    this.traineesState$ = store.select(selectTraineesState);
   }
 }
