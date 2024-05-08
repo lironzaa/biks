@@ -7,7 +7,8 @@ import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute } from "@angular/router";
 
 import {
-  createTrainee, createTraineeGrade,
+  createTrainee,
+  createTraineeGrade,
   deleteTrainee,
   editTrainee,
   getTrainees,
@@ -50,6 +51,7 @@ export class TraineesEffects {
             country: trainee.country,
             zip: trainee.zip,
             grade: grade.grade,
+            gradeDate: grade.date,
             subject: grade.subject,
           }
         )

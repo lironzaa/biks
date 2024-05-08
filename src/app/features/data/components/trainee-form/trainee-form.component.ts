@@ -182,6 +182,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
       country: this.traineeForm.value.country!,
       zip: this.traineeForm.value.zip!,
       grade: this.traineeForm.value.grade!,
+      gradeDate: this.traineesState.selectedTraineesRow!.gradeDate!,
       subject: this.traineeForm.value.subject!,
     }
   }

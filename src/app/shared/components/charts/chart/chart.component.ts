@@ -18,6 +18,7 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input({ required: true }) labels: string[] = [];
   @Input({ required: true }) data!: ChartDataInterface;
   @Input({ required: true }) graphLabel: string = "";
+  @Input({ required: true }) selectLabel: string = "";
 
   public barChartOptions: ChartConfiguration["options"] = {
     scales: {
@@ -50,13 +51,13 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["data"] && Object.keys(changes["data"].currentValue).length > 0) {
-      this.barChartData.datasets = [];
-      this.setData();
-      this.chart?.update();
-    } else {
-      this.barChartData.datasets = [];
-      this.chart?.update();
+    if (changes["data"]) {
+      const isDataChanged = JSON.stringify(changes["data"].previousValue) !== JSON.stringify(changes["data"].currentValue);
+      if (isDataChanged) {
+        this.barChartData.datasets = [];
+        this.setData();
+        this.chart?.update();
+      }
     }
   }
 

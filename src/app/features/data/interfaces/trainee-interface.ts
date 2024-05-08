@@ -23,6 +23,7 @@ export interface TraineeRow {
   country: string;
   zip: string;
   grade: string;
+  gradeDate: string;
   subject: SubjectType;
 }
 

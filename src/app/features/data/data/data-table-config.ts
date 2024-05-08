@@ -4,7 +4,7 @@ export const dataTableConfig: DataTableConfig = {
   columns: [
     { title: "ID", dataProperty: "id" },
     { title: "Name", dataProperty: "name" },
-    { title: "Date", dataProperty: "dateJoined", columnType: "date" },
+    { title: "Date", dataProperty: "gradeDate", columnType: "date" },
     { title: "Grade", dataProperty: "grade" },
     { title: "Subject", dataProperty: "subject" },
   ],

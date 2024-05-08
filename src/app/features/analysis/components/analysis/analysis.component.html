@@ -26,13 +26,25 @@
 </div>
 <div class="charts-container">
   <div class="chart">
+    <ng-container *ngIf="traineesGradesAverages$ | async; let traineesGradesAverages">
+      <app-chart *ngFor="let traineesGradesAverage of traineesGradesAverages; trackBy: trackByTrainee"
+                 [data]="traineesGradesAverage.averages"
+                 [graphLabel]="'Grades averages for trainee ' + traineesGradesAverage.trainee.name"
+                 [labels]="['Grades averages per month']"
+                 [selectLabel]="'Select trainees to display chart'"
+      />
+    </ng-container>
+    <ng-container *ngIf="(traineesGradesAverages$ | async)?.length === 0">
+      <p class="text-center">Select at least of trainee to display chart</p>
+    </ng-container>
   </div>
   <div class="chart">
-    <ng-container *ngIf="gradesAveragesForSelectedSubjects$ | async; let gradesAverages">
+    <ng-container *ngIf="subjectsGradesAverages$ | async; let subjectsGradesAverages">
       <app-chart
-        [data]="gradesAverages"
+        [data]="subjectsGradesAverages"
         [graphLabel]="'Grades averages per subject'"
         [labels]="['Grades averages']"
+        [selectLabel]="'Select subjects to display chart'"
       />
     </ng-container>
   </div>

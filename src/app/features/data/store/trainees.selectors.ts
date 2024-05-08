@@ -1,15 +1,15 @@
 import { TraineesState } from "./trainees.reducer";
 
+import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis/analysis-charts-interface";
+
 export const selectTrainees = (state: { trainees: TraineesState }) => state.trainees;
 export const selectTraineesIds = (state: {
   trainees: TraineesState
 }) => state.trainees.trainees.map(trainee => trainee.id);
 
 export const selectGradesAveragesForSelectedSubjects = (state: { trainees: TraineesState }) => {
-  const subjectsAverages: { [subject: string]: number } = {};
+  const subjectsAverages: ChartSubjectsGradesAverages = {};
   const counts: { [subject: string]: number } = {};
-
-  console.log(state);
 
   state.trainees.traineesRows.filter(traineesRow => state.trainees.selectedSubjects.includes(traineesRow.subject))
     .forEach(traineeRow => {
@@ -26,33 +26,45 @@ export const selectGradesAveragesForSelectedSubjects = (state: { trainees: Train
   for (const subject in subjectsAverages) {
     subjectsAverages[subject] /= counts[subject];
   }
-  console.log(subjectsAverages);
+
   return subjectsAverages;
 };
 
 export const selectGradesAveragesForSelectedTrainees = (state: { trainees: TraineesState }) => {
-  const gradesAverages: { [trainee: string]: number } = {};
-  const counts: { [subject: string]: number } = {};
+  const averagesByTrainee: ChartTraineesGradesAverages[] = [];
 
-  console.log(state);
+  state.trainees.selectedTraineesIds.forEach(traineeId => {
+    const gradesByMonthYear: { [monthYear: string]: number[] } = {};
+    const counts: { [monthYear: string]: number } = {};
 
-  state.trainees.trainees.filter(trainees => state.trainees.selectedTraineesIds.includes(trainees.id))
-    .forEach(trainee => {
-      console.log(trainee);
-      // const grade = parseInt(trainee.grade, 10);
-      // if (trainee.subject in gradesAverages) {
-      //   gradesAverages[trainee.subject] += grade;
-      //   counts[trainee.subject]++;
-      // } else {
-      //   gradesAverages[trainee.subject] = grade;
-      //   counts[trainee.subject] = 1;
-      // }
-    });
+    const trainee = state.trainees.trainees.find(trainee => trainee.id === traineeId);
+    if (trainee) {
+      trainee.grades.forEach(grade => {
+        const monthYear = getMonthYearFromDate(grade.date);
+        if (!(monthYear in gradesByMonthYear)) {
+          gradesByMonthYear[monthYear] = [];
+          counts[monthYear] = 0;
+        }
+        gradesByMonthYear[monthYear].push(parseInt(grade.grade, 10));
+        counts[monthYear]++;
+      });
 
-  for (const subject in gradesAverages) {
-    gradesAverages[subject] /= counts[subject];
-  }
+      const averagesByMonthYear: { [monthYear: string]: number } = {};
+      for (const monthYear in gradesByMonthYear) {
+        const totalGrade = gradesByMonthYear[monthYear].reduce((acc, grade) => acc + grade, 0);
+        averagesByMonthYear[monthYear] = totalGrade / counts[monthYear];
+      }
 
-  console.log(gradesAverages);
-  return gradesAverages;
-};
+      averagesByTrainee.push({ trainee, averages: averagesByMonthYear });
+    }
+  });
+
+  return averagesByTrainee;
+}
+
+function getMonthYearFromDate(dateString: string): string {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `${ year }-${ month < 10 ? "0" + month : month }`;
+}
