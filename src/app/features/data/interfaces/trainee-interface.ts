@@ -30,6 +30,7 @@ export interface TraineeGrade {
   id: string;
   grade: string;
   subject: SubjectType;
+  date: string;
   traineeId: string;
 }
 
@@ -49,6 +50,7 @@ export interface CreateTrainee {
 export interface CreateTraineeGrade {
   grade: string;
   subject: SubjectType;
+  date: string;
   traineeId: string;
 }
 

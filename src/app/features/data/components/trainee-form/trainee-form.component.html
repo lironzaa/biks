@@ -7,7 +7,7 @@
   <app-button
     [text]="'Delete trainee'"
     [color]="'warn'"
-    (buttonClicked)="removeTrainee()"
+    (buttonClicked)="onDeleteTrainee()"
     [isDisabled]="!isEditMode"
   />
   <app-button
@@ -111,6 +111,13 @@
         [placeholder]="'Subject'"
         [formControl]="formUtilitiesService.getControl(gradeForm, 'subject')"
         [name]="'subject'"
+      />
+    </div>
+    <div>
+      <app-date-input
+        [placeholder]="'Date Joined'"
+        [formControl]="formUtilitiesService.getControl(gradeForm, 'date')"
+        [name]="'date'"
       />
     </div>
     <app-button

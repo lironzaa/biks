@@ -14,6 +14,7 @@ import {
 } from "@angular/material/datepicker";
 import { MatIcon } from "@angular/material/icon";
 import { MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
+import { MatDialogActions, MatDialogClose, MatDialogContent } from "@angular/material/dialog";
 import { BaseChartDirective } from "ng2-charts";
 
 import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
@@ -26,6 +27,7 @@ import { ErrorInputComponent } from "./components/inputs/error-input/error-input
 import { SelectInputComponent } from "./components/inputs/select-input/select-input.component";
 import { DateInputComponent } from "./components/inputs/date-input/date-input.component";
 import { ChartComponent } from "./components/charts/chart/chart.component";
+import { ConfirmationDialogComponent } from "./components/dialogs/confirmation-dialog/confirmation-dialog.component";
 
 import { AsStringPipe } from "./pipes/as-string.pipe";
 
@@ -42,6 +44,7 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     SelectInputComponent,
     DateInputComponent,
     ChartComponent,
+    ConfirmationDialogComponent,
   ],
   exports: [
     DataTableComponent,
@@ -74,6 +77,9 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     MatDatepickerModule,
     MatInputModule,
     MatIcon,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: "en-GB" }

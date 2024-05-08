@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from
 import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
 
 import * as fromApp from "../../../../core/store/app.reducer";
 import {
@@ -17,6 +18,9 @@ import { FormUtilitiesService } from "../../../../shared/services/form-utilities
 import { SubjectTypeOptions } from "../../data/subject-type-options";
 import { selectTrainees } from "../../store/trainees.selectors";
 import { TraineesState } from "../../store/trainees.reducer";
+import {
+  ConfirmationDialogComponent
+} from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-trainee-form",
@@ -45,6 +49,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   gradeForm = this.fb.group({
     "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
+    "date": new FormControl<string>("", [ Validators.required ]),
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
@@ -53,7 +58,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
   @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
-              protected formUtilitiesService: FormUtilitiesService) {
+              protected formUtilitiesService: FormUtilitiesService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -75,9 +80,28 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
-  removeTrainee(): void {
-    this.store.dispatch(deleteTrainee({ id: this.traineesState.selectedTraineesRow!.id }));
-    this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
+  onDeleteTrainee(): void {
+    this.openConfirmationDialog();
+
+  }
+
+  openConfirmationDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: "Are you sure want to delete?",
+        buttonText: {
+          ok: "Yes",
+          cancel: "No"
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.store.dispatch(deleteTrainee({ id: this.traineesState.selectedTraineesRow!.id }));
+        this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
+      }
+    });
   }
 
   addGrade(): void {
@@ -119,6 +143,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
       gradeData: {
         grade: this.traineeForm.value.grade!,
         subject: this.traineeForm.value.subject!,
+        date: this.traineeForm.value.dateJoined!,
         traineeId: ""
       }
     };
@@ -185,6 +210,7 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     return {
       grade: this.gradeForm.value.grade!,
       subject: this.gradeForm.value.subject!,
+      date: this.gradeForm.value.date!,
       traineeId: this.gradeForm.value.traineeId!
     };
   }
