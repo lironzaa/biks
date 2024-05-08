@@ -8,11 +8,12 @@ import { SubjectTypeOptions } from "../../../data/data/subject-type-options";
 import * as fromApp from "../../../../core/store/app.reducer";
 import {
   selectGradesAveragesForSelectedSubjects,
-  selectTrainees,
+  selectGradesAveragesForSelectedTrainees,
+  // selectTrainees,
   selectTraineesIds
 } from "../../../data/store/trainees.selectors";
-import { TraineesState } from "../../../data/store/trainees.reducer";
-import { setSelectedSubjects } from "../../../data/store/trainees.actions";
+// import { TraineesState } from "../../../data/store/trainees.reducer";
+import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
 import { SubjectType } from "../../../data/types/subject-type";
 
 @Component({
@@ -24,6 +25,7 @@ import { SubjectType } from "../../../data/types/subject-type";
 export class AnalysisComponent implements OnInit, OnDestroy {
   traineesStateIds$: Observable<string[]>;
   gradesAveragesForSelectedSubjects$: Observable<{ [key: string]: number }>;
+  gradesAveragesForSelectedTrainees$: Observable<{ [key: string]: number }>;
   // traineesState!: TraineesState;
   subjectTypeOptions = SubjectTypeOptions;
 
@@ -32,28 +34,38 @@ export class AnalysisComponent implements OnInit, OnDestroy {
     "subjects": new FormControl<SubjectType[]>([]),
   });
 
-  storeSub!: Subscription;
+  // storeSub!: Subscription;
+  idsSub: Subscription | undefined;
+  subjectsSub: Subscription | undefined;
 
   constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
               private store: Store<fromApp.AppState>) {
     this.traineesStateIds$ = store.select(selectTraineesIds);
     this.gradesAveragesForSelectedSubjects$ = store.select(selectGradesAveragesForSelectedSubjects);
+    this.gradesAveragesForSelectedTrainees$ = store.select(selectGradesAveragesForSelectedTrainees);
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
+    // this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
       // this.traineesState = traineesState;
-      console.log(traineesState);
-    });
-    this.analysisForm.get("subjects")?.valueChanges.pipe(
+      // console.log(traineesState);
+    // });
+    this.idsSub = this.analysisForm.get("ids")?.valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe((selectedIds) => {
+      console.log(selectedIds);
+      this.store.dispatch(setSelectedTraineesIds({ traineesIds: selectedIds! }));
+    })
+    this.subjectsSub = this.analysisForm.get("subjects")?.valueChanges.pipe(
       distinctUntilChanged()
     ).subscribe((selectedSubjects) => {
-      console.log(selectedSubjects);
       this.store.dispatch(setSelectedSubjects({ selectedSubjects: selectedSubjects! }));
     })
   }
 
   ngOnDestroy(): void {
-    if (!this.storeSub.closed) this.storeSub.unsubscribe();
+    // if (!this.storeSub.closed) this.storeSub.unsubscribe();
+    if (this.idsSub && !this.idsSub.closed) this.idsSub.unsubscribe();
+    if (this.subjectsSub && !this.subjectsSub.closed) this.subjectsSub.unsubscribe();
   }
 }

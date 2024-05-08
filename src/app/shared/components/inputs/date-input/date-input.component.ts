@@ -24,4 +24,8 @@ export class DateInputComponent<T>
   @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+
+  clearDate(): void {
+    this.control?.setValue("");
+  }
 }

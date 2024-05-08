@@ -48,6 +48,15 @@ body {
   flex-direction: column;
 }
 
+.w-100 {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 // Padding
 
 //.px-3 {

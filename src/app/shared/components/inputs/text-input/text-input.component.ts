@@ -25,4 +25,5 @@ export class TextInputComponent<T>
   @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+  @Input() isFullWidth = false;
 }

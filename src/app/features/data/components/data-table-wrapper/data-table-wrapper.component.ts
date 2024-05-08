@@ -16,6 +16,9 @@ import { dataTableConfig } from "../../data/data-table-config";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { TraineeRow } from "../../interfaces/trainee-interface";
 import { GradeRangeOptions } from "../../data/grade-range-options";
+import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
+import { DataFiltersEnum } from "../../enums/data-filters-enum";
+import { GradeRangeEnum } from "../../enums/grade-range-enum";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -28,6 +31,8 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
   tableConfig = dataTableConfig;
   traineesState!: TraineesState;
   gradeRangeOptions = GradeRangeOptions;
+  isInitialRender = true;
+  isResetPage = false;
 
   dataFiltersForm = this.fb.group({
     "id": new FormControl<string>(""),
@@ -43,43 +48,24 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store<fromApp.AppState>, private fb: FormBuilder,
               private router: Router, private route: ActivatedRoute,
-              protected formUtilitiesService: FormUtilitiesService, private toastr: ToastrService) {
+              protected formUtilitiesService: FormUtilitiesService, private toastr: ToastrService,
+              private paginationDataService: PaginationDataService) {
     this.traineesState$ = store.select(selectTrainees);
   }
 
   ngOnInit(): void {
-    // console.log("DataTableWrapperComponent on init");
-    this.storeSub = this.store.select(selectTrainees).subscribe((traineesState: TraineesState) => {
-      this.traineesState = traineesState;
-      // console.log(this.traineesState);
-    });
+    this.storeSub = this.store.select(selectTrainees)
+      .subscribe((traineesState: TraineesState) => {
+        this.traineesState = traineesState;
+        console.log(this.traineesState);
+      });
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
   }
 
-  initFiltersFormSub(): void {
-    this.filtersFormSub = this.dataFiltersForm.valueChanges
-      .pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues))
-      ).subscribe(formattedSearchValues => {
-        const queryParams = formattedSearchValues.formValues;
-        const isResetPage = formattedSearchValues.isResetPage;
-        // console.log(queryParams);
-        // console.log("isResetPage " + isResetPage);
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { ...queryParams, page: isResetPage ? 1 : this.route.snapshot.queryParams.page },
-          queryParamsHandling: "merge",
-        });
-      })
-  }
-
   patchFiltersFormValue(): void {
     const queryParamsValue: DataFiltersQueryParams = { ...this.route.snapshot.queryParams };
-    // console.log(queryParamsValue);
     if (queryParamsValue.startDate) queryParamsValue.startDate = new Date(queryParamsValue.startDate);
     if (queryParamsValue.endDate) queryParamsValue.endDate = new Date(queryParamsValue.endDate);
     this.dataFiltersForm.patchValue(queryParamsValue);
@@ -87,28 +73,32 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
 
   initQueryParamsSub(): void {
     this.queryParamsSub = this.route.queryParams.subscribe((queryParams) => {
-      // console.log(queryParams);
       const isApplyFilters = this.isApplyFilters(queryParams);
-      // console.log(isApplyFilters);
-      if (isApplyFilters) this.applyFilters(queryParams);
+      if (isApplyFilters) {
+        this.applyFilters(queryParams);
+      } else {
+        const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesState.traineesRowsOrigin.length);
+        this.paginationDataService.setPaginationData(paginationData);
+      }
     });
   }
 
   isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
     for (const filter in queryParams) {
-      if (filter === "id" || filter === "grade" || filter === "startDate" || filter === "endDate") {
+      if (filter === DataFiltersEnum.id || filter === DataFiltersEnum.grade || filter === DataFiltersEnum.startDate || filter === DataFiltersEnum.endDate) {
         return true;
       }
     }
-    // const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesState.traineesRowsOrigin.length);
-    // this.paginationDataService.setPaginationData(paginationData);
-    // console.log(paginationData);
+    if (this.isResetPage) {
+      const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesState.traineesRowsOrigin.length);
+      this.paginationDataService.setPaginationData(paginationData);
+      this.isResetPage = false;
+    }
     this.store.dispatch(filterTrainees({ traineesRows: this.traineesState.traineesRowsOrigin }));
     return false;
   }
 
   applyFilters(queryParams: DataFiltersQueryParams): void {
-    // console.log(queryParams);
     const filteredItems = this.traineesState.traineesRowsOrigin.filter(item => {
       let idMatch = true;
       let gradeMatch = true;
@@ -133,19 +123,51 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
 
       return idMatch && gradeMatch && dateMatch;
     })
-    console.log(filteredItems);
-    // const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
-    // this.paginationDataService.setPaginationData(paginationData);
+    const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
+    this.paginationDataService.setPaginationData(paginationData);
     this.store.dispatch(filterTrainees({ traineesRows: filteredItems }));
+  }
+
+  initFiltersFormSub(): void {
+    this.filtersFormSub = this.dataFiltersForm.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        map(formValues => this.formatSearchFormValues(formValues))
+      ).subscribe(formattedSearchValues => {
+        const queryParams = formattedSearchValues.formValues;
+        this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
+        this.isInitialRender = false;
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+          queryParamsHandling: "merge",
+        });
+      })
+  }
+
+  formatSearchFormValues(formValues: DataTableFiltersValues): {
+    formValues: DataTableFiltersValues;
+    isResetPage: boolean
+  } {
+    let isResetPage = false;
+    for (const value in formValues) {
+      if (formValues[value] === "") {
+        formValues[value] = null;
+      } else {
+        isResetPage = true;
+      }
+    }
+    return { formValues, isResetPage };
   }
 
   compareAccordingToOperator(grade: string, gradeRange: string, queryParamsGrade: string): boolean {
     switch (gradeRange) {
-      case ">":
+      case GradeRangeEnum.greaterThan:
         return grade > queryParamsGrade!;
-      case "<":
+      case GradeRangeEnum.lessThan:
         return grade < queryParamsGrade!;
-      case "===":
+      case GradeRangeEnum.equals:
         return grade === queryParamsGrade!;
       default:
         this.toastr.error("An error occurred");
@@ -153,25 +175,13 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatSearchFormValues(formValues: DataTableFiltersValues): {
-    formValues: DataTableFiltersValues;
-    isResetPage: boolean
-  } {
-    console.log(formValues);
-    let isResetPage = true;
-    for (const value in formValues) {
-      if (formValues[value] === "") {
-        formValues[value] = null;
-        isResetPage = false;
-      }
-    }
-    console.log(formValues);
-    return { formValues, isResetPage };
-  }
-
   onTableRowClick(item: DataTableItem): void {
     const traineeRow: TraineeRow = item as unknown as TraineeRow;
     this.store.dispatch(setSelectedTraineeRow({ traineeRow }));
+  }
+
+  resetFilters(): void {
+    this.dataFiltersForm.reset();
   }
 
   ngOnDestroy(): void {

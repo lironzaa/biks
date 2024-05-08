@@ -1,8 +1,9 @@
 <ng-container *ngIf="control">
-  <mat-form-field>
+  <mat-form-field class="mat-container">
     <mat-label>{{ placeholder }}</mat-label>
     <input matInput [matDatepicker]="picker" [formControl]="control">
-    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-hint>DD/MM/YYYY</mat-hint>
+    <mat-icon matDatepickerToggleIcon (click)="clearDate()">clear</mat-icon>
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>

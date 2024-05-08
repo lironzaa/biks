@@ -1,1 +1,1 @@
-export const GradeRangeOptions = [ "<", ">", "===" ];
+export const GradeRangeOptions = [ "Less than", "Greater than", "=" ];

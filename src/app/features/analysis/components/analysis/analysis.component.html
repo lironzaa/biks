@@ -1,22 +1,28 @@
-<div class="d-flex-center">
-  <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+<div class="inputs-container">
+  <div class="d-flex-center">
+    <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+      <app-select-input
+        class="w-100"
+        [options]="traineesStateIds"
+        [placeholder]="'Select trainees ids'"
+        [formControl]="formUtilitiesService.getControl(analysisForm, 'ids')"
+        [name]="'ids'"
+        [isMultiple]="true"
+        [isFullWidth]="true"
+      />
+    </ng-container>
+  </div>
+  <div class="d-flex-center">
     <app-select-input
-      [options]="traineesStateIds"
-      [placeholder]="'Select trainees ids'"
-      [formControl]="formUtilitiesService.getControl(analysisForm, 'ids')"
-      [name]="'ids'"
+      class="w-100"
+      [options]="subjectTypeOptions"
+      [placeholder]="'Select Subjects'"
+      [formControl]="formUtilitiesService.getControl(analysisForm, 'subjects')"
+      [name]="'subjects'"
       [isMultiple]="true"
+      [isFullWidth]="true"
     />
-  </ng-container>
-</div>
-<div class="d-flex-center">
-  <app-select-input
-    [options]="subjectTypeOptions"
-    [placeholder]="'Select Subjects'"
-    [formControl]="formUtilitiesService.getControl(analysisForm, 'subjects')"
-    [name]="'subjects'"
-    [isMultiple]="true"
-  />
+  </div>
 </div>
 <div class="charts-container">
   <div class="chart">

@@ -12,6 +12,7 @@ import {
   MatDatepickerModule,
   MatDatepickerToggle
 } from "@angular/material/datepicker";
+import { MatIcon } from "@angular/material/icon";
 import { MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
 import { BaseChartDirective } from "ng2-charts";
 
@@ -72,6 +73,7 @@ import { AsStringPipe } from "./pipes/as-string.pipe";
     MatNativeDateModule,
     MatDatepickerModule,
     MatInputModule,
+    MatIcon,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: "en-GB" }

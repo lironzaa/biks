@@ -48,3 +48,8 @@ export const setSelectedSubjects = createAction(
   "[Trainees] Set Selected Subjects",
   props<{ selectedSubjects: SubjectType[] }>()
 );
+
+export const setSelectedTraineesIds = createAction(
+  "[Trainees] Set Selected Trainees Ids",
+  props<{ traineesIds: string[] }>()
+);

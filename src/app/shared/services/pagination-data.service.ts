@@ -20,10 +20,7 @@ export class PaginationDataService {
   });
 
   calculatePaginationData(page: number, itemsCount?: number): PaginationData {
-    // console.log(page);
-    // console.log(itemsCount);
     const updatedItemsCount = itemsCount ?? this.paginationData.value.itemsCount;
-    // console.log(updatedItemsCount);
     return {
       currentPage: page,
       itemsCount: updatedItemsCount,

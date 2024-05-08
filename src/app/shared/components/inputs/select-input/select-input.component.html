@@ -1,7 +1,8 @@
 <ng-container *ngIf="control">
-  <mat-form-field>
+  <mat-form-field [ngClass]="{'w-100': isFullWidth}">
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select [formControl]="control" [multiple]="isMultiple">
+      <mat-option *ngIf="isEmptyOption">None</mat-option>
       <mat-option *ngFor="let option of options; trackBy: trackByOptionName" [value]="option">{{ option }}</mat-option>
     </mat-select>
   </mat-form-field>

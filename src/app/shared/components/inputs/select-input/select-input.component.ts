@@ -26,8 +26,10 @@ export class SelectInputComponent<T>
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
   @Input() isMultiple = false;
+  @Input() isEmptyOption = false;
+  @Input() isFullWidth = false;
 
-  trackByOptionName(index: number, option: string) {
+  trackByOptionName(index: number, option: string): string {
     return option;
   }
 }

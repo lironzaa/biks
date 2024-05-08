@@ -1,0 +1,37 @@
+<div class="monitor-container">
+  <ng-container *ngIf="traineesState$ | async; let traineesState">
+    <app-data-table
+      [dataTableConfig]="monitorTableConfig"
+      [items]="traineesState.traineesRows"
+      [isLoading]="traineesState.isLoading"
+      [filtersForm]="monitorFiltersForm"
+    >
+      <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+        <app-select-input
+          class="w-100"
+          [options]="traineesStateIds"
+          [placeholder]="'Select trainees ids'"
+          [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'ids')"
+          [name]="'ids'"
+          [isMultiple]="true"
+          [isFullWidth]="true"
+        />
+      </ng-container>
+      <div class="search-container">
+        <app-text-input
+          class="w-100"
+          [placeholder]="'Names'"
+          [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'names')"
+          [name]="'names'"
+          [isFullWidth]="true"
+        />
+        <!--      <app-text-input-->
+        <!--        [placeholder]="'Grade'"-->
+        <!--        [type]="'number'"-->
+        <!--        [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'grade')"-->
+        <!--        [name]="'grade'"-->
+        <!--      />-->
+      </div>
+    </app-data-table>
+  </ng-container>
+</div>

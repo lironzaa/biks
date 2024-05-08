@@ -29,7 +29,7 @@ export class DataTableComponent {
     this.paginationData$ = this.paginationDataService.getPaginationDataListener();
   }
 
-  trackByItemId(index: number, item: any): any {
+  trackByItemId(index: number, item: DataTableItem): string {
     return item.id;
   }
 
@@ -37,7 +37,7 @@ export class DataTableComponent {
     return item.dataProperty;
   }
 
-  onTableRowClick(item: DataTableItem) {
+  onTableRowClick(item: DataTableItem): void {
     this.tableRowClicked.emit(item);
   }
 }

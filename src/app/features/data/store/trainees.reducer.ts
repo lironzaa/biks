@@ -5,8 +5,10 @@ import {
   createTrainee,
   editTrainee,
   filterTrainees,
-  getTrainees, setSelectedSubjects,
+  getTrainees,
+  setSelectedSubjects,
   setSelectedTraineeRow,
+  setSelectedTraineesIds,
   traineesError,
   traineesFetched,
 } from "./trainees.actions";
@@ -20,6 +22,7 @@ export interface TraineesState {
   isLoading: boolean;
   error: string | null;
   selectedSubjects: SubjectType[];
+  selectedTraineesIds: string[];
 }
 
 const initialState: TraineesState = {
@@ -30,6 +33,7 @@ const initialState: TraineesState = {
   isLoading: false,
   error: null,
   selectedSubjects: [],
+  selectedTraineesIds: [],
 };
 
 export const traineesReducer = createReducer(
@@ -41,11 +45,11 @@ export const traineesReducer = createReducer(
     error: null,
     isLoading: true
   })),
-  on(traineesFetched, (state, action) => ({
+  on(traineesFetched, (state, { trainees, traineeRows }) => ({
     ...state,
-    trainees: action.trainees,
-    traineesRows: action.traineeRows,
-    traineesRowsOrigin: action.traineeRows,
+    trainees: trainees,
+    traineesRows: traineeRows,
+    traineesRowsOrigin: traineeRows,
     error: null,
     isLoading: false
   })),
@@ -54,32 +58,38 @@ export const traineesReducer = createReducer(
     error: null,
     isLoading: true
   })),
-  on(editTrainee, (state, action) => ({
+  on(editTrainee, (state, { selectedTraineeRow }) => ({
     ...state,
-    selectedTraineesRow: action.selectedTraineeRow,
+    selectedTraineesRow: selectedTraineeRow,
     error: null,
     isLoading: true
   })),
-  on(setSelectedTraineeRow, (state, action) => ({
+  on(setSelectedTraineeRow, (state, { traineeRow }) => ({
     ...state,
-    selectedTraineesRow: action.traineeRow,
+    selectedTraineesRow: traineeRow,
     error: null,
     isLoading: false
   })),
-  on(traineesError, (state, action) => ({
+  on(traineesError, (state, { errorMessage }) => ({
     ...state,
-    error: action.errorMessage,
+    error: errorMessage,
     isLoading: false
   })),
-  on(filterTrainees, (state, action) => ({
+  on(filterTrainees, (state, { traineesRows }) => ({
     ...state,
-    traineesRows: action.traineesRows,
+    traineesRows: traineesRows,
     error: null,
     isLoading: false
   })),
   on(setSelectedSubjects, (state, { selectedSubjects }) => ({
     ...state,
     selectedSubjects: selectedSubjects,
+    error: null,
+    isLoading: false,
+  })),
+  on(setSelectedTraineesIds, (state, { traineesIds }) => ({
+    ...state,
+    selectedTraineesIds: traineesIds,
     error: null,
     isLoading: false,
   })),

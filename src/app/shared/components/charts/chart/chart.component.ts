@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from "chart.js";
 import DataLabelsPlugin from "chartjs-plugin-datalabels";
@@ -16,7 +16,7 @@ import { ChartDataInterface } from "../../../interfaces/chart-data-interface";
 export class ChartComponent implements OnInit, OnChanges {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
   @Input({ required: true }) labels: string[] = [];
-  @Input({ required: true }) data: ChartDataInterface = {};
+  @Input({ required: true }) data!: ChartDataInterface;
   @Input({ required: true }) graphLabel: string = "";
 
   public barChartOptions: ChartConfiguration["options"] = {
@@ -49,10 +49,15 @@ export class ChartComponent implements OnInit, OnChanges {
     this.barChartData.labels = this.labels;
   }
 
-  ngOnChanges(): void {
-    this.barChartData.datasets = [];
-    this.setData();
-    this.chart?.update();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["data"] && Object.keys(changes["data"].currentValue).length > 0) {
+      this.barChartData.datasets = [];
+      this.setData();
+      this.chart?.update();
+    } else {
+      this.barChartData.datasets = [];
+      this.chart?.update();
+    }
   }
 
   setData(): void {
