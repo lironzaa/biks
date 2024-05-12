@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { debounceTime, distinctUntilChanged, Observable, Subscription } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs";
 import { map } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 
@@ -19,6 +19,7 @@ import { GradeRangeOptions } from "../../data/grade-range-options";
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
 import { DataFiltersEnum } from "../../enums/data-filters-enum";
 import { GradeRangeEnum } from "../../enums/grade-range-enum";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -26,7 +27,7 @@ import { GradeRangeEnum } from "../../enums/grade-range-enum";
   styleUrl: "./data-table-wrapper.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DataTableWrapperComponent implements OnInit, OnDestroy {
+export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   traineesState$: Observable<TraineesState>;
   tableConfig = dataTableConfig;
   traineesRowsOrigin!: TraineeRow[];
@@ -42,19 +43,16 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
     "endDate": new FormControl<string | Date>(""),
   });
 
-  filtersFormSub!: Subscription;
-  queryParamsSub!: Subscription;
-  storeSub!: Subscription;
-
   constructor(private store: Store<fromApp.AppState>, private fb: FormBuilder,
               private router: Router, private route: ActivatedRoute,
               protected formUtilitiesService: FormUtilitiesService, private toastr: ToastrService,
               private paginationDataService: PaginationDataService) {
+    super();
     this.traineesState$ = store.select(selectTraineesState);
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTraineesRowsOrigin)
+    this.store.select(selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
       .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
@@ -69,7 +67,7 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
   }
 
   initQueryParamsSub(): void {
-    this.queryParamsSub = this.route.queryParams.subscribe((queryParams) => {
+    this.route.queryParams.subscribe((queryParams) => {
       const isApplyFilters = this.isApplyFilters(queryParams);
       if (isApplyFilters) {
         this.applyFilters(queryParams);
@@ -135,21 +133,22 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
   }
 
   initFiltersFormSub(): void {
-    this.filtersFormSub = this.dataFiltersForm.valueChanges
+    this.dataFiltersForm.valueChanges
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues))
+        map(formValues => this.formatSearchFormValues(formValues)),
+        takeUntil(this.unsubscribe$)
       ).subscribe(formattedSearchValues => {
-        const queryParams = formattedSearchValues.formValues;
-        this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
-        this.isInitialRender = false;
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
-          queryParamsHandling: "merge",
-        });
-      })
+      const queryParams = formattedSearchValues.formValues;
+      this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
+      this.isInitialRender = false;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParamsHandling: "merge",
+      });
+    })
   }
 
   formatSearchFormValues(formValues: DataTableFiltersValues): {
@@ -188,11 +187,5 @@ export class DataTableWrapperComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.dataFiltersForm.reset();
-  }
-
-  ngOnDestroy(): void {
-    if (!this.filtersFormSub?.closed) this.filtersFormSub.unsubscribe();
-    if (!this.queryParamsSub?.closed) this.queryParamsSub.unsubscribe();
-    if (!this.storeSub?.closed) this.storeSub.unsubscribe();
   }
 }

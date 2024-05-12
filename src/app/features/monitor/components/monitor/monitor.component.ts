@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { map } from "rxjs/operators";
-import { debounceTime, distinctUntilChanged, Observable, Subscription } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import {
@@ -21,6 +21,7 @@ import { filterTrainees } from "../../../data/store/trainees.actions";
 import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
 import { DataTableFiltersValues } from "../../../../shared/interfaces/data-table-interface";
 import { MonitorStateOptions } from "../../data/monitor-state-options";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
   selector: "app-monitor",
@@ -28,7 +29,7 @@ import { MonitorStateOptions } from "../../data/monitor-state-options";
   styleUrl: "./monitor.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MonitorComponent implements OnInit, OnDestroy {
+export class MonitorComponent extends Unsubscribe implements OnInit {
   traineesState$: Observable<TraineesState>;
   traineesOrigin!: Trainee[];
   traineesStateIds$: Observable<string[]>;
@@ -44,19 +45,16 @@ export class MonitorComponent implements OnInit, OnDestroy {
     "isFailed": new FormControl<boolean | string>(true),
   });
 
-  filtersFormSub!: Subscription;
-  queryParamsSub!: Subscription;
-  storeSub!: Subscription;
-
   constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
               private store: Store<fromApp.AppState>, private route: ActivatedRoute,
               private paginationDataService: PaginationDataService, private router: Router) {
+    super();
     this.traineesStateIds$ = store.select(selectTraineesIds);
     this.traineesState$ = store.select(selectTraineesState);
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTraineesOrigin)
+    this.store.select(selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
       .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
@@ -76,7 +74,7 @@ export class MonitorComponent implements OnInit, OnDestroy {
   }
 
   initQueryParamsSub(): void {
-    this.queryParamsSub = this.route.queryParams.subscribe((queryParams) => {
+    this.route.queryParams.subscribe((queryParams) => {
       const isApplyFilters = this.isApplyFilters(queryParams);
       if (isApplyFilters) {
         this.applyFilters(queryParams);
@@ -141,21 +139,22 @@ export class MonitorComponent implements OnInit, OnDestroy {
   }
 
   initFiltersFormSub(): void {
-    this.filtersFormSub = this.monitorFiltersForm.valueChanges
+    this.monitorFiltersForm.valueChanges
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues))
+        map(formValues => this.formatSearchFormValues(formValues)),
+        takeUntil(this.unsubscribe$)
       ).subscribe(formattedSearchValues => {
-        const queryParams = formattedSearchValues.formValues;
-        this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
-        this.isInitialRender = false;
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
-          queryParamsHandling: "merge",
-        });
-      })
+      const queryParams = formattedSearchValues.formValues;
+      this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
+      this.isInitialRender = false;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParamsHandling: "merge",
+      });
+    })
   }
 
   formatSearchFormValues(formValues: DataTableFiltersValues): {
@@ -180,11 +179,5 @@ export class MonitorComponent implements OnInit, OnDestroy {
     this.monitorFiltersForm.reset();
     this.monitorFiltersForm.get("isPassed")?.setValue(true);
     this.monitorFiltersForm.get("isFailed")?.setValue(true);
-  }
-
-  ngOnDestroy(): void {
-    if (!this.filtersFormSub?.closed) this.filtersFormSub.unsubscribe();
-    if (!this.queryParamsSub?.closed) this.queryParamsSub.unsubscribe();
-    if (!this.storeSub?.closed) this.storeSub.unsubscribe();
   }
 }

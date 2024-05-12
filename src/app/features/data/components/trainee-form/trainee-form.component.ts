@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
-import { Subscription } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
+import { takeUntil } from "rxjs";
 
 import * as fromApp from "../../../../core/store/app.reducer";
 import {
@@ -20,6 +20,7 @@ import { selectSelectedTraineesRow } from "../../store/trainees.selectors";
 import {
   ConfirmationDialogComponent
 } from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
   selector: "app-trainee-form",
@@ -27,7 +28,7 @@ import {
   styleUrl: "./trainee-form.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TraineeFormComponent implements OnInit, OnDestroy {
+export class TraineeFormComponent extends Unsubscribe implements OnInit {
   isEditMode = false;
   selectedTraineesRow: TraineeRow | null = null;
   subjectTypeOptions = SubjectTypeOptions;
@@ -52,16 +53,19 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
-  storeSub!: Subscription;
-
   @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
               protected formUtilitiesService: FormUtilitiesService, private dialog: MatDialog) {
+    super();
   }
 
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectSelectedTraineesRow).subscribe(selectedTraineesRow => {
+    this.initStoreSub();
+  }
+
+  initStoreSub(): void {
+    this.store.select(selectSelectedTraineesRow).pipe(takeUntil(this.unsubscribe$)).subscribe(selectedTraineesRow => {
       this.selectedTraineesRow = selectedTraineesRow;
       if (this.selectedTraineesRow) {
         this.isEditMode = true;
@@ -208,9 +212,5 @@ export class TraineeFormComponent implements OnInit, OnDestroy {
       date: this.gradeForm.value.date!,
       traineeId: this.gradeForm.value.traineeId!
     };
-  }
-
-  ngOnDestroy(): void {
-    if (!this.storeSub.closed) this.storeSub.unsubscribe();
   }
 }

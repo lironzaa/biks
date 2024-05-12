@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { Store } from "@ngrx/store";
-import { distinctUntilChanged, Observable, Subscription } from "rxjs";
+import { distinctUntilChanged, Observable, takeUntil } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../../data/data/subject-type-options";
@@ -14,6 +14,7 @@ import {
 import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
 import { SubjectType } from "../../../data/types/subject-type";
 import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis-charts-interface";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
   selector: "app-analysis",
@@ -21,7 +22,7 @@ import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../
   styleUrl: "./analysis.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnalysisComponent implements OnInit, OnDestroy {
+export class AnalysisComponent extends Unsubscribe implements OnInit {
   traineesStateIds$: Observable<string[]>;
   traineesGradesAverages$: Observable<ChartTraineesGradesAverages[]>;
   subjectsGradesAverages$: Observable<ChartSubjectsGradesAverages>;
@@ -32,24 +33,28 @@ export class AnalysisComponent implements OnInit, OnDestroy {
     "subjects": new FormControl<SubjectType[]>([]),
   });
 
-  idsSub: Subscription | undefined;
-  subjectsSub: Subscription | undefined;
-
   constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
               private store: Store<fromApp.AppState>) {
+    super();
     this.traineesStateIds$ = store.select(selectTraineesIds);
     this.traineesGradesAverages$ = store.select(selectGradesAveragesForSelectedTrainees);
     this.subjectsGradesAverages$ = store.select(selectGradesAveragesForSelectedSubjects);
   }
 
   ngOnInit(): void {
-    this.idsSub = this.analysisForm.get("ids")?.valueChanges.pipe(
-      distinctUntilChanged()
+    this.initValueChangesSubs();
+  }
+
+  initValueChangesSubs(): void {
+    this.analysisForm.get("ids")?.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
     ).subscribe((selectedIds) => {
       this.store.dispatch(setSelectedTraineesIds({ traineesIds: selectedIds! }));
     })
-    this.subjectsSub = this.analysisForm.get("subjects")?.valueChanges.pipe(
-      distinctUntilChanged()
+    this.analysisForm.get("subjects")?.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
     ).subscribe((selectedSubjects) => {
       this.store.dispatch(setSelectedSubjects({ selectedSubjects: selectedSubjects! }));
     })
@@ -57,10 +62,5 @@ export class AnalysisComponent implements OnInit, OnDestroy {
 
   trackByTrainee(index: number, item: ChartTraineesGradesAverages): string {
     return item.trainee.id;
-  }
-
-  ngOnDestroy(): void {
-    if (this.idsSub && !this.idsSub.closed) this.idsSub.unsubscribe();
-    if (this.subjectsSub && !this.subjectsSub.closed) this.subjectsSub.unsubscribe();
   }
 }

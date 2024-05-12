@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 
 import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
@@ -11,10 +11,9 @@ import { PaginationDataService } from "../../../services/pagination-data.service
   styleUrl: "./pagination.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaginationComponent implements OnInit, OnDestroy {
+export class PaginationComponent implements OnInit {
   page!: number;
 
-  private queryParamsSub!: Subscription;
   paginationData$: Observable<PaginationData>;
 
   constructor(private route: ActivatedRoute, private router: Router,
@@ -28,8 +27,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   }
 
   initQueryParamsSub(): void {
-    this.queryParamsSub = this.route.queryParams
-      .subscribe(queryParams => this.page = queryParams["page"] ? +queryParams["page"] : 1);
+    this.route.queryParams.subscribe(queryParams => this.page = queryParams["page"] ? +queryParams["page"] : 1);
   }
 
   navigateToPage(navigateType: "previousPage" | "nextPage"): void {
@@ -56,9 +54,5 @@ export class PaginationComponent implements OnInit, OnDestroy {
         queryParams,
         queryParamsHandling: "merge",
       });
-  }
-
-  ngOnDestroy(): void {
-    if (!this.queryParamsSub.closed) this.queryParamsSub.unsubscribe();
   }
 }
