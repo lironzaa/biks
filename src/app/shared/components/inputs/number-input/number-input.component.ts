@@ -2,29 +2,29 @@ import { ChangeDetectionStrategy, Component, forwardRef, Input } from "@angular/
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
-import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
+import { NumberControlValueAccessorDirective } from "../../../directives/number-input.directive";
 
 @Component({
-  selector: "app-date-input",
+  selector: "app-number-input",
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateInputComponent),
+      useExisting: forwardRef(() => NumberInputComponent),
       multi: true,
     },
   ],
-  templateUrl: "./date-input.component.html",
-  styleUrl: "./date-input.component.scss",
+  templateUrl: "./number-input.component.html",
+  styleUrl: "./number-input.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DateInputComponent<T>
-  extends ControlValueAccessorDirective<T>
+export class NumberInputComponent
+  extends NumberControlValueAccessorDirective
   implements InputType {
   @Input() placeholder?: string | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
-
-  clearDate(): void {
-    this.control?.setValue("");
-  }
+  @Input() isFullWidth = false;
+  @Input() digitsAfterDecimal = 2;
+  @Input() maxNumber = 1000000;
+  value?: number | undefined;
 }

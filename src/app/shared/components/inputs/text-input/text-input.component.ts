@@ -20,10 +20,10 @@ import { ControlValueAccessorDirective } from "../../../directives/input-directi
 export class TextInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input() override type: "text" | "number" | "email" = "text";
+  @Input() override type: "text" | "email" = "text";
   @Input() placeholder?: string | undefined;
-  @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
   @Input() isFullWidth = false;
+  value?: string | undefined;
 }

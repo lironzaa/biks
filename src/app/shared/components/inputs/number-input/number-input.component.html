@@ -1,0 +1,12 @@
+<ng-container *ngIf="control">
+  <mat-form-field [ngClass]="{'w-100': isFullWidth}">
+    <mat-label>{{ placeholder }}</mat-label>
+    <input [formControl]="control" [attr.value]="value || null" type='text'
+           mask="separator.{{digitsAfterDecimal}}" decimalMarker="."
+           thousandSeparator="," separatorLimit="{{maxNumber}}" matInput>
+  </mat-form-field>
+  <app-error-input
+    [formContained]="control"
+    [controlName]="name"
+  ></app-error-input>
+</ng-container>

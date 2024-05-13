@@ -37,7 +37,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
   dataFiltersForm = this.fb.group({
     "id": new FormControl<string>(""),
-    "grade": new FormControl<string>(""),
+    "grade": new FormControl<number | null>(null),
     "gradeRange": new FormControl<string>(""),
     "startDate": new FormControl<string | Date>(""),
     "endDate": new FormControl<string | Date>(""),
@@ -112,9 +112,9 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
       if (queryParams.grade !== undefined) {
         if (queryParams.gradeRange === undefined) {
-          gradeMatch = item.grade === queryParams.grade;
+          gradeMatch = item.grade === Number(queryParams.grade);
         } else {
-          gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, queryParams.grade);
+          gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, Number(queryParams.grade));
         }
       }
 
@@ -166,7 +166,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
     return { formValues, isResetPage };
   }
 
-  compareAccordingToOperator(grade: string, gradeRange: string, queryParamsGrade: string): boolean {
+  compareAccordingToOperator(grade: number, gradeRange: string, queryParamsGrade: number): boolean {
     switch (gradeRange) {
       case GradeRangeEnum.greaterThan:
         return grade > queryParamsGrade!;

@@ -25,7 +25,7 @@ export interface TraineeRow {
   city: string;
   country: string;
   zip: string;
-  grade: string;
+  grade: number;
   gradeDate: string;
   subject: SubjectType;
 }
@@ -37,7 +37,7 @@ export interface FormattedTrainees {
 
 export interface TraineeGrade {
   id: string;
-  grade: string;
+  grade: number;
   subject: SubjectType;
   date: string;
   traineeId: string;
@@ -57,7 +57,7 @@ export interface CreateTrainee {
 }
 
 export interface CreateTraineeGrade {
-  grade: string;
+  grade: number;
   subject: SubjectType;
   date: string;
   traineeId: string;
@@ -79,7 +79,7 @@ export interface EditTrainee {
 
 export interface EditTraineeGrade {
   id: string;
-  grade: string;
+  grade: number;
   subject: SubjectType;
   date: string;
   traineeId: string;

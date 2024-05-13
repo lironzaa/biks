@@ -22,7 +22,6 @@ export class SelectInputComponent<T>
   implements InputType {
   @Input({ required: true }) options: string[] = [];
   @Input() placeholder?: string | undefined;
-  @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
   @Input() isMultiple = false;

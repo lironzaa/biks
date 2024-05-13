@@ -23,7 +23,6 @@ export class CheckboxInputComponent<T>
   implements InputType {
   @Input({ required: true }) option!: CheckboxInputOption;
   @Input() placeholder?: string | undefined;
-  @Input() value?: string | number | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
 }

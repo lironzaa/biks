@@ -17,6 +17,7 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
 import { MatDialogActions, MatDialogClose, MatDialogContent } from "@angular/material/dialog";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { BaseChartDirective } from "ng2-charts";
+import { NgxMaskDirective, provideNgxMask } from "ngx-mask";
 
 import { TextInputComponent } from "./components/inputs/text-input/text-input.component";
 import { DataTableComponent } from "./components/tables/data-table/data-table.component";
@@ -29,9 +30,8 @@ import { SelectInputComponent } from "./components/inputs/select-input/select-in
 import { DateInputComponent } from "./components/inputs/date-input/date-input.component";
 import { ChartComponent } from "./components/charts/chart/chart.component";
 import { ConfirmationDialogComponent } from "./components/dialogs/confirmation-dialog/confirmation-dialog.component";
-
-import { AsStringPipe } from "./pipes/as-string.pipe";
 import { CheckboxInputComponent } from "./components/inputs/checkbox-input/checkbox-input.component";
+import { NumberInputComponent } from "./components/inputs/number-input/number-input.component";
 
 @NgModule({
   declarations: [
@@ -41,13 +41,13 @@ import { CheckboxInputComponent } from "./components/inputs/checkbox-input/check
     PaginationComponent,
     AppButtonComponent,
     TableFiltersComponent,
-    AsStringPipe,
     ErrorInputComponent,
     SelectInputComponent,
     DateInputComponent,
     ChartComponent,
     ConfirmationDialogComponent,
     CheckboxInputComponent,
+    NumberInputComponent,
   ],
   exports: [
     DataTableComponent,
@@ -58,7 +58,8 @@ import { CheckboxInputComponent } from "./components/inputs/checkbox-input/check
     SelectInputComponent,
     DateInputComponent,
     ChartComponent,
-    CheckboxInputComponent
+    CheckboxInputComponent,
+    NumberInputComponent
   ],
   imports: [
     CommonModule,
@@ -85,9 +86,11 @@ import { CheckboxInputComponent } from "./components/inputs/checkbox-input/check
     MatDialogActions,
     MatDialogClose,
     MatCheckbox,
+    NgxMaskDirective,
   ],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: "en-GB" }
+    { provide: MAT_DATE_LOCALE, useValue: "en-GB" },
+    provideNgxMask()
   ]
 })
 export class SharedModule {

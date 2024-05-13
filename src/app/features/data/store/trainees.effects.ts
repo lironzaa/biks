@@ -41,7 +41,7 @@ export class TraineesEffects {
     const traineeRows: TraineeRow[] = [];
 
     const formattedTrainees: Trainee[] = trainees.map(trainee => {
-      const gradesTotal = trainee.grades.reduce((total, grade) => total + parseFloat(grade.grade), 0);
+      const gradesTotal = trainee.grades.reduce((total, traineeGrade) => total + traineeGrade.grade, 0);
       const average = (gradesTotal / trainee.grades.length);
       trainee.grades.map(grade => {
         traineeRows.push({

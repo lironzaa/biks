@@ -27,7 +27,7 @@ export class ControlValueAccessorDirective<T>
   @Input() type = "text";
   control: FormControl | undefined;
   private _isDisabled = false;
-  private _destroy$ = new Subject<void>();
+  protected _destroy$ = new Subject<void>();
   private _onTouched!: () => T;
 
   ngOnInit(): void {

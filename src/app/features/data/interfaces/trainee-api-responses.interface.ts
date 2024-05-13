@@ -13,7 +13,7 @@ export interface CreateUpdateDeleteTraineeResponse {
 
 export interface CreateOrUpdateGradeResponse {
   id: string;
-  grade: string;
+  grade: number;
   subject: SubjectType;
   traineeId: string;
 }

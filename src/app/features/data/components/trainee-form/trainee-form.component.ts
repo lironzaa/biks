@@ -36,7 +36,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
 
   traineeForm = this.fb.group({
     "name": new FormControl<string>("", [ Validators.required ]),
-    "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "email": new FormControl<string>("", [ Validators.required ]),
     "dateJoined": new FormControl<string>("", [ Validators.required ]),
     "address": new FormControl<string>("", [ Validators.required ]),
@@ -47,7 +47,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
   });
 
   gradeForm = this.fb.group({
-    "grade": new FormControl<string>("", [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
     "date": new FormControl<string>("", [ Validators.required ]),
     "traineeId": new FormControl<string>("", [ Validators.required ]),
@@ -111,15 +111,19 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
   }
 
   onSubmitTraineeForm(): void {
+    console.log(this.traineeForm.value);
     this.isAddGradeForm = false;
     if (this.traineeForm.valid) {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
+        console.log(traineeData);
         this.resetTraineeForm();
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
         const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
+        console.log(editTraineeData);
+        console.log(selectedTraineeRow);
         this.resetTraineeForm();
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }

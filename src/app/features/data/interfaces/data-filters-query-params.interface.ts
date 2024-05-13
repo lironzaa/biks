@@ -1,7 +1,7 @@
 export interface DataFiltersQueryParams {
   page?: string;
   id?: string;
-  grade?: string;
+  grade?: number;
   gradeRange?: string;
   startDate?: string | Date;
   endDate?: string | Date;

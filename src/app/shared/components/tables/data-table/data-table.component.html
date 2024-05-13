@@ -24,7 +24,7 @@
         <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
             [ngSwitch]="header.columnType" [ngClass]="{'pointer': isPointer}">
           <ng-container *ngSwitchCase="'date'">
-            {{ item[header.dataProperty] | asString | date:"dd/MM/yyyy" }}
+            {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{ item[header.dataProperty] }}

@@ -20,7 +20,7 @@ export const selectGradesAveragesForSelectedSubjects = (state: { trainees: Train
 
   state.trainees.traineesRows.filter(traineesRow => state.trainees.selectedSubjects.includes(traineesRow.subject))
     .forEach(traineeRow => {
-      const grade = parseInt(traineeRow.grade, 10);
+      const grade = traineeRow.grade;
       if (traineeRow.subject in subjectsAverages) {
         subjectsAverages[traineeRow.subject] += grade;
         counts[traineeRow.subject]++;
@@ -46,13 +46,13 @@ export const selectGradesAveragesForSelectedTrainees = (state: { trainees: Train
 
     const trainee = state.trainees.trainees.find(trainee => trainee.id === traineeId);
     if (trainee) {
-      trainee.grades.forEach(grade => {
-        const monthYear = getMonthYearFromDate(grade.date);
+      trainee.grades.forEach(traineeGrade => {
+        const monthYear = getMonthYearFromDate(traineeGrade.date);
         if (!(monthYear in gradesByMonthYear)) {
           gradesByMonthYear[monthYear] = [];
           counts[monthYear] = 0;
         }
-        gradesByMonthYear[monthYear].push(parseInt(grade.grade, 10));
+        gradesByMonthYear[monthYear].push(traineeGrade.grade);
         counts[monthYear]++;
       });
 
