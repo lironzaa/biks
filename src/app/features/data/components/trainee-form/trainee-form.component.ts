@@ -83,7 +83,6 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
 
   onDeleteTrainee(): void {
     this.openConfirmationDialog();
-
   }
 
   openConfirmationDialog(): void {

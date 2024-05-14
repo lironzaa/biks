@@ -252,7 +252,7 @@
     },
     {
       "id": "de2f",
-      "name": "Liron Zalait",
+      "name": "Liron Zalaitt",
       "email": "lironzaa@gmail.com",
       "dateJoined": "2024-05-15T21:00:00.000Z",
       "address": "Yehuda Hanasi 16 apartment 8",
@@ -298,16 +298,16 @@
     },
     {
       "id": "3",
-      "grade": 95,
+      "grade": 80,
       "subject": "Math",
-      "date": "2023-01-25T22:00:00.000Z",
+      "date": "2023-02-20T00:00:00Z",
       "traineeId": "2"
     },
     {
       "id": "4",
-      "grade": 80,
+      "grade": 90,
       "subject": "Algebra",
-      "date": "2023-01-25T22:00:00.000Z",
+      "date": "2023-02-20T00:00:00Z",
       "traineeId": "2"
     },
     {
@@ -720,7 +720,7 @@
       "id": "3e6e",
       "grade": 0,
       "subject": "Chemistry",
-      "date": "2024-05-08T21:00:00.000Z",
+      "date": "2024-05-15T21:00:00.000Z",
       "traineeId": "de2f"
     },
     {

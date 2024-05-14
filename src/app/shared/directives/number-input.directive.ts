@@ -13,7 +13,7 @@ export class NumberControlValueAccessorDirective extends ControlValueAccessorDir
 
   override writeValue(value: number | null): void {
     this.control
-      ? this.control.setValue(value ? Number(value) : null, { emitModelToViewChange: false })
+      ? this.control.setValue(typeof value === "number" ? value : null, { emitModelToViewChange: false })
       : (this.control = new FormControl(value));
   }
 

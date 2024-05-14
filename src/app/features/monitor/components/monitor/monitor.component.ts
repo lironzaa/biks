@@ -6,21 +6,22 @@ import { map } from "rxjs/operators";
 import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
+import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
 import {
   selectTraineesState,
   selectTraineesIds,
   selectTraineesOrigin
 } from "../../../data/store/trainees.selectors";
+import { filterTrainees } from "../../../data/store/trainees.actions";
 import * as fromApp from "../../../../core/store/app.reducer";
 import { TraineesState } from "../../../data/store/trainees.reducer";
 import { monitorTableConfig } from "../../data/monitor-table-config";
+import { MonitorStateOptions } from "../../data/monitor-state-options";
 import { Trainee } from "../../../data/interfaces/trainee-interface";
 import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
-import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
-import { filterTrainees } from "../../../data/store/trainees.actions";
-import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
 import { DataTableFiltersValues } from "../../../../shared/interfaces/data-table-interface";
-import { MonitorStateOptions } from "../../data/monitor-state-options";
+import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
+import { IsPassedIsFailedQueryParamEnum } from "../../enums/is-passed-is-failed-query-param-enum";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
@@ -64,12 +65,8 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   patchFiltersFormValue(): void {
     const queryParamsValue: MonitorsFiltersQueryParams = { ...this.route.snapshot.queryParams };
     if (queryParamsValue.ids) queryParamsValue.ids = (queryParamsValue.ids as string).split(",");
-    if (queryParamsValue.isPassed) {
-      if (queryParamsValue.isPassed === "false") queryParamsValue.isPassed = false;
-    }
-    if (queryParamsValue.isFailed) {
-      if (queryParamsValue.isFailed === "false") queryParamsValue.isFailed = false;
-    }
+    if (queryParamsValue.isPassed && queryParamsValue.isPassed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isPassed = false;
+    if (queryParamsValue.isFailed && queryParamsValue.isFailed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isFailed = false;
     this.monitorFiltersForm.patchValue(queryParamsValue);
   }
 
@@ -101,33 +98,33 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   }
 
   applyFilters(queryParams: MonitorsFiltersQueryParams): void {
+    let lowerNameQueryParam: string;
+    const isFilterByName = queryParams.name !== undefined;
+    if (isFilterByName) lowerNameQueryParam = queryParams.name!.toLowerCase();
+
+    let idsArrayQueryParam: string[];
+    const isFilterByIds = queryParams.ids !== undefined;
+    if (isFilterByIds) idsArrayQueryParam = (queryParams.ids as string).split(",");
+
+    const isFilterByIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
+    const isFilterByIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
+
     const filteredItems = this.traineesOrigin.filter(item => {
       let nameMatch = true;
       let idMatch = true;
       let isPassedMatch = true;
       let isFailedMatch = true;
 
-      if (queryParams.ids !== undefined) {
-        idMatch = (queryParams.ids as string).split(",").includes(item.id);
-      }
+      if (isFilterByIds) idMatch = idsArrayQueryParam.includes(item.id);
 
-      if (queryParams.name !== undefined) {
+      if (isFilterByName) {
         const itemNameLower = item.name.toLowerCase();
-        const queryNameLower = queryParams.name.toLowerCase();
-        nameMatch = itemNameLower.includes(queryNameLower);
+        nameMatch = itemNameLower.includes(lowerNameQueryParam);
       }
 
-      if (queryParams.isPassed !== undefined) {
-        if (queryParams.isPassed === "false" && item.average > 64) {
-          isPassedMatch = false;
-        }
-      }
+      if (isFilterByIsPassed && item.average > 64) isPassedMatch = false;
 
-      if (queryParams.isFailed !== undefined) {
-        if (queryParams.isFailed === "false" && item.average < 66) {
-          isFailedMatch = false;
-        }
-      }
+      if (isFilterByIsFailed && item.average < 66) isFailedMatch = false;
 
       return nameMatch && idMatch && isPassedMatch && isFailedMatch;
     })

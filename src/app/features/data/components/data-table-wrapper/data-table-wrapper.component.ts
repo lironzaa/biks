@@ -101,18 +101,21 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       startDate = new Date(queryParams.startDate!);
       endDate = new Date(queryParams.endDate!);
     }
+
+    let gradeQueryParam: number;
+    const isFilterByGrade = queryParams.grade !== undefined;
+    if (isFilterByGrade) gradeQueryParam = Number(queryParams.grade);
+
+    const isFilterById = queryParams.id !== undefined;
+
     const filteredItems = this.traineesRowsOrigin.filter(item => {
       let idMatch = true;
       let gradeMatch = true;
       let dateMatch = true;
 
-      if (queryParams.id !== undefined) {
-        idMatch = item.id === queryParams.id;
-      }
+      if (isFilterById) idMatch = item.id === queryParams.id;
 
-      if (queryParams.grade !== undefined) {
-        gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, Number(queryParams.grade));
-      }
+      if (isFilterByGrade) gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, gradeQueryParam);
 
       if (isFilterByDate) {
         const itemDate = new Date(item.gradeDate);
