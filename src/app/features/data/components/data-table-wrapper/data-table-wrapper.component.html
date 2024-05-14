@@ -17,13 +17,14 @@
         [placeholder]="'Grade'"
         [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'grade')"
         [name]="'grade'"
+        [maxNumberLength]="100"
+        [digitsAfterDecimal]="0"
       />
       <app-select-input
         [options]="gradeRangeOptions"
         [placeholder]="'Grade range'"
         [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'gradeRange')"
         [name]="'gradeRange'"
-        [isEmptyOption]="true"
       />
       <app-date-input
         [placeholder]="'Start Date'"

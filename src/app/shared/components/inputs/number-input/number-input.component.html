@@ -3,7 +3,7 @@
     <mat-label>{{ placeholder }}</mat-label>
     <input [formControl]="control" [attr.value]="value || null" type='text'
            mask="separator.{{digitsAfterDecimal}}" decimalMarker="."
-           thousandSeparator="," separatorLimit="{{maxNumber}}" matInput>
+           thousandSeparator="," separatorLimit="{{maxNumberLength}}" matInput>
   </mat-form-field>
   <app-error-input
     [formContained]="control"

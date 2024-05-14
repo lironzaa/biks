@@ -41,7 +41,7 @@ tr {
   unicode-bidi: isolate;
 }
 
-tr:hover {
+tbody tr:hover {
   background-color: var(--gray-color);
 }
 

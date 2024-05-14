@@ -25,6 +25,6 @@ export class NumberInputComponent
   @Input() name!: string;
   @Input() isFullWidth = false;
   @Input() digitsAfterDecimal = 2;
-  @Input() maxNumber = 1000000;
+  @Input() maxNumberLength = 1000000;
   value?: number | undefined;
 }

@@ -32,6 +32,8 @@
         [placeholder]="'Grade'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
         [name]="'grade'"
+        [maxNumberLength]="100"
+        [digitsAfterDecimal]="0"
       />
     </div>
     <div>
@@ -100,6 +102,8 @@
         [placeholder]="'Grade'"
         [formControl]="formUtilitiesService.getControl(gradeForm, 'grade')"
         [name]="'grade'"
+        [maxNumberLength]="100"
+        [digitsAfterDecimal]="0"
       />
     </div>
     <div>

@@ -23,14 +23,8 @@ export class NumberControlValueAccessorDirective extends ControlValueAccessorDir
         takeUntil(this._destroy$),
         startWith(this.control.value),
         distinctUntilChanged(),
-        map((value: string | null) => this.setNumericValue(value)),
-        tap((val) => fn(val))
-      )
-      .subscribe();
-  }
-
-  setNumericValue(num: string | null): number | null {
-    const numValue = Number(num);
-    return !isNaN(parseFloat(<string>num)) && isFinite(numValue) ? numValue : null;
+        map((value: number | string | null) => typeof value === "number" ? value : null),
+        tap((val: number | null) => fn(val))
+      ).subscribe();
   }
 }

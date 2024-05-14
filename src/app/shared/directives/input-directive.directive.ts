@@ -66,8 +66,7 @@ export class ControlValueAccessorDirective<T>
         startWith(this.control.value),
         distinctUntilChanged(),
         tap((val) => fn(val))
-      )
-      .subscribe();
+      ).subscribe();
   }
 
   registerOnTouched(fn: () => T): void {
@@ -76,7 +75,7 @@ export class ControlValueAccessorDirective<T>
 
   setDisabledState?(isDisabled: boolean): void {
     this._isDisabled = isDisabled;
-    if (this.control) {
+    if (this.control && this.control.disabled !== this._isDisabled) {
       isDisabled ? this.control.disable() : this.control.enable();
     }
   }
