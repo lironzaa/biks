@@ -7,8 +7,9 @@
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
-  <app-error-input
-    [formContained]="control"
-    [controlName]="name"
+  <app-error-input *ngIf="formName"
+                   [formContained]="control"
+                   [controlName]="name"
+                   [formName]="formName"
   ></app-error-input>
 </ng-container>

@@ -6,8 +6,9 @@
       <mat-option *ngFor="let option of options; trackBy: trackByOptionName" [value]="option">{{ option }}</mat-option>
     </mat-select>
   </mat-form-field>
-  <app-error-input
-    [formContained]="control"
-    [controlName]="name"
+  <app-error-input *ngIf="formName"
+                   [formContained]="control"
+                   [controlName]="name"
+                   [formName]="formName"
   ></app-error-input>
 </ng-container>

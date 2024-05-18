@@ -23,6 +23,7 @@ export class NumberInputComponent
   @Input() placeholder?: string | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+  @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
   @Input() isFullWidth = false;
   @Input() digitsAfterDecimal = 2;
   @Input() maxNumberLength = 1000000;

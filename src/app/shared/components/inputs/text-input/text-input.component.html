@@ -3,8 +3,9 @@
     <mat-label>{{ placeholder }}</mat-label>
     <input [formControl]="control" [attr.value]="value || null" [type]="type" matInput>
   </mat-form-field>
-  <app-error-input
-    [formContained]="control"
-    [controlName]="name"
+  <app-error-input *ngIf="formName"
+                   [formContained]="control"
+                   [controlName]="name"
+                   [formName]="formName"
   ></app-error-input>
 </ng-container>

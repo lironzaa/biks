@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
-import { combineLatest, Observable, of, startWith } from "rxjs";
+import { combineLatest, distinctUntilChanged, Observable, of, shareReplay, startWith } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { DefaultErrorMessages } from "../../../interfaces/error-input.interface";
@@ -13,42 +13,36 @@ import { FormUtilitiesService } from "../../../services/form-utilities.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorInputComponent implements OnInit {
-  @Input() public controlName?: string;
-  @Input() public formContained!: AbstractControl;
+  @Input({ required: true }) public controlName?: string;
+  @Input({ required: true }) public formContained!: AbstractControl;
+  @Input({ required: true }) public formName!: string;
 
   error$!: Observable<string>;
-  isFormSubmitted$: Observable<boolean>;
-  isFormCompleted$: Observable<boolean>;
-  initialState = true;
+  isFormSubmitted$!: Observable<boolean>;
 
   constructor(private formUtilitiesService: FormUtilitiesService) {
-    this.isFormSubmitted$ = this.formUtilitiesService.getFormSubmitAttemptListener();
-    this.isFormCompleted$ = this.formUtilitiesService.getIsFormCompletedListener();
   }
 
   ngOnInit(): void {
+    this.isFormSubmitted$ = this.formUtilitiesService.getFormSubmitAttemptListener(this.formName);
     this.initError$();
   }
 
   initError$(): void {
     const valueChange$: Observable<string> = this.control?.valueChanges.pipe(
-      map((value) => value)
+      startWith(this.control?.value),
+      map((value) => value),
+      distinctUntilChanged(),
+      shareReplay(1)
     ) || of("");
-
-    this.isFormCompleted$.subscribe(() => {
-      this.initialState = true;
-    })
 
     this.error$ = combineLatest([
       valueChange$.pipe(startWith("")),
-      this.isFormSubmitted$.pipe(startWith(false)),
+      this.isFormSubmitted$.pipe(startWith(false),),
     ]).pipe(
-      map(([ , isFormSubmitted ]) => {
-        if (this.initialState) {
-          this.initialState = false;
-          return "";
-        }
-        return (!this.control?.pristine || isFormSubmitted) && this.control?.errors ? this.getErrorMessage(this.control?.errors as ValidationErrors) : "";
+      map(([ valueChange, isFormSubmitted ]) => {
+        if (valueChange) this.control?.markAsTouched();
+        return (!this.control?.untouched || isFormSubmitted) && this.control?.errors ? this.getErrorMessage(this.control?.errors as ValidationErrors) : "";
       })
     );
   }
@@ -65,10 +59,7 @@ export class ErrorInputComponent implements OnInit {
   private getErrorMessage(error: ValidationErrors): string {
     const [ errorName ] = Object.keys(error);
     const errorFunction = DefaultErrorMessages[errorName];
-    if (errorFunction) {
-      return errorFunction(error[errorName]);
-    } else {
-      return "An error occurred";
-    }
+    if (errorFunction) return errorFunction(error[errorName]);
+    else return "An error occurred";
   }
 }

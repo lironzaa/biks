@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { MatDialog } from "@angular/material/dialog";
@@ -28,7 +28,7 @@ import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
   styleUrl: "./trainee-form.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TraineeFormComponent extends Unsubscribe implements OnInit {
+export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestroy {
   isEditMode = false;
   selectedTraineesRow: TraineeRow | null = null;
   subjectTypeOptions = SubjectTypeOptions;
@@ -53,7 +53,8 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
-  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
+  @ViewChild("traineeFormDirective") traineeFormDirective!: FormGroupDirective;
+  @ViewChild("gradeFormDirective") gradeFormDirective!: FormGroupDirective;
 
   constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
               protected formUtilitiesService: FormUtilitiesService, private dialog: MatDialog) {
@@ -78,6 +79,8 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
   }
 
   addTrainee(): void {
+    this.traineeFormDirective.resetForm();
+    this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", false);
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
@@ -110,24 +113,19 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
   }
 
   onSubmitTraineeForm(): void {
-    console.log(this.traineeForm.value);
-    this.isAddGradeForm = false;
     if (this.traineeForm.valid) {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
-        console.log(traineeData);
         this.resetTraineeForm();
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
         const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
-        console.log(editTraineeData);
-        console.log(selectedTraineeRow);
         this.resetTraineeForm();
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     } else {
-      this.formUtilitiesService.setIsFormSubmitAttempt(true);
+      this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", true);
     }
   }
 
@@ -191,20 +189,21 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
   }
 
   resetTraineeForm(): void {
-    this.formUtilitiesService.setIsFormSubmitAttempt(false);
-    this.formUtilitiesService.setIsFormCompleted(true);
+    this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", false);
     this.traineeForm.reset();
-    this.formDirective.resetForm();
+    this.traineeFormDirective.resetForm();
   }
 
   onSubmitGradeForm(): void {
     if (this.gradeForm.valid) {
       const gradeData: CreateTraineeGrade = this.populateCreateGradeData();
       this.gradeForm.reset();
-      this.isAddGradeForm = false;
+      this.gradeFormDirective.resetForm();
+      this.formUtilitiesService.setIsFormSubmitAttempt("gradeForm", false);
+      this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
       this.store.dispatch(createTraineeGrade({ data: gradeData }));
     } else {
-      this.formUtilitiesService.setIsFormSubmitAttempt(true);
+      this.formUtilitiesService.setIsFormSubmitAttempt("gradeForm", true);
     }
   }
 
@@ -215,5 +214,10 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit {
       date: this.gradeForm.value.date!,
       traineeId: this.gradeForm.value.traineeId!
     };
+  }
+
+  override ngOnDestroy(): void {
+    this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
+    this.formUtilitiesService.removeFormSubmitAttempt([ "traineeForm", "gradeForm" ]);
   }
 }

@@ -24,6 +24,7 @@ export class SelectInputComponent<T>
   @Input() placeholder?: string | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
+  @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
   @Input() isMultiple = false;
   @Input() isEmptyOption = false;
   @Input() isFullWidth = false;
