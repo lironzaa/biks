@@ -6,9 +6,7 @@ import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs"
 import { map } from "rxjs/operators";
 
 import { filterTraineesRows, setSelectedTraineeRow } from "../../store/trainees.actions";
-import { selectTraineesRowsOrigin, selectTraineesState } from "../../store/trainees.selectors";
-import * as fromApp from "../../../../core/store/app.reducer";
-import { TraineesState } from "../../store/trainees.reducer";
+import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
 import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-params.interface";
 import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { TraineeRow } from "../../interfaces/trainee-interface";
@@ -44,15 +42,15 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
   gradeRangeControl = this.dataFiltersForm.get("gradeRange");
 
-  constructor(private store: Store<fromApp.AppState>, private fb: FormBuilder,
+  constructor(private store: Store, private fb: FormBuilder,
               private router: Router, private route: ActivatedRoute,
               protected formUtilitiesService: FormUtilitiesService, private paginationDataService: PaginationDataService) {
     super();
-    this.traineesState$ = store.select(selectTraineesState);
+    this.traineesState$ = store.select(traineesFeature.selectTraineesState);
   }
 
   ngOnInit(): void {
-    this.store.select(selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
+    this.store.select(traineesFeature.selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
       .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
     this.patchFiltersFormValue();
     this.initQueryParamsSub();

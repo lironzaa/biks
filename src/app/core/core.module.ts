@@ -9,8 +9,8 @@ import { MatIcon } from "@angular/material/icon";
 import { HttpClientModule } from "@angular/common/http";
 
 import { HeaderComponent } from "./components/layout/header/header.component";
-import * as fromApp from "./store/app.reducer";
 import { TraineesEffects } from "../features/data/store/trainees.effects";
+import { appReducer } from "./store/app.reducer";
 
 @NgModule({
   declarations: [
@@ -27,7 +27,7 @@ import { TraineesEffects } from "../features/data/store/trainees.effects";
     MatIcon,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    StoreModule.forRoot(fromApp.appReducer),
+    StoreModule.forRoot(appReducer),
     EffectsModule.forRoot([ TraineesEffects ]),
   ]
 })

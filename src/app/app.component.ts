@@ -4,7 +4,6 @@ import { ActivatedRoute } from "@angular/router";
 
 import { getTrainees } from "./features/data/store/trainees.actions";
 import { DataFiltersQueryParams } from "./features/data/interfaces/data-filters-query-params.interface";
-import * as fromApp from "./core/store/app.reducer";
 
 @Component({
   selector: "app-root",
@@ -15,10 +14,10 @@ import * as fromApp from "./core/store/app.reducer";
 export class AppComponent implements OnInit {
   title = "biks";
 
-  constructor(private store: Store<fromApp.AppState>, private route: ActivatedRoute) {
+  constructor(private store: Store, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(getTrainees(this.route.snapshot.queryParams as DataFiltersQueryParams));
+    this.store.dispatch(getTrainees({ queryParams: this.route.snapshot.queryParams as DataFiltersQueryParams }));
   }
 }

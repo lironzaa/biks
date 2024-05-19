@@ -31,7 +31,10 @@
             "style": "kebab-case"
           }
         ],
-        "@typescript-eslint/quotes": ["error", "double"]
+        "@typescript-eslint/quotes": [
+          "error",
+          "double"
+        ]
       }
     },
     {
@@ -43,6 +46,14 @@
         "plugin:@angular-eslint/template/accessibility"
       ],
       "rules": {}
+    },
+    {
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "plugin:@ngrx/recommended"
+      ]
     }
   ]
 }

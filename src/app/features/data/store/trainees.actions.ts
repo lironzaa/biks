@@ -12,7 +12,7 @@ import { GradeCreateData } from "../types/trainee-type";
 
 export const getTrainees = createAction(
   "[Trainees] Get Trainees]",
-  props<DataFiltersQueryParams>()
+  props<{ queryParams: DataFiltersQueryParams }>()
 );
 
 export const traineesFetched = createAction(

@@ -5,12 +5,7 @@ import { distinctUntilChanged, Observable, takeUntil } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../../data/data/subject-type-options";
-import * as fromApp from "../../../../core/store/app.reducer";
-import {
-  selectGradesAveragesForSelectedSubjects,
-  selectGradesAveragesForSelectedTrainees,
-  selectTraineesIds
-} from "../../../data/store/trainees.selectors";
+import { traineesFeature } from "../../../data/store/trainees.reducer";
 import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
 import { SubjectType } from "../../../data/types/subject-type";
 import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis-charts-interface";
@@ -34,11 +29,11 @@ export class AnalysisComponent extends Unsubscribe implements OnInit {
   });
 
   constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store<fromApp.AppState>) {
+              private store: Store) {
     super();
-    this.traineesStateIds$ = store.select(selectTraineesIds);
-    this.traineesGradesAverages$ = store.select(selectGradesAveragesForSelectedTrainees);
-    this.subjectsGradesAverages$ = store.select(selectGradesAveragesForSelectedSubjects);
+    this.traineesStateIds$ = store.select(traineesFeature.selectTraineesIds);
+    this.traineesGradesAverages$ = store.select(traineesFeature.selectGradesAveragesForSelectedTrainees);
+    this.subjectsGradesAverages$ = store.select(traineesFeature.selectGradesAveragesForSelectedSubjects);
   }
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { catchError, map, switchMap } from "rxjs/operators";
+import { catchError, map, mergeMap, switchMap } from "rxjs/operators";
 import { of } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute } from "@angular/router";
@@ -12,6 +12,7 @@ import {
   deleteTrainee,
   editTrainee,
   getTrainees,
+  setSelectedTraineeRow,
   traineesError,
   traineesFetched
 } from "./trainees.actions";
@@ -85,7 +86,7 @@ export class TraineesEffects {
         return this.http.get<Trainee[]>(`${ this.apiPrefix }?_embed=grades`).pipe(
           map(trainees => {
             const formattedTrainees: FormattedTrainees = this.mapTraineeRows(trainees)
-            const calculatedPage = getTraineesData.page ? +getTraineesData.page : 1;
+            const calculatedPage = getTraineesData.queryParams.page ? +getTraineesData.queryParams.page : 1;
             const paginationData = this.paginationDataService.calculatePaginationData(calculatedPage, formattedTrainees.traineeRows.length);
             this.paginationDataService.setPaginationData(paginationData);
             return traineesFetched({
@@ -112,7 +113,7 @@ export class TraineesEffects {
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee created successfully");
-                return getTrainees(queryParams as DataFiltersQueryParams);
+                return getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
               }),
               catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
             );
@@ -133,7 +134,7 @@ export class TraineesEffects {
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
                 this.toastr.success("Trainee updated successfully");
-                return getTrainees(queryParams as DataFiltersQueryParams);
+                return getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
               }),
               catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
             );
@@ -149,13 +150,17 @@ export class TraineesEffects {
       ofType(deleteTrainee),
       switchMap((deleteTraineeData) => {
         return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${ deleteTraineeData.id }`).pipe(
-          map(() => {
+          mergeMap(() => {
             const queryParams = this.route.snapshot.queryParams;
-            return getTrainees(queryParams as DataFiltersQueryParams);
+            return [
+              setSelectedTraineeRow({ traineeRow: null }),
+              getTrainees({ queryParams: queryParams as DataFiltersQueryParams })
+            ];
           }),
-          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
+          catchError((errorRes: HttpErrorResponse) => of(traineesError({ errorMessage: errorRes.message })))
         );
-      }));
+      })
+    );
   });
 
   createTraineeGrade = createEffect(() => {
@@ -165,7 +170,7 @@ export class TraineesEffects {
         return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, createTraineeGrade.data).pipe(
           map(() => {
             const queryParams = this.route.snapshot.queryParams;
-            return getTrainees(queryParams as DataFiltersQueryParams);
+            return getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
           }),
           catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
         );

@@ -4,7 +4,7 @@ import { Store } from "@ngrx/store";
 import { MatDialog } from "@angular/material/dialog";
 import { takeUntil } from "rxjs";
 
-import * as fromApp from "../../../../core/store/app.reducer";
+import { traineesFeature } from "../../store/trainees.reducer";
 import {
   createTrainee,
   createTraineeGrade,
@@ -21,7 +21,6 @@ import {
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
-import { selectSelectedTraineesRow } from "../../store/trainees.selectors";
 import {
   ConfirmationDialogComponent
 } from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
@@ -66,7 +65,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   @ViewChild("traineeFormDirective") traineeFormDirective!: FormGroupDirective;
   @ViewChild("gradeFormDirective") gradeFormDirective!: FormGroupDirective;
 
-  constructor(private fb: FormBuilder, private store: Store<fromApp.AppState>,
+  constructor(private fb: FormBuilder, private store: Store,
               protected formUtilitiesService: FormUtilitiesService, private dialog: MatDialog) {
     super();
   }
@@ -76,11 +75,12 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   }
 
   initStoreSub(): void {
-    this.store.select(selectSelectedTraineesRow).pipe(takeUntil(this.unsubscribe$)).subscribe(selectedTraineesRow => {
+    this.store.select(traineesFeature.selectSelectedTraineesRow).pipe(takeUntil(this.unsubscribe$)).subscribe(selectedTraineesRow => {
       this.selectedTraineesRow = selectedTraineesRow;
       if (this.selectedTraineesRow) {
         this.isEditMode = true;
         this.traineeForm.patchValue(this.selectedTraineesRow);
+        this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
       } else {
         this.isEditMode = false;
         this.traineeForm.reset();
@@ -109,16 +109,12 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.store.dispatch(deleteTrainee({ id: this.selectedTraineesRow!.id }));
-        this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
-      }
+      if (confirmed) this.store.dispatch(deleteTrainee({ id: this.selectedTraineesRow!.id }));
     });
   }
 
   addGrade(): void {
     this.isAddGradeForm = true;
-    this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
   }
 
   onSubmitTraineeForm(): void {
@@ -204,9 +200,9 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   onSubmitGradeForm(): void {
     if (this.gradeForm.valid) {
       const gradeData: GradeCreateData = this.populateCreateGradeData();
+      this.store.dispatch(createTraineeGrade({ data: gradeData }));
       this.resetForm(this.gradeFormKey, this.gradeForm, this.gradeFormDirective);
       this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
-      this.store.dispatch(createTraineeGrade({ data: gradeData }));
     } else {
       this.formUtilitiesService.setIsFormSubmitAttempt(this.gradeFormKey, true);
     }

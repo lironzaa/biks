@@ -7,14 +7,8 @@ import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs"
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
-import {
-  selectTraineesState,
-  selectTraineesIds,
-  selectTraineesOrigin
-} from "../../../data/store/trainees.selectors";
 import { filterTrainees } from "../../../data/store/trainees.actions";
-import * as fromApp from "../../../../core/store/app.reducer";
-import { TraineesState } from "../../../data/store/trainees.reducer";
+import { traineesFeature, TraineesState } from "../../../data/store/trainees.reducer";
 import { monitorTableConfig } from "../../data/monitor-table-config";
 import { MonitorStateOptions } from "../../data/monitor-state-options";
 import { Trainee } from "../../../data/interfaces/trainee-interface";
@@ -47,15 +41,15 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   });
 
   constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store<fromApp.AppState>, private route: ActivatedRoute,
+              private store: Store, private route: ActivatedRoute,
               private paginationDataService: PaginationDataService, private router: Router) {
     super();
-    this.traineesStateIds$ = store.select(selectTraineesIds);
-    this.traineesState$ = store.select(selectTraineesState);
+    this.traineesStateIds$ = store.select(traineesFeature.selectTraineesIds);
+    this.traineesState$ = store.select(traineesFeature.selectTraineesState);
   }
 
   ngOnInit(): void {
-    this.store.select(selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
+    this.store.select(traineesFeature.selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
       .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
