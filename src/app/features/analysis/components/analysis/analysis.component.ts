@@ -25,7 +25,7 @@ import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 export class AnalysisComponent extends Unsubscribe implements OnInit {
   traineesStateIds$: Observable<string[]>;
   traineesGradesAverages$: Observable<ChartTraineesGradesAverages[]>;
-  subjectsGradesAverages$: Observable<ChartSubjectsGradesAverages>;
+  subjectsGradesAverages$: Observable<Partial<ChartSubjectsGradesAverages>>;
   subjectTypeOptions = SubjectTypeOptions;
 
   analysisForm = this.fb.group({
