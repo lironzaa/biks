@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormControl, FormGroupDirective, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { MatDialog } from "@angular/material/dialog";
 import { takeUntil } from "rxjs";
@@ -12,7 +12,12 @@ import {
   editTrainee,
   setSelectedTraineeRow
 } from "../../store/trainees.actions";
-import { CreateTrainee, CreateTraineeGrade, EditTrainee, TraineeRow } from "../../interfaces/trainee-interface";
+import {
+  CreateTrainee,
+  EditTrainee,
+  TraineeGrade,
+  TraineeRow
+} from "../../interfaces/trainee-interface";
 import { SubjectType } from "../../types/subject-type";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../data/subject-type-options";
@@ -21,6 +26,7 @@ import {
   ConfirmationDialogComponent
 } from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
+import { GradeCreateData, TraineeCreateData } from "../../types/trainee-type";
 
 @Component({
   selector: "app-trainee-form",
@@ -53,6 +59,10 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
+  gradeFormKey = "gradeForm";
+  traineeFormKey = "traineeForm";
+  formsKeys = [ this.traineeFormKey, this.gradeFormKey ];
+
   @ViewChild("traineeFormDirective") traineeFormDirective!: FormGroupDirective;
   @ViewChild("gradeFormDirective") gradeFormDirective!: FormGroupDirective;
 
@@ -79,8 +89,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   }
 
   addTrainee(): void {
-    this.traineeFormDirective.resetForm();
-    this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", false);
+    this.resetForm(this.traineeFormKey, this.traineeForm, this.traineeFormDirective);
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
@@ -116,34 +125,26 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
     if (this.traineeForm.valid) {
       if (!this.isEditMode) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
-        this.resetTraineeForm();
+        this.resetForm(this.traineeFormKey, this.traineeForm, this.traineeFormDirective);
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
         const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
-        this.resetTraineeForm();
+        this.resetForm(this.traineeFormKey, this.traineeForm, this.traineeFormDirective);
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     } else {
-      this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", true);
+      this.formUtilitiesService.setIsFormSubmitAttempt(this.traineeFormKey, true);
     }
   }
 
   populateCreateTraineeData(): CreateTrainee {
     return {
       traineeData: {
-        name: this.traineeForm.value.name!,
-        email: this.traineeForm.value.email!,
-        dateJoined: this.traineeForm.value.dateJoined!,
-        address: this.traineeForm.value.address!,
-        city: this.traineeForm.value.city!,
-        country: this.traineeForm.value.country!,
-        zip: this.traineeForm.value.zip!,
+        ...this.getCommonTraineeData()
       },
       gradeData: {
-        grade: this.traineeForm.value.grade!,
-        subject: this.traineeForm.value.subject!,
-        date: this.traineeForm.value.dateJoined!,
+        ...this.getCommonGradeData(),
         traineeId: ""
       }
     };
@@ -153,28 +154,18 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
     return {
       traineeData: {
         id: this.selectedTraineesRow!.id,
-        name: this.traineeForm.value.name!,
-        email: this.traineeForm.value.email!,
-        dateJoined: this.traineeForm.value.dateJoined!,
-        address: this.traineeForm.value.address!,
-        city: this.traineeForm.value.city!,
-        country: this.traineeForm.value.country!,
-        zip: this.traineeForm.value.zip!,
+        ...this.getCommonTraineeData()
       },
       gradeData: {
         id: this.selectedTraineesRow!.gradeId,
-        grade: this.traineeForm.value.grade!,
-        subject: this.traineeForm.value.subject!,
-        date: this.traineeForm.value.dateJoined!,
+        ...this.getCommonGradeData(),
         traineeId: this.selectedTraineesRow!.id!
       }
     };
   }
 
-  populateSelectedTraineeRow(): TraineeRow {
+  getCommonTraineeData(): TraineeCreateData {
     return {
-      id: this.selectedTraineesRow!.id,
-      gradeId: this.selectedTraineesRow!.gradeId,
       name: this.traineeForm.value.name!,
       email: this.traineeForm.value.email!,
       dateJoined: this.traineeForm.value.dateJoined!,
@@ -182,32 +173,46 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
       city: this.traineeForm.value.city!,
       country: this.traineeForm.value.country!,
       zip: this.traineeForm.value.zip!,
+    }
+  }
+
+  getCommonGradeData(): Omit<TraineeGrade, "id" | "traineeId"> {
+    return {
+      grade: this.traineeForm.value.grade!,
+      subject: this.traineeForm.value.subject!,
+      date: this.traineeForm.value.dateJoined!,
+    }
+  }
+
+  populateSelectedTraineeRow(): TraineeRow {
+    return {
+      id: this.selectedTraineesRow!.id,
+      gradeId: this.selectedTraineesRow!.gradeId,
+      ...this.getCommonTraineeData(),
       grade: this.traineeForm.value.grade!,
       gradeDate: this.selectedTraineesRow!.gradeDate!,
       subject: this.traineeForm.value.subject!,
     }
   }
 
-  resetTraineeForm(): void {
-    this.formUtilitiesService.setIsFormSubmitAttempt("traineeForm", false);
-    this.traineeForm.reset();
-    this.traineeFormDirective.resetForm();
+  resetForm(formKey: string, form: FormGroup, formDirective: FormGroupDirective): void {
+    this.formUtilitiesService.setIsFormSubmitAttempt(formKey, false);
+    form.reset();
+    formDirective.resetForm();
   }
 
   onSubmitGradeForm(): void {
     if (this.gradeForm.valid) {
-      const gradeData: CreateTraineeGrade = this.populateCreateGradeData();
-      this.gradeForm.reset();
-      this.gradeFormDirective.resetForm();
-      this.formUtilitiesService.setIsFormSubmitAttempt("gradeForm", false);
+      const gradeData: GradeCreateData = this.populateCreateGradeData();
+      this.resetForm(this.gradeFormKey, this.gradeForm, this.gradeFormDirective);
       this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow!.id);
       this.store.dispatch(createTraineeGrade({ data: gradeData }));
     } else {
-      this.formUtilitiesService.setIsFormSubmitAttempt("gradeForm", true);
+      this.formUtilitiesService.setIsFormSubmitAttempt(this.gradeFormKey, true);
     }
   }
 
-  populateCreateGradeData(): CreateTraineeGrade {
+  populateCreateGradeData(): GradeCreateData {
     return {
       grade: this.gradeForm.value.grade!,
       subject: this.gradeForm.value.subject!,
@@ -218,6 +223,6 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
 
   override ngOnDestroy(): void {
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
-    this.formUtilitiesService.removeFormSubmitAttempt([ "traineeForm", "gradeForm" ]);
+    this.formUtilitiesService.removeFormSubmitAttempt(this.formsKeys);
   }
 }

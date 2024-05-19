@@ -15,7 +15,11 @@ import {
   traineesError,
   traineesFetched
 } from "./trainees.actions";
-import { CreateTraineeGrade, FormattedTrainees, Trainee, TraineeRow } from "../interfaces/trainee-interface";
+import {
+  FormattedTrainees,
+  Trainee,
+  TraineeRow
+} from "../interfaces/trainee-interface";
 import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
@@ -23,6 +27,7 @@ import {
   CreateOrUpdateGradeResponse,
   CreateUpdateDeleteTraineeResponse
 } from "../interfaces/trainee-api-responses.interface";
+import { GradeCreateData } from "../types/trainee-type";
 
 @Injectable()
 export class TraineesEffects {
@@ -99,7 +104,7 @@ export class TraineesEffects {
       switchMap((createTraineeData) => {
         return this.http.post<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }`, createTraineeData.data.traineeData).pipe(
           switchMap((createdTrainee) => {
-            const updatedGradeData: CreateTraineeGrade = {
+            const updatedGradeData: GradeCreateData = {
               ...createTraineeData.data.gradeData,
               traineeId: createdTrainee.id
             };

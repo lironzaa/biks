@@ -1,8 +1,14 @@
 import { createAction, props } from "@ngrx/store";
 
-import { CreateTrainee, CreateTraineeGrade, EditTrainee, Trainee, TraineeRow } from "../interfaces/trainee-interface";
+import {
+  CreateTrainee,
+  EditTrainee,
+  Trainee,
+  TraineeRow
+} from "../interfaces/trainee-interface";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
 import { SubjectType } from "../types/subject-type";
+import { GradeCreateData } from "../types/trainee-type";
 
 export const getTrainees = createAction(
   "[Trainees] Get Trainees]",
@@ -41,7 +47,7 @@ export const traineesError = createAction(
 
 export const createTraineeGrade = createAction(
   "[Trainees] Create Trainee Grade]",
-  props<{ data: CreateTraineeGrade }>()
+  props<{ data: GradeCreateData }>()
 );
 
 export const filterTraineesRows = createAction(

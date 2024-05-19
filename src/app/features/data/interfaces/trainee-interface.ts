@@ -1,33 +1,29 @@
 import { SubjectType } from "../types/subject-type";
+import { GradeCreateData, TraineeCreateData } from "../types/trainee-type";
 
-export interface Trainee {
+interface TraineeBase {
   id: string;
   name: string;
-  grades: TraineeGrade[];
   email: string;
   dateJoined: string;
   address: string;
   city: string;
   country: string;
   zip: string;
+}
+
+export interface Trainee extends TraineeBase {
   average: number;
   exams: number;
   dynamicTrClass?: string;
+  grades: TraineeGrade[];
 }
 
-export interface TraineeRow {
-  id: string;
-  gradeId: string;
-  name: string;
-  email: string;
-  dateJoined: string;
-  address: string;
-  city: string;
-  country: string;
-  zip: string;
+export interface TraineeRow extends TraineeBase {
   grade: number;
   gradeDate: string;
   subject: SubjectType;
+  gradeId: string;
 }
 
 export interface FormattedTrainees {
@@ -44,43 +40,11 @@ export interface TraineeGrade {
 }
 
 export interface CreateTrainee {
-  traineeData: {
-    name: string;
-    email: string;
-    dateJoined: string;
-    address: string;
-    city: string;
-    country: string;
-    zip: string;
-  }
-  gradeData: CreateTraineeGrade;
-}
-
-export interface CreateTraineeGrade {
-  grade: number;
-  subject: SubjectType;
-  date: string;
-  traineeId: string;
+  traineeData: TraineeCreateData;
+  gradeData: GradeCreateData;
 }
 
 export interface EditTrainee {
-  traineeData: {
-    id: string;
-    name: string;
-    email: string;
-    dateJoined: string;
-    address: string;
-    city: string;
-    country: string;
-    zip: string;
-  }
-  gradeData: EditTraineeGrade;
-}
-
-export interface EditTraineeGrade {
-  id: string;
-  grade: number;
-  subject: SubjectType;
-  date: string;
-  traineeId: string;
+  traineeData: Omit<Trainee, "average" | "exams" | "dynamicTrClass" | "grades">
+  gradeData: TraineeGrade;
 }
