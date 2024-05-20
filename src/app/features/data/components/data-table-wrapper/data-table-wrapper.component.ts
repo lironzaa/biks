@@ -17,6 +17,7 @@ import { GradeRangeEnum } from "../../enums/grade-range-enum";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
+import { GradeRangeType } from "../../types/grade-range-type";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -35,7 +36,10 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   dataFiltersForm = this.fb.group({
     "id": new FormControl<string>(""),
     "grade": new FormControl<number | null>(null),
-    "gradeRange": new FormControl<string>({ value: "", disabled: !this.route.snapshot.queryParams["grade"] }),
+    "gradeRange": new FormControl<GradeRangeType>({
+      value: GradeRangeEnum.equals,
+      disabled: !this.route.snapshot.queryParams["grade"]
+    }),
     "startDate": new FormControl<string | Date>(""),
     "endDate": new FormControl<string | Date>(""),
   });
@@ -61,7 +65,46 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
     const queryParamsValue: DataFiltersQueryParams = { ...this.route.snapshot.queryParams };
     if (queryParamsValue.startDate) queryParamsValue.startDate = new Date(queryParamsValue.startDate);
     if (queryParamsValue.endDate) queryParamsValue.endDate = new Date(queryParamsValue.endDate);
+    if (queryParamsValue.grade) queryParamsValue.grade = Number(queryParamsValue.grade);
     this.dataFiltersForm.patchValue(queryParamsValue);
+  }
+
+  initFiltersFormSub(): void {
+    this.dataFiltersForm.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        map(formValues => {
+          if (formValues.grade === null) formValues.gradeRange = null;
+          return this.formatSearchFormValues(formValues);
+        }),
+        takeUntil(this.unsubscribe$)
+      ).subscribe(formattedSearchValues => {
+      const queryParams = formattedSearchValues.formValues;
+      this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
+      this.isInitialRender = false;
+      this.setGrandeRangeIsDisabled(queryParams.grade);
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParamsHandling: "merge",
+      });
+    })
+  }
+
+  formatSearchFormValues(formValues: DataTableFiltersValues): {
+    formValues: DataFiltersQueryParams;
+    isResetPage: boolean
+  } {
+    let isResetPage = false;
+    for (const value in formValues) {
+      if (formValues[value] === "" || formValues[value] === null) {
+        formValues[value] = null;
+      } else {
+        isResetPage = true;
+      }
+    }
+    return { formValues, isResetPage };
   }
 
   initQueryParamsSub(): void {
@@ -70,6 +113,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       if (isApplyFilters) {
         this.applyFilters(queryParams);
       } else {
+        this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
         const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesRowsOrigin.length);
         this.paginationDataService.setPaginationData(paginationData);
       }
@@ -82,12 +126,6 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
         return true;
       }
     }
-    if (this.isResetPage) {
-      const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesRowsOrigin.length);
-      this.paginationDataService.setPaginationData(paginationData);
-      this.isResetPage = false;
-    }
-    this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
     return false;
   }
 
@@ -122,55 +160,14 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
       return idMatch && gradeMatch && dateMatch;
     })
-    if (queryParams.page === "1") {
-      const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
-      this.paginationDataService.setPaginationData(paginationData);
-    }
+    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, filteredItems.length);
+    this.paginationDataService.setPaginationData(paginationData);
     this.store.dispatch(filterTraineesRows({ traineesRows: filteredItems }));
   }
 
-  initFiltersFormSub(): void {
-    this.dataFiltersForm.valueChanges
-      .pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues)),
-        takeUntil(this.unsubscribe$)
-      ).subscribe(formattedSearchValues => {
-      const queryParams = formattedSearchValues.formValues;
-      this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
-      this.isInitialRender = false;
-      this.setGrandeRangeIsDisabled((queryParams.grade as number | null));
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
-        queryParamsHandling: "merge",
-      });
-    })
-  }
-
-  setGrandeRangeIsDisabled(grade: number | null) {
-    if (typeof grade === "number") {
-      if (!this.gradeRangeControl?.value) this.gradeRangeControl?.setValue(GradeRangeEnum.equals);
-      this.gradeRangeControl?.enable({ emitEvent: false })
-    } else {
-      this.gradeRangeControl?.disable({ emitEvent: false })
-    }
-  }
-
-  formatSearchFormValues(formValues: DataTableFiltersValues): {
-    formValues: DataTableFiltersValues;
-    isResetPage: boolean
-  } {
-    let isResetPage = false;
-    for (const value in formValues) {
-      if (formValues[value] === "") {
-        formValues[value] = null;
-      } else {
-        isResetPage = true;
-      }
-    }
-    return { formValues, isResetPage };
+  setGrandeRangeIsDisabled(grade: number | null | undefined): void {
+    if (typeof grade === "number") this.gradeRangeControl?.enable({ emitEvent: false });
+    else this.gradeRangeControl?.disable({ emitEvent: false });
   }
 
   compareAccordingToOperator(grade: number, gradeRange: string | undefined, queryParamsGrade: number): boolean {
@@ -192,5 +189,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
   resetFilters(): void {
     this.dataFiltersForm.reset();
+    this.gradeRangeControl?.patchValue(GradeRangeEnum.equals);
+    this.gradeRangeControl?.disable({ emitEvent: false })
   }
 }

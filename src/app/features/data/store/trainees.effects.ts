@@ -82,13 +82,10 @@ export class TraineesEffects {
   getTrainees = createEffect(() => {
     return this.actions$.pipe(
       ofType(getTrainees),
-      switchMap((getTraineesData) => {
+      switchMap(() => {
         return this.http.get<Trainee[]>(`${ this.apiPrefix }?_embed=grades`).pipe(
           map(trainees => {
             const formattedTrainees: FormattedTrainees = this.mapTraineeRows(trainees)
-            const calculatedPage = getTraineesData.queryParams.page ? +getTraineesData.queryParams.page : 1;
-            const paginationData = this.paginationDataService.calculatePaginationData(calculatedPage, formattedTrainees.traineeRows.length);
-            this.paginationDataService.setPaginationData(paginationData);
             return traineesFetched({
               trainees: formattedTrainees.trainees,
               traineeRows: formattedTrainees.traineeRows
