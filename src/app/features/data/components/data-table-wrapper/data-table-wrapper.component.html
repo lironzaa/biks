@@ -5,6 +5,8 @@
     [isLoading]="traineesState.isLoading"
     [filtersForm]="dataFiltersForm"
     [isPointer]="true"
+    [activeItemId]="traineesState.selectedTraineesRow?.gradeId"
+    [activeItemIdKey]="'gradeId'"
     (tableRowClicked)="onTableRowClick($event)"
   >
     <div class="search-container row">

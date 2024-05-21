@@ -16,6 +16,7 @@ import {
 } from "./trainees.actions";
 import { SubjectType } from "../types/subject-type";
 import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis/analysis-charts-interface";
+import { Utils } from "../../../shared/class/utils.class";
 
 export interface TraineesState {
   trainees: Trainee[];
@@ -149,7 +150,7 @@ export const traineesFeature = createFeature({
           const typedSubject = subject as SubjectType;
           const average = subjectsAverages[typedSubject]! / counts[typedSubject]!;
 
-          subjectsAverages[typedSubject] = formatNumber(average);
+          subjectsAverages[typedSubject] = Utils.roundToDecimal(average, 2);
         }
 
         return subjectsAverages;
@@ -168,7 +169,7 @@ export const traineesFeature = createFeature({
             const counts: { [monthYear: string]: number } = {};
 
             trainee.grades.forEach(traineeGrade => {
-              const monthYear = getMonthYearFromDate(traineeGrade.date);
+              const monthYear = Utils.getMonthYearFromDate(traineeGrade.date);
               if (!gradesByMonthYear[monthYear]) {
                 gradesByMonthYear[monthYear] = 0;
                 counts[monthYear] = 0;
@@ -179,7 +180,7 @@ export const traineesFeature = createFeature({
 
             const averagesByMonthYear: { [monthYear: string]: number } = {};
             Object.keys(gradesByMonthYear).sort().forEach(monthYear => {
-              averagesByMonthYear[monthYear] = formatNumber(gradesByMonthYear[monthYear] / counts[monthYear]);
+              averagesByMonthYear[monthYear] = Utils.roundToDecimal(gradesByMonthYear[monthYear] / counts[monthYear], 2);
             });
 
             averagesByTrainee.push({ trainee: { id: trainee.id, name: trainee.name }, averages: averagesByMonthYear });
@@ -191,12 +192,3 @@ export const traineesFeature = createFeature({
     )
   })
 })
-
-const getMonthYearFromDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${ year }-${ month < 10 ? "0" + month : month }`;
-}
-
-const formatNumber = (num: number): number => parseFloat(num.toFixed(2));

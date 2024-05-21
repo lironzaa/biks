@@ -26,6 +26,7 @@
         [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
         [name]="'name'"
         [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.name"
       />
     </div>
     <div>
@@ -36,6 +37,7 @@
         [maxNumberLength]="100"
         [digitsAfterDecimal]="0"
         [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.grade"
       />
     </div>
     <div>
@@ -45,6 +47,7 @@
         [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
         [name]="'email'"
         [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.email"
       />
     </div>
     <div>
@@ -53,6 +56,7 @@
         [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
         [name]="'dateJoined'"
         [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.dateJoined"
       />
     </div>
     <div>
@@ -95,6 +99,7 @@
         [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
         [name]="'subject'"
         [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.subject"
       />
     </div>
     <app-button

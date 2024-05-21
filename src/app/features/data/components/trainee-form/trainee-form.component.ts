@@ -26,6 +26,8 @@ import {
 } from "../../../../shared/components/dialogs/confirmation-dialog/confirmation-dialog.component";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 import { GradeCreateData, TraineeCreateData } from "../../types/trainee-type";
+import { EMAIL_REGEX } from "../../../../shared/regex/regex";
+import { TraineeFormCustomErrorsData } from "../../data/trainee-form-custom-errors";
 
 @Component({
   selector: "app-trainee-form",
@@ -42,7 +44,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   traineeForm = this.fb.group({
     "name": new FormControl<string>("", [ Validators.required ]),
     "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
-    "email": new FormControl<string>("", [ Validators.required ]),
+    "email": new FormControl<string>("", [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
     "dateJoined": new FormControl<string>("", [ Validators.required ]),
     "address": new FormControl<string>("", [ Validators.required ]),
     "city": new FormControl<string>("", [ Validators.required ]),
@@ -58,6 +60,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
+  traineeFormCustomErrors = TraineeFormCustomErrorsData;
   gradeFormKey = "gradeForm";
   traineeFormKey = "traineeForm";
   formsKeys = [ this.traineeFormKey, this.gradeFormKey ];

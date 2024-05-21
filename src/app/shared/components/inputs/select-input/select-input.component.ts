@@ -3,6 +3,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
+import { CustomErrorMessages } from "../error-input/error-messages";
 
 @Component({
   selector: "app-select-input",
@@ -22,7 +23,7 @@ export class SelectInputComponent<T>
   implements InputType {
   @Input({ required: true }) options: string[] = [];
   @Input() placeholder?: string | undefined;
-  @Input() customErrorMessages: Record<string, string> = {};
+  @Input() customErrorMessages: CustomErrorMessages = {};
   @Input() name!: string;
   @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
   @Input() isMultiple = false;

@@ -22,6 +22,8 @@ export class DataTableComponent {
   @Input({ required: true }) isLoading = false;
   @Input({ required: true }) filtersForm!: FormGroup;
   @Input() isPointer = false;
+  @Input() activeItemId: string | undefined;
+  @Input() activeItemIdKey = "id";
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
 
   paginationData$: Observable<PaginationData>;

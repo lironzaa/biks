@@ -21,7 +21,6 @@ import {
   Trainee,
   TraineeRow
 } from "../interfaces/trainee-interface";
-import { PaginationDataService } from "../../../shared/services/pagination-data.service";
 import { environment } from "../../../../environments/environment";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
 import {
@@ -29,6 +28,7 @@ import {
   CreateUpdateDeleteTraineeResponse
 } from "../interfaces/trainee-api-responses.interface";
 import { GradeCreateData } from "../types/trainee-type";
+import { Utils } from "../../../shared/class/utils.class";
 
 @Injectable()
 export class TraineesEffects {
@@ -38,8 +38,7 @@ export class TraineesEffects {
 
   constructor(
     private actions$: Actions, private http: HttpClient,
-    private toastr: ToastrService, private paginationDataService: PaginationDataService,
-    private route: ActivatedRoute
+    private toastr: ToastrService, private route: ActivatedRoute
   ) {
   }
 
@@ -48,7 +47,7 @@ export class TraineesEffects {
 
     const formattedTrainees: Trainee[] = trainees.map(trainee => {
       const gradesTotal = trainee.grades.reduce((total, traineeGrade) => total + traineeGrade.grade, 0);
-      const average = (gradesTotal / trainee.grades.length);
+      const average = Utils.roundToDecimal(gradesTotal / trainee.grades.length, 2);
       trainee.grades.map(grade => {
         traineeRows.push({
           id: trainee.id,
