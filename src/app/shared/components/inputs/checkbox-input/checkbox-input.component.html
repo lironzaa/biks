@@ -1,7 +1,7 @@
 <ng-container *ngIf="control">
   <section>
-    <mat-label>{{ placeholder }}</mat-label>
-    <mat-checkbox [formControl]="control" class="example-margin">{{ option.key }}
+    <mat-label>{{ label }}</mat-label>
+    <mat-checkbox [formControl]="control">{{ option }}
     </mat-checkbox>
   </section>
   <app-error-input *ngIf="formName"

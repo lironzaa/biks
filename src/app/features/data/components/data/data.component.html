@@ -1,9 +1,6 @@
 <div class="d-flex">
   <div class="table-container">
-    <ng-container *ngIf="traineesState$ | async; let traineesState">
-      <app-data-table-wrapper *ngIf="!traineesState.isLoading" />
-      <app-spinner *ngIf="traineesState.isLoading" />
-    </ng-container>
+    <app-data-table-wrapper />
   </div>
   <div class="form-container">
     <app-trainee-form />

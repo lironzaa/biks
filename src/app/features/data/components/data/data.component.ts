@@ -1,8 +1,4 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { Store } from "@ngrx/store";
-import { Observable } from "rxjs";
-
-import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
 
 @Component({
   selector: "app-data",
@@ -11,9 +7,4 @@ import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataComponent {
-  traineesState$: Observable<TraineesState>;
-
-  constructor(private store: Store) {
-    this.traineesState$ = store.select(traineesFeature.selectTraineesState);
-  }
 }

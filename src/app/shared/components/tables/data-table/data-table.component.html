@@ -17,9 +17,9 @@
     </td>
   </tr>
   <ng-container *ngIf="paginationData$ | async; let paginationData">
-    <tr [className]="item.dynamicTrClass ? item.dynamicTrClass : ''"
-        [ngClass]="{'bg-primary': activeItemId === item[activeItemIdKey]}"
-        *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
+    <tr
+      [ngClass]="[activeItemId === item[activeItemIdKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
+      *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
      trackBy: trackByItemId" (click)="onTableRowClick(item)">
       <ng-container *ngIf="!isLoading && items.length > 0">
         <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, skip, takeUntil } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { filterTraineesRows, setSelectedTraineeRow } from "../../store/trainees.actions";
@@ -30,8 +30,6 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   tableConfig = dataTableConfig;
   traineesRowsOrigin!: TraineeRow[];
   gradeRangeOptions = GradeRangeOptions;
-  isInitialRender = true;
-  isResetPage = false;
 
   dataFiltersForm = this.fb.group({
     "id": new FormControl<string>(""),
@@ -76,60 +74,62 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
         distinctUntilChanged(),
         map(formValues => {
           if (formValues.grade === null) formValues.gradeRange = null;
-          return this.formatSearchFormValues(formValues);
+          return this.formatSearchFormToQueryParams(formValues);
         }),
+        skip(1),
         takeUntil(this.unsubscribe$)
-      ).subscribe(formattedSearchValues => {
-      const queryParams = formattedSearchValues.formValues;
-      this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
-      this.isInitialRender = false;
-      this.setGrandeRangeIsDisabled(queryParams.grade);
+      ).subscribe(formattedFiltersValues => {
+      const updatedQueryParams = formattedFiltersValues.formatedQueryParams;
+      this.setGrandeRangeIsDisabled(updatedQueryParams.grade);
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParams: {
+          ...updatedQueryParams,
+          page: formattedFiltersValues.isResetPage ? 1 : this.route.snapshot.queryParams.page
+        },
         queryParamsHandling: "merge",
       });
     })
   }
 
-  formatSearchFormValues(formValues: DataTableFiltersValues): {
-    formValues: DataFiltersQueryParams;
+  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): {
+    formatedQueryParams: DataFiltersQueryParams;
     isResetPage: boolean
   } {
     let isResetPage = false;
     for (const value in formValues) {
-      if (formValues[value] === "" || formValues[value] === null) {
-        formValues[value] = null;
-      } else {
-        isResetPage = true;
-      }
+      if (formValues[value] === "" || formValues[value] === null) formValues[value] = null;
+      else isResetPage = true;
     }
-    return { formValues, isResetPage };
+    return { formatedQueryParams: formValues, isResetPage };
   }
 
   initQueryParamsSub(): void {
     this.route.queryParams.subscribe((queryParams) => {
       const isApplyFilters = this.isApplyFilters(queryParams);
-      if (isApplyFilters) {
-        this.applyFilters(queryParams);
-      } else {
-        this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
-        const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesRowsOrigin.length);
-        this.paginationDataService.setPaginationData(paginationData);
-      }
+      if (isApplyFilters) this.applyFiltersOnData(queryParams);
+      else this.resetDataToOrigin();
     });
+  }
+
+  resetDataToOrigin(): void {
+    this.setPaginationData(this.traineesRowsOrigin.length);
+    this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
+  }
+
+  setPaginationData(itemsLength: number): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, itemsLength);
+    this.paginationDataService.setPaginationData(paginationData);
   }
 
   isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
     for (const filter in queryParams) {
-      if (filter === DataFiltersEnum.id || filter === DataFiltersEnum.grade || filter === DataFiltersEnum.startDate || filter === DataFiltersEnum.endDate) {
-        return true;
-      }
+      if (filter === DataFiltersEnum.id || filter === DataFiltersEnum.grade || filter === DataFiltersEnum.startDate || filter === DataFiltersEnum.endDate) return true;
     }
     return false;
   }
 
-  applyFilters(queryParams: DataFiltersQueryParams): void {
+  applyFiltersOnData(queryParams: DataFiltersQueryParams): void {
     let startDate: Date;
     let endDate: Date;
     const isFilterByDate = queryParams.startDate !== undefined && queryParams.endDate !== undefined;
@@ -160,8 +160,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
       return idMatch && gradeMatch && dateMatch;
     })
-    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, filteredItems.length);
-    this.paginationDataService.setPaginationData(paginationData);
+    this.setPaginationData(filteredItems.length);
     this.store.dispatch(filterTraineesRows({ traineesRows: filteredItems }));
   }
 

@@ -27,13 +27,13 @@
         />
         <div class="d-flex">
           <app-checkbox-input
-            [option]="monitorStateOptions[0]"
-            [placeholder]="'State'"
+            [option]="'Passed'"
+            [label]="'State'"
             [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'isPassed')"
             [name]="'isPassed'"
           />
           <app-checkbox-input
-            [option]="monitorStateOptions[1]"
+            [option]="'Failed'"
             [formControl]="formUtilitiesService.getControl(monitorFiltersForm, 'isFailed')"
             [name]="'isFailed'"
           />

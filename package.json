@@ -23,6 +23,7 @@
     "@ngrx/effects": "^17.2.0",
     "@ngrx/eslint-plugin": "^17.2.0",
     "@ngrx/store": "^17.2.0",
+    "@ngrx/store-devtools": "^17.2.0",
     "chart.js": "^4.4.2",
     "chartjs-plugin-datalabels": "^2.2.0",
     "i": "^0.3.7",

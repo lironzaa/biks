@@ -10,10 +10,10 @@ import { PaginationDataService } from "../../../../shared/services/pagination-da
 import { filterTrainees } from "../../../data/store/trainees.actions";
 import { traineesFeature, TraineesState } from "../../../data/store/trainees.reducer";
 import { monitorTableConfig } from "../../data/monitor-table-config";
-import { MonitorStateOptions } from "../../data/monitor-state-options";
 import { Trainee } from "../../../data/interfaces/trainee-interface";
 import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
 import { DataTableFiltersValues } from "../../../../shared/interfaces/data-table-interface";
+import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
 import { IsPassedIsFailedQueryParamEnum } from "../../enums/is-passed-is-failed-query-param-enum";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
@@ -29,7 +29,6 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   traineesStateIds$: Observable<string[]>;
   monitorTableConfig = monitorTableConfig;
   isResetPage = false;
-  monitorStateOptions = MonitorStateOptions;
 
   monitorFiltersForm = this.fb.group({
     "ids": new FormControl<string | string[]>(""),
@@ -67,40 +66,49 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues)),
+        map(formValues => this.formatSearchFormToQueryParams(formValues)),
         takeUntil(this.unsubscribe$)
-      ).subscribe(formattedSearchValues => {
-      const queryParams = formattedSearchValues.formattedFormValues;
+      ).subscribe(formattedFiltersValues => {
+      const updatedQueryParams = formattedFiltersValues.formatedQueryParams;
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParams: { ...updatedQueryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
         queryParamsHandling: "merge",
       });
       if (!this.isResetPage) this.isResetPage = true;
     })
   }
 
-  formatSearchFormValues(formValues: DataTableFiltersValues): {
-    formattedFormValues: DataTableFiltersValues;
+  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): {
+    formatedQueryParams: DataTableFiltersValues;
   } {
     for (const value in formValues) {
-      if (Array.isArray(formValues[value])) {
-        formValues[value] = formValues[value]?.toString();
-      }
-      if (formValues[value] === "") {
-        formValues[value] = null;
-      }
+      if (Array.isArray(formValues[value])) formValues[value] = formValues[value]?.toString();
+      if (formValues[value] === "") formValues[value] = null;
     }
-    return { formattedFormValues: formValues };
+    return { formatedQueryParams: formValues };
   }
 
   initQueryParamsSub(): void {
     this.route.queryParams.subscribe((queryParams) => {
-      this.applyFilters(queryParams);
+      if (this.isApplyFilters(queryParams)) this.applyFiltersOnData(queryParams);
+      else this.resetDataToOrigin();
     });
   }
 
-  applyFilters(queryParams: MonitorsFiltersQueryParams): void {
+  resetDataToOrigin(): void {
+    this.setPaginationData(this.traineesOrigin.length);
+    this.store.dispatch(filterTrainees({ trainees: this.traineesOrigin }));
+  }
+
+  isApplyFilters(queryParams: MonitorsFiltersQueryParams): boolean {
+    for (const filter in queryParams) {
+      if (filter === MonitorFiltersEnum.ids || filter === MonitorFiltersEnum.name || filter === MonitorFiltersEnum.isPassed || filter === MonitorFiltersEnum.isFailed) return true;
+    }
+    return false;
+  }
+
+  applyFiltersOnData(queryParams: MonitorsFiltersQueryParams): void {
     let lowerNameQueryParam: string;
     const isFilterByName = queryParams.name !== undefined;
     if (isFilterByName) lowerNameQueryParam = queryParams.name!.toLowerCase();
@@ -109,8 +117,8 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
     const isFilterByIds = queryParams.ids !== undefined;
     if (isFilterByIds) idsArrayQueryParam = (queryParams.ids as string).split(",");
 
-    const isFilterByIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
-    const isFilterByIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
+    const isFilterIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
+    const isFilterIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
 
     const filteredItems = this.traineesOrigin.filter(item => {
       let nameMatch = true;
@@ -125,15 +133,19 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
         nameMatch = itemNameLower.includes(lowerNameQueryParam);
       }
 
-      if (isFilterByIsPassed && item.average > 64) isPassedMatch = false;
+      if (isFilterIsPassed && item.average > 65) isPassedMatch = false;
 
-      if (isFilterByIsFailed && item.average < 66) isFailedMatch = false;
+      if (isFilterIsFailed && item.average < 65) isFailedMatch = false;
 
       return nameMatch && idMatch && isPassedMatch && isFailedMatch;
     })
-    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, filteredItems.length);
-    this.paginationDataService.setPaginationData(paginationData);
+    this.setPaginationData(filteredItems.length);
     this.store.dispatch(filterTrainees({ trainees: filteredItems }));
+  }
+
+  setPaginationData(itemsLength: number): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, itemsLength);
+    this.paginationDataService.setPaginationData(paginationData);
   }
 
   resetFilters(): void {

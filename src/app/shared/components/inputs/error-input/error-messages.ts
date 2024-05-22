@@ -32,7 +32,6 @@ export const DefaultErrorMessages: Record<string, ErrorFunction> = {
     }
   },
   maxlength: (values) => {
-    console.log(values);
     if ("requiredLength" in values) {
       return `The field must have a maximum of ${ values.requiredLength } characters.`;
     } else {

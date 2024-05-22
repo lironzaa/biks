@@ -3,7 +3,6 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
-import { CheckboxInputOption } from "../../../interfaces/checkbox-input-option";
 
 @Component({
   selector: "app-checkbox-input",
@@ -21,8 +20,8 @@ import { CheckboxInputOption } from "../../../interfaces/checkbox-input-option";
 export class CheckboxInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input({ required: true }) option!: CheckboxInputOption;
-  @Input() placeholder?: string | undefined;
+  @Input({ required: true }) option!: string;
+  @Input() label?: string | undefined;
   @Input() customErrorMessages: Record<string, string> = {};
   @Input() name!: string;
   @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
