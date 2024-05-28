@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { distinctUntilChanged, Observable, takeUntil } from "rxjs";
@@ -18,9 +18,13 @@ import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnalysisComponent extends Unsubscribe implements OnInit {
-  traineesStateIds$: Observable<string[]>;
-  traineesGradesAverages$: Observable<ChartTraineesGradesAverages[]>;
-  subjectsGradesAverages$: Observable<Partial<ChartSubjectsGradesAverages>>;
+  formUtilitiesService = inject(FormUtilitiesService);
+  store = inject(Store);
+  fb = inject(FormBuilder);
+
+  traineesStateIds$ = new Observable<string[]>;
+  traineesGradesAverages$ = new Observable<ChartTraineesGradesAverages[]>;
+  subjectsGradesAverages$ = new Observable<Partial<ChartSubjectsGradesAverages>>;
   subjectTypeOptions = SubjectTypeOptions;
 
   analysisForm = this.fb.group({
@@ -28,16 +32,15 @@ export class AnalysisComponent extends Unsubscribe implements OnInit {
     "subjects": new FormControl<SubjectType[]>([]),
   });
 
-  constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store) {
-    super();
-    this.traineesStateIds$ = store.select(traineesFeature.selectTraineesIds);
-    this.traineesGradesAverages$ = store.select(traineesFeature.selectGradesAveragesForSelectedTrainees);
-    this.subjectsGradesAverages$ = store.select(traineesFeature.selectGradesAveragesForSelectedSubjects);
+  ngOnInit(): void {
+    this.initStoreSelects();
+    this.initValueChangesSubs();
   }
 
-  ngOnInit(): void {
-    this.initValueChangesSubs();
+  initStoreSelects(): void {
+    this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
+    this.traineesGradesAverages$ = this.store.select(traineesFeature.selectGradesAveragesForSelectedTrainees);
+    this.subjectsGradesAverages$ = this.store.select(traineesFeature.selectGradesAveragesForSelectedSubjects);
   }
 
   initValueChangesSubs(): void {

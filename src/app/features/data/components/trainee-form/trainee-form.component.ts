@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { MatDialog } from "@angular/material/dialog";
@@ -36,6 +36,11 @@ import { TraineeFormCustomErrorsData } from "../../data/trainee-form-custom-erro
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestroy {
+  formUtilitiesService = inject(FormUtilitiesService);
+  fb = inject(FormBuilder);
+  store = inject(Store);
+  dialog = inject(MatDialog);
+
   isEditMode = false;
   selectedTraineesRow: TraineeRow | null = null;
   subjectTypeOptions = SubjectTypeOptions;
@@ -67,11 +72,6 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
 
   @ViewChild("traineeFormDirective") traineeFormDirective!: FormGroupDirective;
   @ViewChild("gradeFormDirective") gradeFormDirective!: FormGroupDirective;
-
-  constructor(private fb: FormBuilder, private store: Store,
-              protected formUtilitiesService: FormUtilitiesService, private dialog: MatDialog) {
-    super();
-  }
 
   ngOnInit(): void {
     this.initStoreSub();

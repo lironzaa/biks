@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { ActivatedRoute } from "@angular/router";
 
@@ -12,10 +12,10 @@ import { DataFiltersQueryParams } from "./features/data/interfaces/data-filters-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  title = "biks";
+  route = inject(ActivatedRoute);
+  store = inject(Store);
 
-  constructor(private store: Store, private route: ActivatedRoute) {
-  }
+  title = "biks";
 
   ngOnInit(): void {
     this.store.dispatch(getTrainees({ queryParams: this.route.snapshot.queryParams as DataFiltersQueryParams }));

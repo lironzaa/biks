@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { combineLatest, distinctUntilChanged, Observable, of, shareReplay, startWith } from "rxjs";
 import { map } from "rxjs/operators";
@@ -13,6 +13,8 @@ import { CustomErrorMessages, getErrorMessage } from "./error-messages";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorInputComponent implements OnInit {
+  formUtilitiesService = inject(FormUtilitiesService);
+
   @Input({ required: true }) public controlName?: string;
   @Input({ required: true }) public formContained!: AbstractControl;
   @Input({ required: true }) public formName!: string;
@@ -20,9 +22,6 @@ export class ErrorInputComponent implements OnInit {
 
   error$!: Observable<string>;
   isFormSubmitted$!: Observable<boolean>;
-
-  constructor(private formUtilitiesService: FormUtilitiesService) {
-  }
 
   ngOnInit(): void {
     this.isFormSubmitted$ = this.formUtilitiesService.getFormSubmitAttemptListener(this.formName);

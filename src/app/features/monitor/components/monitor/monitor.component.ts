@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
@@ -24,9 +24,16 @@ import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MonitorComponent extends Unsubscribe implements OnInit {
-  traineesState$: Observable<TraineesState>;
-  traineesOrigin!: Trainee[];
-  traineesStateIds$: Observable<string[]>;
+  formUtilitiesService = inject(FormUtilitiesService);
+  store = inject(Store);
+  fb = inject(FormBuilder);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  paginationDataService = inject(PaginationDataService);
+
+  traineesState$ = new Observable<TraineesState>();
+  traineesStateIds$ = new Observable<string[]>();
+  traineesOrigin: Trainee[] = [];
   monitorTableConfig = monitorTableConfig;
   isResetPage = false;
 
@@ -37,20 +44,18 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
     "isFailed": new FormControl<boolean | string>(true),
   });
 
-  constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store, private route: ActivatedRoute,
-              private paginationDataService: PaginationDataService, private router: Router) {
-    super();
-    this.traineesStateIds$ = store.select(traineesFeature.selectTraineesIds);
-    this.traineesState$ = store.select(traineesFeature.selectTraineesState);
-  }
-
   ngOnInit(): void {
-    this.store.select(traineesFeature.selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
-      .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
+    this.initStoreSelects();
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
+  }
+
+  initStoreSelects(): void {
+    this.store.select(traineesFeature.selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
+      .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
+    this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
+    this.traineesState$ = this.store.select(traineesFeature.selectTraineesState);
   }
 
   patchFiltersFormValue(): void {

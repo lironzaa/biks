@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Observable } from "rxjs";
 
-import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
 
 @Component({
@@ -12,15 +10,12 @@ import { PaginationDataService } from "../../../services/pagination-data.service
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnInit {
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  paginationDataService = inject(PaginationDataService);
+
   page!: number;
-
-  paginationData$: Observable<PaginationData>;
-
-  constructor(private route: ActivatedRoute, private router: Router,
-              private paginationDataService: PaginationDataService
-  ) {
-    this.paginationData$ = this.paginationDataService.getPaginationDataListener();
-  }
+  paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   ngOnInit(): void {
     this.initQueryParamsSub();

@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Observable } from "rxjs";
 
 import { DataTableColumn, DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
-import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { Trainee, TraineeRow } from "../../../../features/data/interfaces/trainee-interface";
 
 @Component({
@@ -14,6 +12,8 @@ import { Trainee, TraineeRow } from "../../../../features/data/interfaces/traine
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTableComponent {
+  paginationDataService = inject(PaginationDataService);
+
   @Input({ required: true }) dataTableConfig!: DataTableConfig;
   @Input({
     transform: (items: TraineeRow[] | Trainee[]): DataTableItem[] => items as unknown as DataTableItem[],
@@ -26,11 +26,7 @@ export class DataTableComponent {
   @Input() activeItemIdKey = "id";
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
 
-  paginationData$: Observable<PaginationData>;
-
-  constructor(private paginationDataService: PaginationDataService) {
-    this.paginationData$ = this.paginationDataService.getPaginationDataListener();
-  }
+  paginationData$ = this.paginationDataService.getPaginationDataListener()
 
   trackByItemId(index: number, item: DataTableItem): string {
     return (item.id as string);

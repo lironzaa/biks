@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
@@ -30,7 +30,14 @@ import { filterPartialDateRangeValue } from "../../custom-operators/custom-opera
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
-  traineesState$: Observable<TraineesState>;
+  formUtilitiesService = inject(FormUtilitiesService);
+  store = inject(Store);
+  fb = inject(FormBuilder);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  paginationDataService = inject(PaginationDataService);
+
+  traineesState$ = new Observable<TraineesState>();
   tableConfig = dataTableConfig;
   traineesRowsOrigin!: TraineeRow[];
   gradeRangeOptions = GradeRangeOptions;
@@ -51,19 +58,17 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   gradeRangeControl = this.dataFiltersForm.get("gradeRange");
   dateRangeGroup = this.dataFiltersForm.get("dateRange") as FormGroup;
 
-  constructor(private store: Store, private fb: FormBuilder,
-              private router: Router, private route: ActivatedRoute,
-              protected formUtilitiesService: FormUtilitiesService, private paginationDataService: PaginationDataService) {
-    super();
-    this.traineesState$ = store.select(traineesFeature.selectTraineesState);
-  }
-
   ngOnInit(): void {
-    this.store.select(traineesFeature.selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
-      .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
+    this.initStoreSelects();
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
+  }
+
+  initStoreSelects(): void {
+    this.traineesState$ = this.store.select(traineesFeature.selectTraineesState);
+    this.store.select(traineesFeature.selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
+      .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
   }
 
   patchFiltersFormValue(): void {

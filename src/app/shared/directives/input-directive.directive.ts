@@ -1,6 +1,6 @@
 import {
   Directive,
-  Inject,
+  inject,
   Injector,
   Input,
   OnInit,
@@ -21,8 +21,7 @@ import { Subject, distinctUntilChanged, startWith, takeUntil, tap } from "rxjs";
 })
 export class ControlValueAccessorDirective<T>
   implements ControlValueAccessor, OnInit {
-  constructor(@Inject(Injector) private injector: Injector) {
-  }
+  injector = inject(Injector);
 
   @Input() type = "text";
   control: FormControl | undefined;

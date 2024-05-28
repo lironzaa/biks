@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { catchError, map, mergeMap, switchMap } from "rxjs/operators";
@@ -32,15 +32,14 @@ import { Utils } from "../../../shared/class/utils.class";
 
 @Injectable()
 export class TraineesEffects {
+  route = inject(ActivatedRoute);
+  toastr = inject(ToastrService);
+  http = inject(HttpClient);
+  actions$ = inject(Actions);
+
   baseUrl = environment.baseUrl;
   apiPrefix = this.baseUrl + "trainees";
   gradesApiPrefix = this.baseUrl + "grades";
-
-  constructor(
-    private actions$: Actions, private http: HttpClient,
-    private toastr: ToastrService, private route: ActivatedRoute
-  ) {
-  }
 
   mapTraineeRows(trainees: Trainee[]): FormattedTrainees {
     const traineeRows: TraineeRow[] = [];
