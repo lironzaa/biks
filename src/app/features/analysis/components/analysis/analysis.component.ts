@@ -6,9 +6,10 @@ import { distinctUntilChanged, Observable, takeUntil } from "rxjs";
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../../data/data/subject-type-options";
 import { traineesFeature } from "../../../data/store/trainees.reducer";
-import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
+import { analysisFeature } from "../../store/analysis.reducer";
+import { setSelectedSubjects, setSelectedTraineesIds } from "../../store/analysis.actions";
 import { SubjectType } from "../../../data/types/subject-type";
-import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis-charts-interface";
+import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../interfaces/analysis-charts-interface";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
@@ -39,8 +40,8 @@ export class AnalysisComponent extends Unsubscribe implements OnInit {
 
   initStoreSelects(): void {
     this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
-    this.traineesGradesAverages$ = this.store.select(traineesFeature.selectGradesAveragesForSelectedTrainees);
-    this.subjectsGradesAverages$ = this.store.select(traineesFeature.selectGradesAveragesForSelectedSubjects);
+    this.traineesGradesAverages$ = this.store.select(analysisFeature.selectGradesAveragesForSelectedTrainees);
+    this.subjectsGradesAverages$ = this.store.select(analysisFeature.selectGradesAveragesForSelectedSubjects);
   }
 
   initValueChangesSubs(): void {

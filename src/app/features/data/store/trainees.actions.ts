@@ -7,7 +7,6 @@ import {
   TraineeRow
 } from "../interfaces/trainee-interface";
 import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
-import { SubjectType } from "../types/subject-type";
 import { GradeCreateData } from "../types/trainee-type";
 
 export const getTrainees = createAction(
@@ -58,14 +57,4 @@ export const filterTraineesRows = createAction(
 export const filterTrainees = createAction(
   "[Trainees] Filter Trainees]",
   props<{ trainees: Trainee[] }>()
-);
-
-export const setSelectedSubjects = createAction(
-  "[Trainees] Set Selected Subjects",
-  props<{ selectedSubjects: SubjectType[] }>()
-);
-
-export const setSelectedTraineesIds = createAction(
-  "[Trainees] Set Selected Trainees Ids",
-  props<{ traineesIds: string[] }>()
 );

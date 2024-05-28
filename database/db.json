@@ -349,6 +349,16 @@
       "city": "Ramat Gan",
       "country": "Israel",
       "zip": "52376"
+    },
+    {
+      "id": "c190",
+      "name": "Liron Zalait",
+      "email": "lironzaa@gmail.com",
+      "dateJoined": "2024-05-01T21:00:00.000Z",
+      "address": "Yehuda Hanasi 16 apartment 8",
+      "city": "Ramat Gan",
+      "country": "Israel",
+      "zip": "52376"
     }
   ],
   "grades": [
@@ -1072,6 +1082,13 @@
       "subject": "Geography",
       "date": "2024-04-30T21:00:00.000Z",
       "traineeId": null
+    },
+    {
+      "id": "e1e3",
+      "grade": 80,
+      "subject": "Chemistry",
+      "date": "2024-05-01T21:00:00.000Z",
+      "traineeId": "c190"
     }
   ]
 }

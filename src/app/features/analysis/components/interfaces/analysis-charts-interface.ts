@@ -1,5 +1,5 @@
-import { Trainee } from "../data/interfaces/trainee-interface";
-import { SubjectType } from "../data/types/subject-type";
+import { Trainee } from "../../../data/interfaces/trainee-interface";
+import { SubjectType } from "../../../data/types/subject-type";
 
 export interface ChartTraineesGradesAverages {
   averages: {
