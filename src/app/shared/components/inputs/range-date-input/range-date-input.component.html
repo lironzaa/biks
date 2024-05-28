@@ -1,0 +1,13 @@
+<ng-container *ngIf="control">
+  <mat-form-field>
+    <mat-label>Enter a date range</mat-label>
+    <mat-date-range-input [formGroup]="formGroup" [rangePicker]="picker">
+      <input matStartDate [formControl]="startDateControl" placeholder="Start date">
+      <input matEndDate [formControl]="endDateControl" placeholder="End date">
+    </mat-date-range-input>
+    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+    <mat-icon matDatepickerToggleIcon (click)="clearDate()">clear</mat-icon>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+</ng-container>

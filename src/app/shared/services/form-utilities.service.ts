@@ -12,6 +12,14 @@ export class FormUtilitiesService {
     return formGroup.get(fieldName) as FormControl;
   }
 
+  getGroup(formGroup: FormGroup, groupName: string): FormGroup {
+    return formGroup.get(groupName) as FormGroup;
+  }
+
+  getNestedControl(nestedFormGroup: FormGroup, fieldName: string): FormControl {
+    return nestedFormGroup.get(fieldName) as FormControl;
+  }
+
   getFormSubmitAttemptListener(formKey: string): Observable<boolean> {
     if (!this.formSubmitAttempts[formKey]) this.formSubmitAttempts[formKey] = new Subject<boolean>();
     return this.formSubmitAttempts[formKey].asObservable();

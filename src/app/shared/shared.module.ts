@@ -32,6 +32,7 @@ import { ChartComponent } from "./components/charts/chart/chart.component";
 import { ConfirmationDialogComponent } from "./components/dialogs/confirmation-dialog/confirmation-dialog.component";
 import { CheckboxInputComponent } from "./components/inputs/checkbox-input/checkbox-input.component";
 import { NumberInputComponent } from "./components/inputs/number-input/number-input.component";
+import { RangeDateInputComponent } from "./components/inputs/range-date-input/range-date-input.component";
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { NumberInputComponent } from "./components/inputs/number-input/number-in
     ConfirmationDialogComponent,
     CheckboxInputComponent,
     NumberInputComponent,
+    RangeDateInputComponent,
   ],
   exports: [
     DataTableComponent,
@@ -59,7 +61,8 @@ import { NumberInputComponent } from "./components/inputs/number-input/number-in
     DateInputComponent,
     ChartComponent,
     CheckboxInputComponent,
-    NumberInputComponent
+    NumberInputComponent,
+    RangeDateInputComponent
   ],
   imports: [
     CommonModule,

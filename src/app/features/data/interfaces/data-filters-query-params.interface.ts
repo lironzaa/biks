@@ -1,10 +1,20 @@
 import { GradeRangeType } from "../types/grade-range-type";
 
-export interface DataFiltersQueryParams {
+interface DataFiltersQueryParamsBase {
   page?: string;
-  id?: string;
+  id?: string | null;
   grade?: number | null;
-  gradeRange?: GradeRangeType;
-  startDate?: string | Date;
-  endDate?: string | Date;
+  gradeRange?: GradeRangeType | null;
+}
+
+export interface DataFiltersQueryParams extends DataFiltersQueryParamsBase {
+  startDate?: string | Date | null;
+  endDate?: string | Date | null;
+}
+
+export interface DataFiltersFormPatchValues extends DataFiltersQueryParamsBase {
+  dateRange?: {
+    startDate?: string | Date | null;
+    endDate?: string | Date | null;
+  }
 }

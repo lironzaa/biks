@@ -28,15 +28,12 @@
         [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'gradeRange')"
         [name]="'gradeRange'"
       />
-      <app-date-input
-        [placeholder]="'Start Date'"
-        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'startDate')"
-        [name]="'startDate'"
-      />
-      <app-date-input
-        [placeholder]="'End Date'"
-        [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'endDate')"
-        [name]="'endDate'"
+      <app-range-date-input
+        [placeholder]="'Date range'"
+        [formGroup]="formUtilitiesService.getGroup(dataFiltersForm, 'dateRange')"
+        [name]="'dateRange'"
+        [startDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'startDate')"
+        [endDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'endDate')"
       />
       <app-button
         [text]="'Reset filters'"

@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { debounceTime, distinctUntilChanged, Observable, skip, takeUntil } from "rxjs";
-import { map } from "rxjs/operators";
 
 import { filterTraineesRows, setSelectedTraineeRow } from "../../store/trainees.actions";
 import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
-import { DataFiltersQueryParams } from "../../interfaces/data-filters-query-params.interface";
-import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
+import {
+  DataFiltersFormPatchValues,
+  DataFiltersQueryParams,
+} from "../../interfaces/data-filters-query-params.interface";
+import { DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { TraineeRow } from "../../interfaces/trainee-interface";
+import { DataFiltersFormValues, FiltersFormState } from "../../interfaces/data-filters-form-values";
 import { dataTableConfig } from "../../data/data-table-config";
 import { GradeRangeOptions } from "../../data/grade-range-options";
 import { DataFiltersEnum } from "../../enums/data-filters-enum";
@@ -18,6 +21,7 @@ import { FormUtilitiesService } from "../../../../shared/services/form-utilities
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 import { GradeRangeType } from "../../types/grade-range-type";
+import { filterPartialDateRangeValue } from "../../custom-operators/custom-operators";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -32,17 +36,20 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   gradeRangeOptions = GradeRangeOptions;
 
   dataFiltersForm = this.fb.group({
-    "id": new FormControl<string>(""),
+    "id": new FormControl<string | null>(""),
     "grade": new FormControl<number | null>(null),
-    "gradeRange": new FormControl<GradeRangeType>({
+    "gradeRange": new FormControl<GradeRangeType | null>({
       value: GradeRangeEnum.equals,
       disabled: !this.route.snapshot.queryParams["grade"]
     }),
-    "startDate": new FormControl<string | Date>(""),
-    "endDate": new FormControl<string | Date>(""),
+    "dateRange": this.fb.group({
+      "startDate": new FormControl<string | Date>(""),
+      "endDate": new FormControl<string | Date>(""),
+    })
   });
 
   gradeRangeControl = this.dataFiltersForm.get("gradeRange");
+  dateRangeGroup = this.dataFiltersForm.get("dateRange") as FormGroup;
 
   constructor(private store: Store, private fb: FormBuilder,
               private router: Router, private route: ActivatedRoute,
@@ -60,11 +67,20 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   }
 
   patchFiltersFormValue(): void {
-    const queryParamsValue: DataFiltersQueryParams = { ...this.route.snapshot.queryParams };
-    if (queryParamsValue.startDate) queryParamsValue.startDate = new Date(queryParamsValue.startDate);
-    if (queryParamsValue.endDate) queryParamsValue.endDate = new Date(queryParamsValue.endDate);
-    if (queryParamsValue.grade) queryParamsValue.grade = Number(queryParamsValue.grade);
-    this.dataFiltersForm.patchValue(queryParamsValue);
+    const dataFiltersQueryParams: DataFiltersQueryParams = { ...this.route.snapshot.queryParams };
+    const dataFiltersQueryParamsPatchValues: DataFiltersFormPatchValues = {
+      ...(dataFiltersQueryParams.page && { page: dataFiltersQueryParams.page }),
+      ...(dataFiltersQueryParams.id && { id: dataFiltersQueryParams.id }),
+      ...(dataFiltersQueryParams.grade && { grade: Number(dataFiltersQueryParams.grade) }),
+      ...(dataFiltersQueryParams.gradeRange && { gradeRange: dataFiltersQueryParams.gradeRange }),
+      ...(dataFiltersQueryParams.startDate && dataFiltersQueryParams.endDate && {
+        dateRange: {
+          startDate: new Date(dataFiltersQueryParams.startDate),
+          endDate: new Date(dataFiltersQueryParams.endDate),
+        }
+      }),
+    }
+    this.dataFiltersForm.patchValue(dataFiltersQueryParamsPatchValues);
   }
 
   initFiltersFormSub(): void {
@@ -72,36 +88,50 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        map(formValues => {
-          if (formValues.grade === null) formValues.gradeRange = null;
-          return this.formatSearchFormToQueryParams(formValues);
-        }),
+        filterPartialDateRangeValue(),
         skip(1),
         takeUntil(this.unsubscribe$)
-      ).subscribe(formattedFiltersValues => {
-      const updatedQueryParams = formattedFiltersValues.formatedQueryParams;
-      this.setGrandeRangeIsDisabled(updatedQueryParams.grade);
+      ).subscribe(filtersFormValues => {
+      const filtersFormState: FiltersFormState = this.generateFormState(filtersFormValues);
+      this.setGrandeRangeIsDisabled(filtersFormState.updatedQueryParams.grade);
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
-          ...updatedQueryParams,
-          page: formattedFiltersValues.isResetPage ? 1 : this.route.snapshot.queryParams.page
+          ...filtersFormState.updatedQueryParams,
+          page: filtersFormState.isResetPage ? 1 : this.route.snapshot.queryParams.page
         },
         queryParamsHandling: "merge",
       });
     })
   }
 
-  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): {
-    formatedQueryParams: DataFiltersQueryParams;
-    isResetPage: boolean
-  } {
+  generateFormState(filtersFormValues: Partial<DataFiltersFormValues>): FiltersFormState {
+    const updatedQueryParams: DataFiltersQueryParams = {};
     let isResetPage = false;
-    for (const value in formValues) {
-      if (formValues[value] === "" || formValues[value] === null) formValues[value] = null;
-      else isResetPage = true;
+    if (filtersFormValues.dateRange) {
+      updatedQueryParams.endDate = filtersFormValues.dateRange.endDate;
+      updatedQueryParams.startDate = filtersFormValues.dateRange.startDate;
+      isResetPage = true;
+    } else {
+      updatedQueryParams.startDate = null;
+      updatedQueryParams.endDate = null;
     }
-    return { formatedQueryParams: formValues, isResetPage };
+    if (filtersFormValues.grade) {
+      updatedQueryParams.grade = filtersFormValues.grade;
+      updatedQueryParams.gradeRange = this.gradeRangeControl?.value;
+      isResetPage = true;
+    } else {
+      updatedQueryParams.grade = null;
+      updatedQueryParams.gradeRange = null;
+    }
+    if (filtersFormValues.id) {
+      updatedQueryParams.id = filtersFormValues.id;
+      isResetPage = true;
+    } else updatedQueryParams.id = null;
+    return {
+      updatedQueryParams,
+      isResetPage
+    }
   }
 
   initQueryParamsSub(): void {
@@ -169,7 +199,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
     else this.gradeRangeControl?.disable({ emitEvent: false });
   }
 
-  compareAccordingToOperator(grade: number, gradeRange: string | undefined, queryParamsGrade: number): boolean {
+  compareAccordingToOperator(grade: number, gradeRange: string | null | undefined, queryParamsGrade: number): boolean {
     switch (gradeRange) {
       case GradeRangeEnum.greaterThan:
         return grade > queryParamsGrade!;
