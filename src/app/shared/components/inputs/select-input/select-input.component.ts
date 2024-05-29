@@ -21,7 +21,7 @@ import { CustomErrorMessages } from "../error-input/error-messages";
 export class SelectInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input({ required: true }) options: string[] = [];
+  @Input({ required: true }) options: (string | number)[] = [];
   @Input() placeholder?: string | undefined;
   @Input() customErrorMessages: CustomErrorMessages = {};
   @Input() name!: string;
@@ -30,7 +30,7 @@ export class SelectInputComponent<T>
   @Input() isEmptyOption = false;
   @Input() isFullWidth = false;
 
-  trackByOptionName(index: number, option: string): string {
+  trackByOptionName(index: number, option: string | number): string | number {
     return option;
   }
 }

@@ -1,5 +1,11 @@
 <div *ngIf="paginationData$ | async; let paginationData" class="pagination-container">
-  <div class="d-flex mb-2">
+  <div class="pagination-buttons">
+    <app-button
+      [text]="'First page'"
+      [color]="'primary'"
+      [isDisabled]="!paginationData.hasPreviousPage"
+      (buttonClicked)="navigateToPage('firstPage')"
+    />
     <app-button
       [text]="'Previous'"
       [color]="'primary'"
@@ -7,7 +13,7 @@
       (buttonClicked)="navigateToPage('previousPage')"
     />
     <div class="current-page-div">
-      <p class="current-page">{{ page }}</p>
+      <span>page {{ currentPage }} of {{totalPages}}</span>
     </div>
     <app-button
       [text]="'Next'"
@@ -15,11 +21,23 @@
       [isDisabled]="!paginationData.hasNextPage"
       (buttonClicked)="navigateToPage('nextPage')"
     />
+    <app-button
+      [text]="'Last page'"
+      [color]="'primary'"
+      [isDisabled]="!paginationData.hasNextPage"
+      (buttonClicked)="navigateToPage('lastPage')"
+    />
   </div>
-  <div>
-    <span>Showing
-      <span *ngIf="paginationData.hasNextPage">{{paginationData.itemsPerPage * paginationData.currentPage}}</span>
-      <span *ngIf="!paginationData.hasNextPage">{{paginationData.itemsCount}}</span>
+  <div class="results-container">
+    <div>
+      <span>Showing <span>{{ paginationData.from }}-{{ paginationData.to }}</span>
       of {{ paginationData.itemsCount }} results</span>
+    </div>
+    <app-select-input
+      [options]="paginationOptions"
+      [placeholder]="'Items Per Page'"
+      [formControl]="formUtilitiesService.getControl(paginationForm, 'itemsPerPage')"
+      [name]="'itemsPerPage'"
+    />
   </div>
 </div>

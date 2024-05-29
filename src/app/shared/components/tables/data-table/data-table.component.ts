@@ -28,8 +28,8 @@ export class DataTableComponent {
 
   paginationData$ = this.paginationDataService.getPaginationDataListener()
 
-  trackByItemId(index: number, item: DataTableItem): string {
-    return (item.id as string);
+  trackByItemId(index: number, item: DataTableItem): string | number {
+    return item.id;
   }
 
   trackByItemDataProperty(index: number, item: DataTableColumn): string {

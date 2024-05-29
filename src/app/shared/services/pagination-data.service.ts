@@ -7,29 +7,52 @@ import { PaginationData } from "../interfaces/pagination-data-interface";
   providedIn: "root"
 })
 export class PaginationDataService {
-  private ITEMS_PER_PAGE = 10;
+  private _itemsPerPage: number = this.getItemsPerPageFromLocalStorage();
+
+  get itemsPerPage(): number {
+    return this._itemsPerPage;
+  }
+
+  set itemsPerPage(itemsPerPage: number) {
+    this._itemsPerPage = itemsPerPage;
+    localStorage.setItem("itemsPerPage", itemsPerPage.toString());
+    this.setPaginationData(this.calculatePaginationData(this.paginationData.value.currentPage, this.paginationData.value.itemsCount));
+  }
+
+  private getItemsPerPageFromLocalStorage(): number {
+    const storedItemsPerPage = localStorage.getItem("itemsPerPage");
+    return storedItemsPerPage ? +storedItemsPerPage : 10;
+  }
+
   private paginationData = new BehaviorSubject<PaginationData>({
     currentPage: 1,
     itemsCount: 0,
-    pagesCount: 0,
+    totalPages: 0,
     nextPage: 0,
     hasNextPage: false,
     previousPage: 0,
     hasPreviousPage: false,
-    itemsPerPage: this.ITEMS_PER_PAGE
+    itemsPerPage: this._itemsPerPage,
+    from: 0,
+    to: 0
   });
 
-  calculatePaginationData(page: number, itemsCount?: number): PaginationData {
+  calculatePaginationData(page: number, itemsCount?: number | undefined): PaginationData {
     const updatedItemsCount = itemsCount ?? this.paginationData.value.itemsCount;
+    const itemsPerPage = this._itemsPerPage;
+    const to = this.paginationData.value.hasNextPage ? page * itemsPerPage : Math.min(page * itemsPerPage, updatedItemsCount);
+
     return {
       currentPage: page,
       itemsCount: updatedItemsCount,
-      pagesCount: Math.ceil(updatedItemsCount / this.ITEMS_PER_PAGE),
+      totalPages: Math.ceil(updatedItemsCount / itemsPerPage),
       nextPage: page + 1,
-      hasNextPage: this.ITEMS_PER_PAGE * page < updatedItemsCount,
+      hasNextPage: itemsPerPage * page < updatedItemsCount,
       previousPage: page - 1,
       hasPreviousPage: page > 1,
-      itemsPerPage: this.ITEMS_PER_PAGE
+      itemsPerPage: itemsPerPage,
+      from: ((page - 1) * itemsPerPage) + 1,
+      to: to
     }
   }
 

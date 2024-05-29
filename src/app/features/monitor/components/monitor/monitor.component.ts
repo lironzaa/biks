@@ -60,7 +60,7 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
 
   patchFiltersFormValue(): void {
     const queryParamsValue: MonitorsFiltersQueryParams = { ...this.route.snapshot.queryParams };
-    if (queryParamsValue.ids) queryParamsValue.ids = (queryParamsValue.ids as string).split(",");
+    if (queryParamsValue.ids && typeof queryParamsValue.ids === "string") queryParamsValue.ids = queryParamsValue.ids.split(",");
     if (queryParamsValue.isPassed && queryParamsValue.isPassed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isPassed = false;
     if (queryParamsValue.isFailed && queryParamsValue.isFailed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isFailed = false;
     this.monitorFiltersForm.patchValue(queryParamsValue);
@@ -120,7 +120,7 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
 
     let idsArrayQueryParam: string[];
     const isFilterByIds = queryParams.ids !== undefined;
-    if (isFilterByIds) idsArrayQueryParam = (queryParams.ids as string).split(",");
+    if (isFilterByIds && typeof queryParams.ids === "string") idsArrayQueryParam = queryParams.ids.split(",");
 
     const isFilterIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
     const isFilterIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
