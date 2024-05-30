@@ -1,4 +1,4 @@
-<ng-container *ngIf="traineesState$ | async; let traineesState">
+@if (traineesState$ | async; as traineesState) {
   <app-data-table
     [dataTableConfig]="tableConfig"
     [items]="traineesState.traineesRows"
@@ -42,4 +42,4 @@
       />
     </div>
   </app-data-table>
-</ng-container>
+}

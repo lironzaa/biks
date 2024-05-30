@@ -29,8 +29,4 @@ export class SelectInputComponent<T>
   @Input() isMultiple = false;
   @Input() isEmptyOption = false;
   @Input() isFullWidth = false;
-
-  trackByOptionName(index: number, option: string | number): string | number {
-    return option;
-  }
 }

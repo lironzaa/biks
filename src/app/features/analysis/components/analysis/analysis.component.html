@@ -1,6 +1,6 @@
 <div class="inputs-container">
   <div class="d-flex-center">
-    <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+    @if (traineesStateIds$ | async; as traineesStateIds) {
       <app-select-input
         class="w-100"
         [options]="traineesStateIds"
@@ -10,7 +10,7 @@
         [isMultiple]="true"
         [isFullWidth]="true"
       />
-    </ng-container>
+    }
   </div>
   <div class="d-flex-center">
     <app-select-input
@@ -26,27 +26,28 @@
 </div>
 <div class="charts-container">
   <div class="chart">
-    <ng-container *ngIf="traineesGradesAverages$ | async; let traineesGradesAverages">
-      <app-chart *ngFor="let traineesGradesAverage of traineesGradesAverages; trackBy: trackByTrainee"
-                 [data]="traineesGradesAverage.averages"
-                 [graphLabel]="'Grades averages for trainee ' + traineesGradesAverage.trainee.name"
-                 [labels]="['Grades averages per month']"
-                 [selectLabel]="'Select trainees to display chart'"
-      />
-    </ng-container>
-    <ng-container *ngIf="(traineesGradesAverages$ | async)?.length === 0">
-      <p class="text-center">Select at least one trainee to display grades average chart</p>
-    </ng-container>
+    @if (traineesGradesAverages$ | async; as traineesGradesAverages) {
+      @for (traineesGradesAverage of traineesGradesAverages; track traineesGradesAverage.trainee.id) {
+        <app-chart
+          [data]="traineesGradesAverage.averages"
+          [graphLabel]="'Grades averages for trainee ' + traineesGradesAverage.trainee.name"
+          [labels]="['Grades averages per month']"
+          [selectLabel]="'Select trainees to display chart'"
+        />
+      } @empty {
+        <p class="text-center">Select at least one trainee to display grades average chart</p>
+      }
+    }
   </div>
   <div class="chart">
-    <ng-container *ngIf="subjectsGradesAverages$ | async; let subjectsGradesAverages">
+    @if (subjectsGradesAverages$ | async; as subjectsGradesAverages) {
       <app-chart
         [data]="subjectsGradesAverages"
         [graphLabel]="'Grades averages per subject'"
         [labels]="['Grades averages']"
         [selectLabel]="'Select subjects to display chart'"
       />
-    </ng-container>
+    }
   </div>
 </div>
 

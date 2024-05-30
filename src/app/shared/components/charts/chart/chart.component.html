@@ -9,7 +9,9 @@
     [type]="barChartType"
   >
   </canvas>
-  <div *ngIf="barChartData.datasets.length===0" class="d-flex-center">
-    <p>{{ selectLabel }}</p>
-  </div>
+  @if (barChartData.datasets.length === 0) {
+    <div class="d-flex-center">
+      <p>{{ selectLabel }}</p>
+    </div>
+  }
 </div>

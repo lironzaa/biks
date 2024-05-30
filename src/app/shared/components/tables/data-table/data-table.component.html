@@ -5,41 +5,51 @@
 <table class="table">
   <thead>
   <tr>
-    <th *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
-        scope="col">{{ header.title }}
-    </th>
+    @for (header of dataTableConfig.columns; track header.dataProperty) {
+      <th scope="col">{{ header.title }}</th>
+    }
   </tr>
   </thead>
   <tbody>
-  <tr *ngIf="isLoading">
-    <td colspan="12">
-      <app-spinner></app-spinner>
-    </td>
-  </tr>
-  <ng-container *ngIf="paginationData$ | async; let paginationData">
-    <tr
-      [ngClass]="[activeItemId === item[activeItemIdKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
-      *ngFor="let item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage;
-     trackBy: trackByItemId" (click)="onTableRowClick(item)">
-      <ng-container *ngIf="!isLoading && items.length > 0">
-        <td *ngFor="let header of dataTableConfig.columns; trackBy: trackByItemDataProperty"
-            [ngSwitch]="header.columnType" [ngClass]="{'pointer': isPointer}">
-          <ng-container *ngSwitchCase="'date'">
-            {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            {{ item[header.dataProperty] }}
-          </ng-container>
+    @if (isLoading) {
+      <tr>
+        <td colspan="12">
+          <app-spinner></app-spinner>
         </td>
-      </ng-container>
-    </tr>
-  </ng-container>
-  <tr *ngIf="!isLoading && items.length === 0">
-    <td colspan="12">
-      <p>No items to display</p>
-    </td>
-  </tr>
+      </tr>
+    }
+    @if (paginationData$ | async; as paginationData) {
+      @for (item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; ; track item.id) {
+        <tr
+          [ngClass]="[activeItemId === item[activeItemIdKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
+          (click)="onTableRowClick(item)">
+          @if (!isLoading && items.length > 0) {
+            @for (header of dataTableConfig.columns; track header.dataProperty) {
+              <td [ngClass]="{'pointer': isPointer}">
+                @switch (header.columnType) {
+                  @case ("date") {
+                    {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
+                  }
+                  @default {
+                    {{ item[header.dataProperty] }}
+                  }
+                }
+              </td>
+            }
+          }
+        </tr>
+      }
+    }
+    @if (!isLoading && items.length === 0) {
+      <tr>
+        <td colspan="12">
+          <p>No items to display</p>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
 
-<app-pagination *ngIf="!isLoading && items.length > 0"></app-pagination>
+@if (!isLoading && items.length > 0) {
+  <app-pagination></app-pagination>
+}

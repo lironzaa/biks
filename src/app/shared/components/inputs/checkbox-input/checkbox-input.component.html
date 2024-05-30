@@ -1,12 +1,14 @@
-<ng-container *ngIf="control">
+@if (control) {
   <section>
     <mat-label>{{ label }}</mat-label>
     <mat-checkbox [formControl]="control">{{ option }}
     </mat-checkbox>
   </section>
-  <app-error-input *ngIf="formName"
-                   [formContained]="control"
-                   [controlName]="name"
-                   [formName]="formName"
-  ></app-error-input>
-</ng-container>
+  @if (formName) {
+    <app-error-input
+      [formContained]="control"
+      [controlName]="name"
+      [formName]="formName"
+    ></app-error-input>
+  }
+}

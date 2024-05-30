@@ -1,5 +1,5 @@
 <div class="monitor-container">
-  <ng-container *ngIf="traineesState$ | async; let traineesState">
+  @if (traineesState$ | async; as traineesState) {
     <app-data-table
       [dataTableConfig]="monitorTableConfig"
       [items]="traineesState.trainees"
@@ -7,7 +7,7 @@
       [filtersForm]="monitorFiltersForm"
     >
       <div class="mb-3">
-        <ng-container *ngIf="traineesStateIds$ | async; let traineesStateIds">
+        @if (traineesStateIds$ | async; as traineesStateIds) {
           <app-select-input
             class="w-100"
             [options]="traineesStateIds"
@@ -17,7 +17,7 @@
             [isMultiple]="true"
             [isFullWidth]="true"
           />
-        </ng-container>
+        }
         <app-text-input
           class="w-100"
           [placeholder]="'Names'"
@@ -45,5 +45,5 @@
         />
       </div>
     </app-data-table>
-  </ng-container>
+  }
 </div>

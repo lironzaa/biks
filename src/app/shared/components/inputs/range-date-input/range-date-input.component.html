@@ -1,4 +1,4 @@
-<ng-container *ngIf="control">
+@if (control) {
   <mat-form-field>
     <mat-label>Enter a date range</mat-label>
     <mat-date-range-input [formGroup]="formGroup" [rangePicker]="picker">
@@ -10,4 +10,4 @@
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-date-range-picker #picker></mat-date-range-picker>
   </mat-form-field>
-</ng-container>
+}

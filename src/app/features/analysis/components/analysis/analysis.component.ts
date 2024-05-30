@@ -58,8 +58,4 @@ export class AnalysisComponent extends Unsubscribe implements OnInit {
       this.store.dispatch(setSelectedSubjects({ selectedSubjects: selectedSubjects! }));
     })
   }
-
-  trackByTrainee(index: number, item: ChartTraineesGradesAverages): string {
-    return item.trainee.id;
-  }
 }

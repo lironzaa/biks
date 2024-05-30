@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 
-import { DataTableColumn, DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
+import { DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
 import { Trainee, TraineeRow } from "../../../../features/data/interfaces/trainee-interface";
 
@@ -27,14 +27,6 @@ export class DataTableComponent {
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
 
   paginationData$ = this.paginationDataService.getPaginationDataListener()
-
-  trackByItemId(index: number, item: DataTableItem): string | number {
-    return item.id;
-  }
-
-  trackByItemDataProperty(index: number, item: DataTableColumn): string {
-    return item.dataProperty;
-  }
 
   onTableRowClick(item: DataTableItem): void {
     this.tableRowClicked.emit(item);
