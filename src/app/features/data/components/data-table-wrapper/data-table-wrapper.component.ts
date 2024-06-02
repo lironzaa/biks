@@ -165,7 +165,6 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       }
       // if (isApplyFilters) this.applyFiltersOnData(queryParams);
       // else this.resetDataToOrigin();
-      console.log(this.filterFn);
     });
   }
 

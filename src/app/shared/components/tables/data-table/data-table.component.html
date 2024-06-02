@@ -2,8 +2,6 @@
   <ng-content></ng-content>
 </app-table-filters>
 
-<div>{{ (paginationData$ | async) | json }}</div>
-
 <table class="table">
   <thead>
   <tr>
@@ -20,28 +18,26 @@
         </td>
       </tr>
     }
-<!--    @if (paginationData$ | async; as paginationData) {-->
-      @for (item of items | filterTableItems : filterFn | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; track item[idKey]) {
-        <tr
-          [ngClass]="[activeItemId === item[idKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
-          (click)="onTableRowClick(item)">
-          @if (!isLoading && items.length > 0) {
-            @for (header of dataTableConfig.columns; track header.dataProperty) {
-              <td [ngClass]="{'pointer': isPointer}">
-                @switch (header.columnType) {
-                  @case ("date") {
-                    {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
-                  }
-                  @default {
-                    {{ item[header.dataProperty] }}
-                  }
+    @for (item of items | filterTableItems : filterFn | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; track item[idKey]) {
+      <tr
+        [ngClass]="[activeItemId === item[idKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
+        (click)="onTableRowClick(item)">
+        @if (!isLoading && items.length > 0) {
+          @for (header of dataTableConfig.columns; track header.dataProperty) {
+            <td [ngClass]="{'pointer': isPointer}">
+              @switch (header.columnType) {
+                @case ("date") {
+                  {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
                 }
-              </td>
-            }
+                @default {
+                  {{ item[header.dataProperty] }}
+                }
+              }
+            </td>
           }
-        </tr>
-      }
-<!--    }-->
+        }
+      </tr>
+    }
     @if (!isLoading && items.length === 0) {
       <tr>
         <td colspan="12">

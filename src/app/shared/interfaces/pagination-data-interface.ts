@@ -10,5 +10,4 @@ export interface PaginationData {
   from: number;
   to: number;
   isPaginated: boolean;
-  isResetPage: boolean;
 }
