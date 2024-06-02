@@ -57,26 +57,32 @@ export class PaginationComponent extends Unsubscribe implements OnInit {
       ).subscribe(itemsPerPage => {
       this.currentPage = 1;
       this.paginationDataService.itemsPerPage = itemsPerPage;
+      this.setPaginationData();
       this.navigate(this.currentPage);
     })
+  }
+
+  setPaginationData(): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(this.currentPage);
+    this.paginationDataService.setPaginationData(paginationData);
   }
 
   navigateToPage(navigateType: "previousPage" | "nextPage" | "firstPage" | "lastPage"): void {
     switch (navigateType) {
       case "previousPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.currentPage - 1));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.currentPage - 1, undefined, true));
         this.navigate(this.currentPage - 1);
         break;
       case "nextPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.currentPage + 1));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.currentPage + 1, undefined, true));
         this.navigate(this.currentPage + 1);
         break;
       case "firstPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(1));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(1, undefined, true));
         this.navigate(1);
         break;
       case "lastPage":
-        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.totalPages));
+        this.paginationDataService.setPaginationData(this.paginationDataService.calculatePaginationData(this.totalPages, undefined, true));
         this.navigate(this.totalPages);
         break;
     }

@@ -9,4 +9,5 @@ export interface PaginationData {
   itemsPerPage: number;
   from: number;
   to: number;
+  isPaginated: boolean;
 }

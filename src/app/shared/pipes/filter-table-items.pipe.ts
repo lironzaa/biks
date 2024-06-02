@@ -29,6 +29,7 @@ export class FilterTableItemsPipe implements PipeTransform {
   }
 
   setPaginationData(itemsCount: number): void {
+    console.log(this.route.snapshot.queryParams.page);
     const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, itemsCount);
     console.log(paginationData);
     this.paginationDataService.setPaginationData(paginationData);
