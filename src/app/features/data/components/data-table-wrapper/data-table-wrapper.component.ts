@@ -2,7 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/cor
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { debounceTime, distinctUntilChanged, Observable, skip, takeUntil } from "rxjs";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  skip,
+  takeUntil,
+  withLatestFrom
+} from "rxjs";
 
 import { filterTraineesRows, setSelectedTraineeRow } from "../../store/trainees.actions";
 import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
@@ -59,6 +66,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   dateRangeGroup = this.dataFiltersForm.get("dateRange") as FormGroup;
 
   filterFn: ((item: DataTableItem) => boolean) | undefined;
+  paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   ngOnInit(): void {
     this.initStoreSelects();
@@ -142,10 +150,19 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   }
 
   initQueryParamsSub(): void {
-    this.route.queryParams.subscribe((queryParams) => {
-      const isApplyFilters = this.isApplyFilters(queryParams);
-      if (isApplyFilters) this.filterFn = this.createFilterFn(queryParams);
-      else this.filterFn = undefined;
+    this.route.queryParams.pipe(
+      withLatestFrom(this.paginationData$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ queryParams, paginationData ]) => {
+      console.log("Query Params:", queryParams);
+      console.log("Pagination Data:", paginationData);
+      if (!paginationData.isPaginated) {
+        const isApplyFilters = this.isApplyFilters(queryParams);
+        if (isApplyFilters) this.filterFn = this.createFilterFn(queryParams);
+        else this.filterFn = undefined;
+      } else {
+        this.setPaginationData(paginationData.currentPage);
+      }
       // if (isApplyFilters) this.applyFiltersOnData(queryParams);
       // else this.resetDataToOrigin();
       console.log(this.filterFn);
@@ -153,6 +170,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   }
 
   createFilterFn(queryParams: DataFiltersQueryParams): (item: DataTableItem) => boolean {
+    console.log("inside createFilterFn");
     let startDate: Date;
     let endDate: Date;
     const isFilterByDate = queryParams.startDate !== undefined && queryParams.endDate !== undefined;
@@ -191,11 +209,11 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   //   this.store.dispatch(filterTraineesRows({ traineesRows: this.traineesRowsOrigin }));
   // }
 
-  // setPaginationData(itemsLength: number): void {
-  //   const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, itemsLength);
-  //   console.log(paginationData);
-  //   this.paginationDataService.setPaginationData(paginationData);
-  // }
+  setPaginationData(currentPage: number): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(currentPage);
+    console.log(paginationData);
+    this.paginationDataService.setPaginationData(paginationData);
+  }
 
   isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
     for (const filter in queryParams) {

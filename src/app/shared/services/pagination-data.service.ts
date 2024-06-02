@@ -7,6 +7,10 @@ import { PaginationData } from "../interfaces/pagination-data-interface";
   providedIn: "root"
 })
 export class PaginationDataService {
+  constructor() {
+    console.log("PaginationDataService created!!!!!!!!!!!!!!!");
+  }
+
   private _itemsPerPage: number = this.getItemsPerPageFromLocalStorage();
 
   get itemsPerPage(): number {
@@ -34,10 +38,12 @@ export class PaginationDataService {
     hasPreviousPage: false,
     itemsPerPage: this._itemsPerPage,
     from: 0,
-    to: 0
+    to: 0,
+    isPaginated: false,
+    isResetPage: false
   });
 
-  calculatePaginationData(page: number, itemsCount?: number | undefined): PaginationData {
+  calculatePaginationData(page: number, itemsCount?: number | undefined, isPaginated?: boolean, isResetPage?: boolean): PaginationData {
     const updatedItemsCount = itemsCount ?? this.paginationData.value.itemsCount;
     const itemsPerPage = this._itemsPerPage;
     const to = this.paginationData.value.hasNextPage ? page * itemsPerPage : Math.min(page * itemsPerPage, updatedItemsCount);
@@ -52,7 +58,9 @@ export class PaginationDataService {
       hasPreviousPage: page > 1,
       itemsPerPage: itemsPerPage,
       from: ((page - 1) * itemsPerPage) + 1,
-      to: to
+      to: to,
+      isPaginated: isPaginated ? isPaginated : false,
+      isResetPage: isResetPage ? isResetPage : false
     }
   }
 
