@@ -6,7 +6,7 @@ import { StoreModule } from "@ngrx/store";
 import { EffectsModule } from "@ngrx/effects";
 import { ToastrModule } from "ngx-toastr";
 import { MatIcon } from "@angular/material/icon";
-import { HttpClientModule } from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 
 import { HeaderComponent } from "./components/layout/header/header.component";
@@ -24,7 +24,6 @@ import { appReducer } from "./store/app.reducer";
     CommonModule,
     RouterLink,
     RouterLinkActive,
-    HttpClientModule,
     MatIcon,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
@@ -37,8 +36,7 @@ import { appReducer } from "./store/app.reducer";
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
       connectInZone: true // If set to true, the connection is established within the Angular zone
     }),
-    EffectsModule.forRoot([ TraineesEffects ]),
-  ]
+    EffectsModule.forRoot([ TraineesEffects ]) ], providers: [ provideHttpClient(withInterceptorsFromDi()) ]
 })
 export class CoreModule {
 }
