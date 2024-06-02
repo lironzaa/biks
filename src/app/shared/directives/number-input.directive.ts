@@ -23,8 +23,20 @@ export class NumberControlValueAccessorDirective extends ControlValueAccessorDir
         takeUntil(this._destroy$),
         startWith(this.control.value),
         distinctUntilChanged(),
-        map((value: number | string | null) => typeof value === "number" ? value : null),
-        tap((val: number | null) => fn(val))
+        map((value: number | string | null) => {
+          console.log("value is :");
+          console.log(value);
+          console.log("typeof value is :");
+          console.log(typeof value);
+          return typeof value === "number" ? value : null;
+        }),
+        tap((val: number | null) => {
+          console.log("Transformed value:", val);
+          console.log("fn(val) is ");
+          console.log(fn);
+          console.log(fn(val));
+          return fn(val);
+        })
       ).subscribe();
   }
 }

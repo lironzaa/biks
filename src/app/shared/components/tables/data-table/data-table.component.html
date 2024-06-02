@@ -19,7 +19,7 @@
       </tr>
     }
     @if (paginationData$ | async; as paginationData) {
-      @for (item of items | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; ; track item.id) {
+      @for (item of items | filterTableItems : filterFn | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; track item.id) {
         <tr
           [ngClass]="[activeItemId === item[activeItemIdKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
           (click)="onTableRowClick(item)">

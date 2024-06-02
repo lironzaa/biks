@@ -1,16 +1,14 @@
-@if (control) {
+<ng-container *ngIf="control">
   <mat-form-field [ngClass]="{'w-100': isFullWidth}">
     <mat-label>{{ placeholder }}</mat-label>
     <input [formControl]="control" [attr.value]="value || null" type='text'
            mask="separator.{{digitsAfterDecimal}}" decimalMarker="."
            thousandSeparator="," separatorLimit="{{maxNumberLength}}" matInput>
   </mat-form-field>
-  @if (formName) {
-    <app-error-input
-      [formContained]="control"
-      [controlName]="name"
-      [formName]="formName"
-      [customErrorMessages]="customErrorMessages"
-    ></app-error-input>
-  }
-}
+  <app-error-input *ngIf="formName"
+                   [formContained]="control"
+                   [controlName]="name"
+                   [formName]="formName"
+                   [customErrorMessages]="customErrorMessages"
+  ></app-error-input>
+</ng-container>

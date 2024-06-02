@@ -13,6 +13,7 @@ import { Trainee, TraineeRow } from "../../../../features/data/interfaces/traine
 })
 export class DataTableComponent {
   paginationDataService = inject(PaginationDataService);
+  @Input() filterFn!: ((item: DataTableItem) => boolean) | undefined;
 
   @Input({ required: true }) dataTableConfig!: DataTableConfig;
   @Input({

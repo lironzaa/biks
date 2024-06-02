@@ -2,6 +2,7 @@
   <app-data-table
     [dataTableConfig]="tableConfig"
     [items]="traineesState.traineesRows"
+    [filterFn]="filterFn"
     [isLoading]="traineesState.isLoading"
     [filtersForm]="dataFiltersForm"
     [isPointer]="true"

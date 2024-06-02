@@ -33,6 +33,7 @@ import { ConfirmationDialogComponent } from "./components/dialogs/confirmation-d
 import { CheckboxInputComponent } from "./components/inputs/checkbox-input/checkbox-input.component";
 import { NumberInputComponent } from "./components/inputs/number-input/number-input.component";
 import { RangeDateInputComponent } from "./components/inputs/range-date-input/range-date-input.component";
+import { FilterTableItemsPipe } from "./pipes/filter-table-items.pipe";
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { RangeDateInputComponent } from "./components/inputs/range-date-input/ra
     CheckboxInputComponent,
     NumberInputComponent,
     RangeDateInputComponent,
+    FilterTableItemsPipe,
   ],
   exports: [
     DataTableComponent,
