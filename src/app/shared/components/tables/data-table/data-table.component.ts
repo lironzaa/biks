@@ -30,7 +30,6 @@ export class DataTableComponent extends Unsubscribe implements OnInit {
   @Input() idKey = "id";
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
 
-  paginationData$ = this.paginationDataService.getPaginationDataListener();
   paginationData!: PaginationData;
 
   ngOnInit(): void {

@@ -6,7 +6,6 @@ import {
   createTraineeGrade,
   editTrainee,
   filterTrainees,
-  filterTraineesRows,
   getTrainees,
   setSelectedTraineeRow,
   traineesError,
@@ -17,7 +16,6 @@ export interface TraineesState {
   trainees: Trainee[];
   traineesOrigin: Trainee[];
   traineesRows: TraineeRow[];
-  traineesRowsOrigin: TraineeRow[];
   selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
   error: string | null;
@@ -27,7 +25,6 @@ const initialState: TraineesState = {
   trainees: [],
   traineesOrigin: [],
   traineesRows: [],
-  traineesRowsOrigin: [],
   selectedTraineesRow: null,
   isLoading: false,
   error: null,
@@ -40,7 +37,6 @@ export const traineesFeature = createFeature({
     on(getTrainees, (state): TraineesState => ({
       ...state,
       trainees: [],
-      traineesRowsOrigin: [],
       error: null,
       isLoading: true
     })),
@@ -49,7 +45,6 @@ export const traineesFeature = createFeature({
       trainees: trainees,
       traineesOrigin: trainees,
       traineesRows: traineeRows,
-      traineesRowsOrigin: traineeRows,
       error: null,
       isLoading: false
     })),
@@ -79,12 +74,6 @@ export const traineesFeature = createFeature({
       ...state,
       error: null,
       isLoading: true
-    })),
-    on(filterTraineesRows, (state, { traineesRows }): TraineesState => ({
-      ...state,
-      traineesRows: traineesRows,
-      error: null,
-      isLoading: false
     })),
     on(filterTrainees, (state, { trainees }): TraineesState => ({
       ...state,

@@ -2,8 +2,6 @@
   <ng-content></ng-content>
 </app-table-filters>
 
-<div>{{ paginationData$ | async | json }}</div>
-
 <table class="table">
   <thead>
   <tr>
@@ -40,7 +38,7 @@
         }
       </tr>
     }
-    @if (!isLoading && items.length === 0) {
+    @if (!isLoading && paginationData.itemsCount === 0) {
       <tr>
         <td colspan="12">
           <p>No items to display</p>
@@ -50,6 +48,6 @@
   </tbody>
 </table>
 
-@if (!isLoading && items.length > 0) {
+@if (!isLoading && paginationData.itemsCount > 0) {
   <app-pagination></app-pagination>
 }

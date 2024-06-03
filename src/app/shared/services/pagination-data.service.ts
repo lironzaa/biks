@@ -16,7 +16,6 @@ export class PaginationDataService {
   set itemsPerPage(itemsPerPage: number) {
     this._itemsPerPage = itemsPerPage;
     localStorage.setItem("itemsPerPage", itemsPerPage.toString());
-    this.setPaginationData(this.calculatePaginationData(this.paginationData.value.currentPage, this.paginationData.value.itemsCount));
   }
 
   private getItemsPerPageFromLocalStorage(): number {
@@ -59,6 +58,8 @@ export class PaginationDataService {
   }
 
   setPaginationData(paginationData: PaginationData): void {
+    console.log("set paginationData");
+    console.log(paginationData);
     this.paginationData.next(paginationData);
   }
 

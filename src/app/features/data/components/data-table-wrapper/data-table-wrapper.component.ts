@@ -39,7 +39,6 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
 
   traineesState$ = new Observable<TraineesState>();
   tableConfig = dataTableConfig;
-  traineesRowsOrigin!: TraineeRow[];
   gradeRangeOptions = GradeRangeOptions;
 
   dataFiltersForm = this.fb.group({
@@ -62,16 +61,14 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   ngOnInit(): void {
-    this.initStoreSelects();
+    this.initStoreSelect();
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
   }
 
-  initStoreSelects(): void {
+  initStoreSelect(): void {
     this.traineesState$ = this.store.select(traineesFeature.selectTraineesState);
-    this.store.select(traineesFeature.selectTraineesRowsOrigin).pipe(takeUntil(this.unsubscribe$))
-      .subscribe((traineesRowsOrigin: TraineeRow[]) => this.traineesRowsOrigin = traineesRowsOrigin);
   }
 
   patchFiltersFormValue(): void {
@@ -182,9 +179,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       let dateMatch = true;
 
       if (isFilterById) idMatch = item.id === queryParams.id;
-
       if (isFilterByGrade) gradeMatch = this.compareAccordingToOperator(item.grade as number, queryParams.gradeRange, gradeQueryParam);
-
       if (isFilterByDate) {
         const itemDate = new Date(item.gradeDate);
         dateMatch = startDate <= itemDate && itemDate <= endDate;
@@ -195,7 +190,8 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   }
 
   setPaginationData(currentPage: number): void {
-    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, currentPage);
+    console.log("currentPage " + currentPage);
+    const paginationData = this.paginationDataService.calculatePaginationData(currentPage);
     console.log(paginationData);
     this.paginationDataService.setPaginationData(paginationData);
   }
