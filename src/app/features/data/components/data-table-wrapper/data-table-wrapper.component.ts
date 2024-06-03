@@ -22,6 +22,7 @@ import { PaginationDataService } from "../../../../shared/services/pagination-da
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 import { GradeRangeType } from "../../types/grade-range-type";
 import { filterPartialDateRangeValue } from "../../custom-operators/custom-operators";
+import { FilterFn } from "../../../../shared/types/filter-fn-type";
 
 @Component({
   selector: "app-data-table-wrapper",
@@ -57,7 +58,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   gradeRangeControl = this.dataFiltersForm.get("gradeRange");
   dateRangeGroup = this.dataFiltersForm.get("dateRange") as FormGroup;
 
-  filterFn: ((item: DataTableItem) => boolean) | undefined;
+  filterFn: FilterFn | undefined;
   paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   ngOnInit(): void {
@@ -144,8 +145,6 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       withLatestFrom(this.paginationData$),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ queryParams, paginationData ]) => {
-      console.log("Query Params:", queryParams);
-      console.log("Pagination Data:", paginationData);
       if (!paginationData.isPaginated) {
         const isApplyFilters = this.isApplyFilters(queryParams);
         if (isApplyFilters) this.filterFn = this.createFilterFn(queryParams);
@@ -153,12 +152,10 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
       } else {
         this.setPaginationData(paginationData.currentPage);
       }
-      console.log(this.filterFn);
     });
   }
 
-  createFilterFn(queryParams: DataFiltersQueryParams): (item: DataTableItem) => boolean {
-    console.log("inside createFilterFn");
+  createFilterFn(queryParams: DataFiltersQueryParams): FilterFn {
     let startDate: Date;
     let endDate: Date;
     const isFilterByDate = queryParams.startDate !== undefined && queryParams.endDate !== undefined;
@@ -190,9 +187,7 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
   }
 
   setPaginationData(currentPage: number): void {
-    console.log("currentPage " + currentPage);
     const paginationData = this.paginationDataService.calculatePaginationData(currentPage);
-    console.log(paginationData);
     this.paginationDataService.setPaginationData(paginationData);
   }
 

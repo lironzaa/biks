@@ -58,8 +58,6 @@ export class PaginationDataService {
   }
 
   setPaginationData(paginationData: PaginationData): void {
-    console.log("set paginationData");
-    console.log(paginationData);
     this.paginationData.next(paginationData);
   }
 

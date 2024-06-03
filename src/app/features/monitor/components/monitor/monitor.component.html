@@ -3,6 +3,7 @@
     <app-data-table
       [dataTableConfig]="monitorTableConfig"
       [items]="traineesState.trainees"
+      [filterFn]="filterFn"
       [isLoading]="traineesState.isLoading"
       [filtersForm]="monitorFiltersForm"
     >

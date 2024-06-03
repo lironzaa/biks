@@ -48,8 +48,3 @@ export const createTraineeGrade = createAction(
   "[Trainees] Create Trainee Grade]",
   props<{ data: GradeCreateData }>()
 );
-
-export const filterTrainees = createAction(
-  "[Trainees] Filter Trainees]",
-  props<{ trainees: Trainee[] }>()
-);

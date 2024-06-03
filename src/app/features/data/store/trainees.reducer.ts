@@ -5,7 +5,6 @@ import {
   createTrainee,
   createTraineeGrade,
   editTrainee,
-  filterTrainees,
   getTrainees,
   setSelectedTraineeRow,
   traineesError,
@@ -14,7 +13,6 @@ import {
 
 export interface TraineesState {
   trainees: Trainee[];
-  traineesOrigin: Trainee[];
   traineesRows: TraineeRow[];
   selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
@@ -23,7 +21,6 @@ export interface TraineesState {
 
 const initialState: TraineesState = {
   trainees: [],
-  traineesOrigin: [],
   traineesRows: [],
   selectedTraineesRow: null,
   isLoading: false,
@@ -43,7 +40,6 @@ export const traineesFeature = createFeature({
     on(traineesFetched, (state, { trainees, traineeRows }): TraineesState => ({
       ...state,
       trainees: trainees,
-      traineesOrigin: trainees,
       traineesRows: traineeRows,
       error: null,
       isLoading: false
@@ -75,19 +71,13 @@ export const traineesFeature = createFeature({
       error: null,
       isLoading: true
     })),
-    on(filterTrainees, (state, { trainees }): TraineesState => ({
-      ...state,
-      trainees: trainees,
-      error: null,
-      isLoading: false
-    })),
   ),
   extraSelectors: ({
-                     selectTraineesOrigin,
+                     selectTrainees,
                    }) => ({
     selectTraineesIds: createSelector(
-      selectTraineesOrigin,
-      traineesOrigin => traineesOrigin.map(trainee => trainee.id)
+      selectTrainees,
+      trainees => trainees.map(trainee => trainee.id)
     )
   })
 })

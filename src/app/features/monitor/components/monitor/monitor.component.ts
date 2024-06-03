@@ -1,21 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { map } from "rxjs/operators";
-import { debounceTime, distinctUntilChanged, Observable, takeUntil } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, takeUntil, withLatestFrom } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
-import { filterTrainees } from "../../../data/store/trainees.actions";
 import { traineesFeature, TraineesState } from "../../../data/store/trainees.reducer";
 import { monitorTableConfig } from "../../data/monitor-table-config";
-import { Trainee } from "../../../data/interfaces/trainee-interface";
 import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
-import { DataTableFiltersValues } from "../../../../shared/interfaces/data-table-interface";
+import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
 import { IsPassedIsFailedQueryParamEnum } from "../../enums/is-passed-is-failed-query-param-enum";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
+import { FilterFn } from "../../../../shared/types/filter-fn-type";
 
 @Component({
   selector: "app-monitor",
@@ -30,12 +29,14 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   paginationDataService = inject(PaginationDataService);
+  private cdRef = inject(ChangeDetectorRef);
 
   traineesState$ = new Observable<TraineesState>();
   traineesStateIds$ = new Observable<string[]>();
-  traineesOrigin: Trainee[] = [];
   monitorTableConfig = monitorTableConfig;
   isResetPage = false;
+  filterFn: FilterFn | undefined;
+  paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   monitorFiltersForm = this.fb.group({
     "ids": new FormControl<string | string[]>(""),
@@ -52,8 +53,6 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
   }
 
   initStoreSelects(): void {
-    this.store.select(traineesFeature.selectTraineesOrigin).pipe(takeUntil(this.unsubscribe$))
-      .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
     this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
     this.traineesState$ = this.store.select(traineesFeature.selectTraineesState);
   }
@@ -73,37 +72,40 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
         distinctUntilChanged(),
         map(formValues => this.formatSearchFormToQueryParams(formValues)),
         takeUntil(this.unsubscribe$)
-      ).subscribe(formattedFiltersValues => {
-      const updatedQueryParams = formattedFiltersValues.formatedQueryParams;
+      ).subscribe(formatedQueryParams => {
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { ...updatedQueryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParams: { ...formatedQueryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
         queryParamsHandling: "merge",
       });
       if (!this.isResetPage) this.isResetPage = true;
     })
   }
 
-  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): {
-    formatedQueryParams: DataTableFiltersValues;
-  } {
+  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): DataTableFiltersValues {
     for (const value in formValues) {
-      if (Array.isArray(formValues[value])) formValues[value] = formValues[value]?.toString();
       if (formValues[value] === "") formValues[value] = null;
+      else if (Array.isArray(formValues[value])) {
+        formValues[value] = (formValues[value] as []).length ? formValues[value]?.toString() : null;
+      }
     }
-    return { formatedQueryParams: formValues };
+    return formValues;
   }
 
   initQueryParamsSub(): void {
-    this.route.queryParams.subscribe((queryParams) => {
-      if (this.isApplyFilters(queryParams)) this.applyFiltersOnData(queryParams);
-      else this.resetDataToOrigin();
+    this.route.queryParams.pipe(
+      withLatestFrom(this.paginationData$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ queryParams, paginationData ]) => {
+      if (!paginationData.isPaginated) {
+        const isApplyFilters = this.isApplyFilters(queryParams);
+        if (isApplyFilters) this.filterFn = this.createFilterFn(queryParams);
+        else this.filterFn = undefined;
+      } else {
+        this.setPaginationData(paginationData.currentPage);
+      }
+      this.cdRef.markForCheck();
     });
-  }
-
-  resetDataToOrigin(): void {
-    this.setPaginationData(this.traineesOrigin.length);
-    this.store.dispatch(filterTrainees({ trainees: this.traineesOrigin }));
   }
 
   isApplyFilters(queryParams: MonitorsFiltersQueryParams): boolean {
@@ -113,7 +115,7 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
     return false;
   }
 
-  applyFiltersOnData(queryParams: MonitorsFiltersQueryParams): void {
+  createFilterFn(queryParams: MonitorsFiltersQueryParams): FilterFn {
     let lowerNameQueryParam: string;
     const isFilterByName = queryParams.name !== undefined;
     if (isFilterByName) lowerNameQueryParam = queryParams.name!.toLowerCase();
@@ -125,31 +127,26 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
     const isFilterIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
     const isFilterIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
 
-    const filteredItems = this.traineesOrigin.filter(item => {
+    return (item: DataTableItem): boolean => {
       let nameMatch = true;
       let idMatch = true;
       let isPassedMatch = true;
       let isFailedMatch = true;
 
-      if (isFilterByIds) idMatch = idsArrayQueryParam.includes(item.id);
-
+      if (isFilterByIds) idMatch = idsArrayQueryParam.includes(item.id as string);
       if (isFilterByName) {
-        const itemNameLower = item.name.toLowerCase();
+        const itemNameLower = (item.name as string).toLowerCase();
         nameMatch = itemNameLower.includes(lowerNameQueryParam);
       }
-
-      if (isFilterIsPassed && item.average > 65) isPassedMatch = false;
-
-      if (isFilterIsFailed && item.average < 65) isFailedMatch = false;
+      if (isFilterIsPassed && (item.average as number) > 65) isPassedMatch = false;
+      if (isFilterIsFailed && (item.average as number) < 65) isFailedMatch = false;
 
       return nameMatch && idMatch && isPassedMatch && isFailedMatch;
-    })
-    this.setPaginationData(filteredItems.length);
-    this.store.dispatch(filterTrainees({ trainees: filteredItems }));
+    }
   }
 
-  setPaginationData(itemsLength: number): void {
-    const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, itemsLength);
+  setPaginationData(currentPage: number): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(currentPage);
     this.paginationDataService.setPaginationData(paginationData);
   }
 
