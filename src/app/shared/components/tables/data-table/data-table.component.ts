@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Observable } from "rxjs";
+import { takeUntil } from "rxjs";
 
-import { DataTableColumn, DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
+import { DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
 import { PaginationDataService } from "../../../services/pagination-data.service";
-import { PaginationData } from "../../../interfaces/pagination-data-interface";
 import { Trainee, TraineeRow } from "../../../../features/data/interfaces/trainee-interface";
+import { Unsubscribe } from "../../../class/unsubscribe.class";
+import { PaginationData } from "../../../interfaces/pagination-data-interface";
+import { FilterFn } from "../../../types/filter-fn-type";
 
 @Component({
   selector: "app-data-table",
@@ -13,7 +15,9 @@ import { Trainee, TraineeRow } from "../../../../features/data/interfaces/traine
   styleUrl: "./data-table.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DataTableComponent {
+export class DataTableComponent extends Unsubscribe implements OnInit {
+  paginationDataService = inject(PaginationDataService);
+
   @Input({ required: true }) dataTableConfig!: DataTableConfig;
   @Input({
     transform: (items: TraineeRow[] | Trainee[]): DataTableItem[] => items as unknown as DataTableItem[],
@@ -21,21 +25,18 @@ export class DataTableComponent {
   }) items: DataTableItem[] = [];
   @Input({ required: true }) isLoading = false;
   @Input({ required: true }) filtersForm!: FormGroup;
+  @Input({ required: true }) filterFn!: FilterFn | undefined;
   @Input() isPointer = false;
+  @Input() activeItemId: string | undefined;
+  @Input() idKey = "id";
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
 
-  paginationData$: Observable<PaginationData>;
+  paginationData!: PaginationData;
 
-  constructor(private paginationDataService: PaginationDataService) {
-    this.paginationData$ = this.paginationDataService.getPaginationDataListener();
-  }
-
-  trackByItemId(index: number, item: DataTableItem): string {
-    return (item.id as string);
-  }
-
-  trackByItemDataProperty(index: number, item: DataTableColumn): string {
-    return item.dataProperty;
+  ngOnInit(): void {
+    this.paginationDataService.getPaginationDataListener().pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe(paginationData => this.paginationData = paginationData);
   }
 
   onTableRowClick(item: DataTableItem): void {

@@ -1,11 +1,14 @@
 import { ActionReducerMap } from "@ngrx/store";
 
-import * as fromTrainees from "../../features/data/store/trainees.reducer";
+import { traineesFeature, TraineesState } from "../../features/data/store/trainees.reducer";
+import { analysisFeature, AnalysisState } from "../../features/analysis/store/analysis.reducer";
 
 export interface AppState {
-  trainees: fromTrainees.TraineesState;
+  trainees: TraineesState;
+  analysis: AnalysisState;
 }
 
 export const appReducer: ActionReducerMap<AppState> = {
-  trainees: fromTrainees.traineesReducer,
+  trainees: traineesFeature.reducer,
+  analysis: analysisFeature.reducer,
 };

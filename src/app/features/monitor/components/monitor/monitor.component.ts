@@ -1,26 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { map } from "rxjs/operators";
-import { debounceTime, distinctUntilChanged, Observable, Subscription } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, takeUntil, withLatestFrom } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
-import {
-  selectTraineesState,
-  selectTraineesIds,
-  selectTraineesOrigin
-} from "../../../data/store/trainees.selectors";
-import * as fromApp from "../../../../core/store/app.reducer";
-import { TraineesState } from "../../../data/store/trainees.reducer";
-import { monitorTableConfig } from "../../data/monitor-table-config";
-import { Trainee } from "../../../data/interfaces/trainee-interface";
-import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
 import { PaginationDataService } from "../../../../shared/services/pagination-data.service";
-import { filterTrainees } from "../../../data/store/trainees.actions";
+import { traineesFeature, TraineesState } from "../../../data/store/trainees.reducer";
+import { monitorTableConfig } from "../../data/monitor-table-config";
+import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
+import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
 import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
-import { DataTableFiltersValues } from "../../../../shared/interfaces/data-table-interface";
-import { MonitorStateOptions } from "../../data/monitor-state-options";
+import { IsPassedIsFailedQueryParamEnum } from "../../enums/is-passed-is-failed-query-param-enum";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
+import { FilterFn } from "../../../../shared/types/filter-fn-type";
 
 @Component({
   selector: "app-monitor",
@@ -28,14 +22,21 @@ import { MonitorStateOptions } from "../../data/monitor-state-options";
   styleUrl: "./monitor.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MonitorComponent implements OnInit, OnDestroy {
-  traineesState$: Observable<TraineesState>;
-  traineesOrigin!: Trainee[];
-  traineesStateIds$: Observable<string[]>;
+export class MonitorComponent extends Unsubscribe implements OnInit {
+  formUtilitiesService = inject(FormUtilitiesService);
+  store = inject(Store);
+  fb = inject(FormBuilder);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  paginationDataService = inject(PaginationDataService);
+  private cdRef = inject(ChangeDetectorRef);
+
+  traineesState$ = new Observable<TraineesState>();
+  traineesStateIds$ = new Observable<string[]>();
   monitorTableConfig = monitorTableConfig;
-  isInitialRender = true;
   isResetPage = false;
-  monitorStateOptions = MonitorStateOptions;
+  filterFn: FilterFn | undefined;
+  paginationData$ = this.paginationDataService.getPaginationDataListener();
 
   monitorFiltersForm = this.fb.group({
     "ids": new FormControl<string | string[]>(""),
@@ -44,147 +45,114 @@ export class MonitorComponent implements OnInit, OnDestroy {
     "isFailed": new FormControl<boolean | string>(true),
   });
 
-  filtersFormSub!: Subscription;
-  queryParamsSub!: Subscription;
-  storeSub!: Subscription;
-
-  constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store<fromApp.AppState>, private route: ActivatedRoute,
-              private paginationDataService: PaginationDataService, private router: Router) {
-    this.traineesStateIds$ = store.select(selectTraineesIds);
-    this.traineesState$ = store.select(selectTraineesState);
-  }
-
   ngOnInit(): void {
-    this.storeSub = this.store.select(selectTraineesOrigin)
-      .subscribe(traineesOrigin => this.traineesOrigin = traineesOrigin);
+    this.initStoreSelects();
     this.patchFiltersFormValue();
     this.initQueryParamsSub();
     this.initFiltersFormSub();
   }
 
+  initStoreSelects(): void {
+    this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
+    this.traineesState$ = this.store.select(traineesFeature.selectTraineesState);
+  }
+
   patchFiltersFormValue(): void {
     const queryParamsValue: MonitorsFiltersQueryParams = { ...this.route.snapshot.queryParams };
-    if (queryParamsValue.ids) queryParamsValue.ids = (queryParamsValue.ids as string).split(",");
-    if (queryParamsValue.isPassed) {
-      if (queryParamsValue.isPassed === "false") queryParamsValue.isPassed = false;
-    }
-    if (queryParamsValue.isFailed) {
-      if (queryParamsValue.isFailed === "false") queryParamsValue.isFailed = false;
-    }
+    if (queryParamsValue.ids && typeof queryParamsValue.ids === "string") queryParamsValue.ids = queryParamsValue.ids.split(",");
+    if (queryParamsValue.isPassed && queryParamsValue.isPassed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isPassed = false;
+    if (queryParamsValue.isFailed && queryParamsValue.isFailed === IsPassedIsFailedQueryParamEnum.false) queryParamsValue.isFailed = false;
     this.monitorFiltersForm.patchValue(queryParamsValue);
   }
 
-  initQueryParamsSub(): void {
-    this.queryParamsSub = this.route.queryParams.subscribe((queryParams) => {
-      const isApplyFilters = this.isApplyFilters(queryParams);
-      if (isApplyFilters) {
-        this.applyFilters(queryParams);
-      } else {
-        const paginationData = this.paginationDataService.calculatePaginationData(this.route.snapshot.queryParams.page ? +this.route.snapshot.queryParams.page : 1, this.traineesOrigin.length);
-        this.paginationDataService.setPaginationData(paginationData);
+  initFiltersFormSub(): void {
+    this.monitorFiltersForm.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        map(formValues => this.formatSearchFormToQueryParams(formValues)),
+        takeUntil(this.unsubscribe$)
+      ).subscribe(formatedQueryParams => {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { ...formatedQueryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
+        queryParamsHandling: "merge",
+      });
+      if (!this.isResetPage) this.isResetPage = true;
+    })
+  }
+
+  formatSearchFormToQueryParams(formValues: DataTableFiltersValues): DataTableFiltersValues {
+    for (const value in formValues) {
+      if (formValues[value] === "") formValues[value] = null;
+      else if (Array.isArray(formValues[value])) {
+        formValues[value] = (formValues[value] as []).length ? formValues[value]?.toString() : null;
       }
+    }
+    return formValues;
+  }
+
+  initQueryParamsSub(): void {
+    this.route.queryParams.pipe(
+      withLatestFrom(this.paginationData$),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(([ queryParams, paginationData ]) => {
+      if (!paginationData.isPaginated) {
+        const isApplyFilters = this.isApplyFilters(queryParams);
+        if (isApplyFilters) this.filterFn = this.createFilterFn(queryParams);
+        else this.filterFn = undefined;
+      } else {
+        this.setPaginationData(paginationData.currentPage);
+      }
+      this.cdRef.markForCheck();
     });
   }
 
   isApplyFilters(queryParams: MonitorsFiltersQueryParams): boolean {
     for (const filter in queryParams) {
-      if (filter === MonitorFiltersEnum.ids || filter === MonitorFiltersEnum.name || filter === MonitorFiltersEnum.isPassed || filter === MonitorFiltersEnum.isFailed) {
-        return true;
-      }
+      if (filter === MonitorFiltersEnum.ids || filter === MonitorFiltersEnum.name || filter === MonitorFiltersEnum.isPassed || filter === MonitorFiltersEnum.isFailed) return true;
     }
-    if (this.isResetPage) {
-      const paginationData = this.paginationDataService.calculatePaginationData(1, this.traineesOrigin.length);
-      this.paginationDataService.setPaginationData(paginationData);
-      this.isResetPage = false;
-    }
-    this.store.dispatch(filterTrainees({ trainees: this.traineesOrigin }));
     return false;
   }
 
-  applyFilters(queryParams: MonitorsFiltersQueryParams): void {
-    const filteredItems = this.traineesOrigin.filter(item => {
+  createFilterFn(queryParams: MonitorsFiltersQueryParams): FilterFn {
+    let lowerNameQueryParam: string;
+    const isFilterByName = queryParams.name !== undefined;
+    if (isFilterByName) lowerNameQueryParam = queryParams.name!.toLowerCase();
+
+    let idsArrayQueryParam: string[];
+    const isFilterByIds = queryParams.ids !== undefined;
+    if (isFilterByIds && typeof queryParams.ids === "string") idsArrayQueryParam = queryParams.ids.split(",");
+
+    const isFilterIsPassed = queryParams.isPassed !== undefined && queryParams.isPassed === IsPassedIsFailedQueryParamEnum.false;
+    const isFilterIsFailed = queryParams.isFailed !== undefined && queryParams.isFailed === IsPassedIsFailedQueryParamEnum.false;
+
+    return (item: DataTableItem): boolean => {
       let nameMatch = true;
       let idMatch = true;
       let isPassedMatch = true;
       let isFailedMatch = true;
 
-      if (queryParams.ids !== undefined) {
-        idMatch = (queryParams.ids as string).split(",").includes(item.id);
+      if (isFilterByIds) idMatch = idsArrayQueryParam.includes(item.id as string);
+      if (isFilterByName) {
+        const itemNameLower = (item.name as string).toLowerCase();
+        nameMatch = itemNameLower.includes(lowerNameQueryParam);
       }
-
-      if (queryParams.name !== undefined) {
-        const itemNameLower = item.name.toLowerCase();
-        const queryNameLower = queryParams.name.toLowerCase();
-        nameMatch = itemNameLower.includes(queryNameLower);
-      }
-
-      if (queryParams.isPassed !== undefined) {
-        if (queryParams.isPassed === "false" && item.average > 64) {
-          isPassedMatch = false;
-        }
-      }
-
-      if (queryParams.isFailed !== undefined) {
-        if (queryParams.isFailed === "false" && item.average < 66) {
-          isFailedMatch = false;
-        }
-      }
+      if (isFilterIsPassed && (item.average as number) > 65) isPassedMatch = false;
+      if (isFilterIsFailed && (item.average as number) < 65) isFailedMatch = false;
 
       return nameMatch && idMatch && isPassedMatch && isFailedMatch;
-    })
-    if (queryParams.page === "1") {
-      const paginationData = this.paginationDataService.calculatePaginationData(1, filteredItems.length);
-      this.paginationDataService.setPaginationData(paginationData);
     }
-    this.store.dispatch(filterTrainees({ trainees: filteredItems }));
   }
 
-  initFiltersFormSub(): void {
-    this.filtersFormSub = this.monitorFiltersForm.valueChanges
-      .pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        map(formValues => this.formatSearchFormValues(formValues))
-      ).subscribe(formattedSearchValues => {
-        const queryParams = formattedSearchValues.formValues;
-        this.isResetPage = !this.isInitialRender && formattedSearchValues.isResetPage;
-        this.isInitialRender = false;
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { ...queryParams, page: this.isResetPage ? 1 : this.route.snapshot.queryParams.page },
-          queryParamsHandling: "merge",
-        });
-      })
-  }
-
-  formatSearchFormValues(formValues: DataTableFiltersValues): {
-    formValues: DataTableFiltersValues;
-    isResetPage: boolean
-  } {
-    let isResetPage = false;
-    for (const value in formValues) {
-      if (Array.isArray(formValues[value])) {
-        formValues[value] = formValues[value]?.toString();
-      }
-      if (formValues[value] === "") {
-        formValues[value] = null;
-      } else {
-        isResetPage = true;
-      }
-    }
-    return { formValues, isResetPage };
+  setPaginationData(currentPage: number): void {
+    const paginationData = this.paginationDataService.calculatePaginationData(currentPage);
+    this.paginationDataService.setPaginationData(paginationData);
   }
 
   resetFilters(): void {
     this.monitorFiltersForm.reset();
     this.monitorFiltersForm.get("isPassed")?.setValue(true);
     this.monitorFiltersForm.get("isFailed")?.setValue(true);
-  }
-
-  ngOnDestroy(): void {
-    if (!this.filtersFormSub?.closed) this.filtersFormSub.unsubscribe();
-    if (!this.queryParamsSub?.closed) this.queryParamsSub.unsubscribe();
-    if (!this.storeSub?.closed) this.storeSub.unsubscribe();
   }
 }

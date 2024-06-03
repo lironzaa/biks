@@ -3,6 +3,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
+import { CustomErrorMessages } from "../error-input/error-messages";
 
 @Component({
   selector: "app-select-input",
@@ -20,16 +21,12 @@ import { ControlValueAccessorDirective } from "../../../directives/input-directi
 export class SelectInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input({ required: true }) options: string[] = [];
+  @Input({ required: true }) options: (string | number)[] = [];
   @Input() placeholder?: string | undefined;
-  @Input() value?: string | number | undefined;
-  @Input() customErrorMessages: Record<string, string> = {};
+  @Input() customErrorMessages: CustomErrorMessages = {};
   @Input() name!: string;
+  @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
   @Input() isMultiple = false;
   @Input() isEmptyOption = false;
   @Input() isFullWidth = false;
-
-  trackByOptionName(index: number, option: string): string {
-    return option;
-  }
 }

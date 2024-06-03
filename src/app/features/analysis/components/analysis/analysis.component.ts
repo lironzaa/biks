@@ -1,19 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { Store } from "@ngrx/store";
-import { distinctUntilChanged, Observable, Subscription } from "rxjs";
+import { distinctUntilChanged, Observable, takeUntil } from "rxjs";
 
 import { FormUtilitiesService } from "../../../../shared/services/form-utilities.service";
 import { SubjectTypeOptions } from "../../../data/data/subject-type-options";
-import * as fromApp from "../../../../core/store/app.reducer";
-import {
-  selectGradesAveragesForSelectedSubjects,
-  selectGradesAveragesForSelectedTrainees,
-  selectTraineesIds
-} from "../../../data/store/trainees.selectors";
-import { setSelectedSubjects, setSelectedTraineesIds } from "../../../data/store/trainees.actions";
+import { traineesFeature } from "../../../data/store/trainees.reducer";
+import { analysisFeature } from "../../store/analysis.reducer";
+import { setSelectedSubjects, setSelectedTraineesIds } from "../../store/analysis.actions";
 import { SubjectType } from "../../../data/types/subject-type";
-import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../analysis-charts-interface";
+import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../interfaces/analysis-charts-interface";
+import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 
 @Component({
   selector: "app-analysis",
@@ -21,10 +18,14 @@ import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../../
   styleUrl: "./analysis.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnalysisComponent implements OnInit, OnDestroy {
-  traineesStateIds$: Observable<string[]>;
-  traineesGradesAverages$: Observable<ChartTraineesGradesAverages[]>;
-  subjectsGradesAverages$: Observable<ChartSubjectsGradesAverages>;
+export class AnalysisComponent extends Unsubscribe implements OnInit {
+  formUtilitiesService = inject(FormUtilitiesService);
+  store = inject(Store);
+  fb = inject(FormBuilder);
+
+  traineesStateIds$ = new Observable<string[]>;
+  traineesGradesAverages$ = new Observable<ChartTraineesGradesAverages[]>;
+  subjectsGradesAverages$ = new Observable<Partial<ChartSubjectsGradesAverages>>;
   subjectTypeOptions = SubjectTypeOptions;
 
   analysisForm = this.fb.group({
@@ -32,35 +33,29 @@ export class AnalysisComponent implements OnInit, OnDestroy {
     "subjects": new FormControl<SubjectType[]>([]),
   });
 
-  idsSub: Subscription | undefined;
-  subjectsSub: Subscription | undefined;
-
-  constructor(protected formUtilitiesService: FormUtilitiesService, private fb: FormBuilder,
-              private store: Store<fromApp.AppState>) {
-    this.traineesStateIds$ = store.select(selectTraineesIds);
-    this.traineesGradesAverages$ = store.select(selectGradesAveragesForSelectedTrainees);
-    this.subjectsGradesAverages$ = store.select(selectGradesAveragesForSelectedSubjects);
+  ngOnInit(): void {
+    this.initStoreSelects();
+    this.initValueChangesSubs();
   }
 
-  ngOnInit(): void {
-    this.idsSub = this.analysisForm.get("ids")?.valueChanges.pipe(
-      distinctUntilChanged()
+  initStoreSelects(): void {
+    this.traineesStateIds$ = this.store.select(traineesFeature.selectTraineesIds);
+    this.traineesGradesAverages$ = this.store.select(analysisFeature.selectGradesAveragesForSelectedTrainees);
+    this.subjectsGradesAverages$ = this.store.select(analysisFeature.selectGradesAveragesForSelectedSubjects);
+  }
+
+  initValueChangesSubs(): void {
+    this.analysisForm.get("ids")?.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
     ).subscribe((selectedIds) => {
       this.store.dispatch(setSelectedTraineesIds({ traineesIds: selectedIds! }));
     })
-    this.subjectsSub = this.analysisForm.get("subjects")?.valueChanges.pipe(
-      distinctUntilChanged()
+    this.analysisForm.get("subjects")?.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
     ).subscribe((selectedSubjects) => {
       this.store.dispatch(setSelectedSubjects({ selectedSubjects: selectedSubjects! }));
     })
-  }
-
-  trackByTrainee(index: number, item: ChartTraineesGradesAverages): string {
-    return item.trainee.id;
-  }
-
-  ngOnDestroy(): void {
-    if (this.idsSub && !this.idsSub.closed) this.idsSub.unsubscribe();
-    if (this.subjectsSub && !this.subjectsSub.closed) this.subjectsSub.unsubscribe();
   }
 }

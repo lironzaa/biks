@@ -3,6 +3,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
 import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
+import { CustomErrorMessages } from "../error-input/error-messages";
 
 @Component({
   selector: "app-text-input",
@@ -20,10 +21,11 @@ import { ControlValueAccessorDirective } from "../../../directives/input-directi
 export class TextInputComponent<T>
   extends ControlValueAccessorDirective<T>
   implements InputType {
-  @Input() override type: "text" | "number" | "email" = "text";
+  @Input() override type: "text" | "email" = "text";
   @Input() placeholder?: string | undefined;
-  @Input() value?: string | number | undefined;
-  @Input() customErrorMessages: Record<string, string> = {};
+  @Input() customErrorMessages: CustomErrorMessages = {};
   @Input() name!: string;
+  @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
   @Input() isFullWidth = false;
+  value?: string | undefined;
 }

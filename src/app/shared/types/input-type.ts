@@ -9,6 +9,7 @@ type OptionalInputType = {
   formGroup: FormGroup;
   formControl: FormControl;
   placeholder: string;
+  formName: string;
 };
 
 export type InputType = RequiredInputType & Partial<OptionalInputType>;

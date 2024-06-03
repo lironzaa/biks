@@ -1,112 +1,83 @@
-import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
-import { createReducer, on } from "@ngrx/store";
+import { createFeature, createReducer, createSelector, on } from "@ngrx/store";
 
+import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
 import {
   createTrainee,
   createTraineeGrade,
   editTrainee,
-  filterTrainees,
-  filterTraineesRows,
   getTrainees,
-  setSelectedSubjects,
   setSelectedTraineeRow,
-  setSelectedTraineesIds,
   traineesError,
   traineesFetched,
 } from "./trainees.actions";
-import { SubjectType } from "../types/subject-type";
 
 export interface TraineesState {
   trainees: Trainee[];
-  traineesOrigin: Trainee[];
   traineesRows: TraineeRow[];
-  traineesRowsOrigin: TraineeRow[];
   selectedTraineesRow: TraineeRow | null;
   isLoading: boolean;
   error: string | null;
-  selectedSubjects: SubjectType[];
-  selectedTraineesIds: string[];
 }
 
 const initialState: TraineesState = {
   trainees: [],
-  traineesOrigin: [],
   traineesRows: [],
-  traineesRowsOrigin: [],
   selectedTraineesRow: null,
   isLoading: false,
   error: null,
-  selectedSubjects: [],
-  selectedTraineesIds: [],
 };
 
-export const traineesReducer = createReducer(
-  initialState,
-  on(getTrainees, (state) => ({
-    ...state,
-    trainees: [],
-    traineesRowsOrigin: [],
-    error: null,
-    isLoading: true
-  })),
-  on(traineesFetched, (state, { trainees, traineeRows }) => ({
-    ...state,
-    trainees: trainees,
-    traineesOrigin: trainees,
-    traineesRows: traineeRows,
-    traineesRowsOrigin: traineeRows,
-    error: null,
-    isLoading: false
-  })),
-  on(createTrainee, (state) => ({
-    ...state,
-    error: null,
-    isLoading: true
-  })),
-  on(editTrainee, (state, { selectedTraineeRow }) => ({
-    ...state,
-    selectedTraineesRow: selectedTraineeRow,
-    error: null,
-    isLoading: true
-  })),
-  on(setSelectedTraineeRow, (state, { traineeRow }) => ({
-    ...state,
-    selectedTraineesRow: traineeRow,
-    error: null,
-    isLoading: false
-  })),
-  on(traineesError, (state, { errorMessage }) => ({
-    ...state,
-    error: errorMessage,
-    isLoading: false
-  })),
-  on(createTraineeGrade, (state) => ({
-    ...state,
-    error: null,
-    isLoading: true
-  })),
-  on(filterTraineesRows, (state, { traineesRows }) => ({
-    ...state,
-    traineesRows: traineesRows,
-    error: null,
-    isLoading: false
-  })),
-  on(filterTrainees, (state, { trainees }) => ({
-    ...state,
-    trainees: trainees,
-    error: null,
-    isLoading: false
-  })),
-  on(setSelectedSubjects, (state, { selectedSubjects }) => ({
-    ...state,
-    selectedSubjects: selectedSubjects,
-    error: null,
-    isLoading: false,
-  })),
-  on(setSelectedTraineesIds, (state, { traineesIds }) => ({
-    ...state,
-    selectedTraineesIds: traineesIds,
-    error: null,
-    isLoading: false,
-  })),
-)
+export const traineesFeature = createFeature({
+  name: "trainees",
+  reducer: createReducer(
+    initialState,
+    on(getTrainees, (state): TraineesState => ({
+      ...state,
+      trainees: [],
+      error: null,
+      isLoading: true
+    })),
+    on(traineesFetched, (state, { trainees, traineeRows }): TraineesState => ({
+      ...state,
+      trainees: trainees,
+      traineesRows: traineeRows,
+      error: null,
+      isLoading: false
+    })),
+    on(createTrainee, (state): TraineesState => ({
+      ...state,
+      error: null,
+      isLoading: true
+    })),
+    on(editTrainee, (state, { selectedTraineeRow }): TraineesState => ({
+      ...state,
+      selectedTraineesRow: selectedTraineeRow,
+      error: null,
+      isLoading: true
+    })),
+    on(setSelectedTraineeRow, (state, { traineeRow }): TraineesState => ({
+      ...state,
+      selectedTraineesRow: traineeRow,
+      error: null,
+      isLoading: false
+    })),
+    on(traineesError, (state, { errorMessage }): TraineesState => ({
+      ...state,
+      error: errorMessage,
+      isLoading: false
+    })),
+    on(createTraineeGrade, (state): TraineesState => ({
+      ...state,
+      error: null,
+      isLoading: true
+    })),
+  ),
+  extraSelectors: ({
+                     selectTrainees,
+                   }) => ({
+    selectTraineesIds: createSelector(
+      selectTrainees,
+      trainees => trainees.map(trainee => trainee.id)
+    )
+  })
+})

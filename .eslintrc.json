@@ -5,14 +5,13 @@
   ],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:@ngrx/recommended"
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
@@ -31,18 +30,18 @@
             "style": "kebab-case"
           }
         ],
-        "@typescript-eslint/quotes": ["error", "double"]
+        "@typescript-eslint/quotes": [
+          "error",
+          "double"
+        ]
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
+      "files": ["*.html"],
       "extends": [
         "plugin:@angular-eslint/template/recommended",
         "plugin:@angular-eslint/template/accessibility"
-      ],
-      "rules": {}
+      ]
     }
   ]
 }

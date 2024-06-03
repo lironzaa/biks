@@ -10,29 +10,35 @@
     (buttonClicked)="onDeleteTrainee()"
     [isDisabled]="!isEditMode"
   />
-  <app-button
-    *ngIf="isEditMode"
-    [text]="'Add grade'"
-    [color]="'accent'"
-    (buttonClicked)="addGrade()"
-  />
+  @if (isEditMode) {
+    <app-button
+      [text]="'Add grade'"
+      [color]="'accent'"
+      (buttonClicked)="addGrade()"
+    />
+  }
 </div>
 <div class="forms-container">
-  <form [formGroup]="traineeForm" (ngSubmit)="onSubmitTraineeForm()">
+  <form [formGroup]="traineeForm" #traineeFormDirective="ngForm" (ngSubmit)="onSubmitTraineeForm()">
     <p>{{ isEditMode ? 'Edit' : 'Create' }} Form</p>
     <div>
       <app-text-input
         [placeholder]="'Name'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'name')"
         [name]="'name'"
+        [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.name"
       />
     </div>
     <div>
-      <app-text-input
-        [type]="'number'"
+      <app-number-input
         [placeholder]="'Grade'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'grade')"
         [name]="'grade'"
+        [maxNumberLength]="100"
+        [digitsAfterDecimal]="0"
+        [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.grade"
       />
     </div>
     <div>
@@ -41,6 +47,8 @@
         [placeholder]="'Email'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'email')"
         [name]="'email'"
+        [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.email"
       />
     </div>
     <div>
@@ -48,6 +56,8 @@
         [placeholder]="'Date Joined'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'dateJoined')"
         [name]="'dateJoined'"
+        [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.dateJoined"
       />
     </div>
     <div>
@@ -55,6 +65,7 @@
         [placeholder]="'Address'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'address')"
         [name]="'address'"
+        [formName]="'traineeForm'"
       />
     </div>
 
@@ -63,6 +74,7 @@
         [placeholder]="'City'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'city')"
         [name]="'city'"
+        [formName]="'traineeForm'"
       />
     </div>
     <div>
@@ -70,14 +82,15 @@
         [placeholder]="'Country'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'country')"
         [name]="'country'"
+        [formName]="'traineeForm'"
       />
     </div>
     <div>
       <app-text-input
-        [type]="'number'"
         [placeholder]="'Zip'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'zip')"
         [name]="'zip'"
+        [formName]="'traineeForm'"
       />
     </div>
     <div>
@@ -86,6 +99,8 @@
         [placeholder]="'Subject'"
         [formControl]="formUtilitiesService.getControl(traineeForm, 'subject')"
         [name]="'subject'"
+        [formName]="'traineeForm'"
+        [customErrorMessages]="traineeFormCustomErrors.subject"
       />
     </div>
     <app-button
@@ -95,35 +110,41 @@
     />
   </form>
 
-  <form *ngIf="isAddGradeForm" [formGroup]="gradeForm" (ngSubmit)="onSubmitGradeForm()">
-    <p>Add Grade Form</p>
-    <div>
-      <app-text-input
-        [type]="'number'"
-        [placeholder]="'Grade'"
-        [formControl]="formUtilitiesService.getControl(gradeForm, 'grade')"
-        [name]="'grade'"
+  @if (isAddGradeForm) {
+    <form #gradeFormDirective="ngForm" [formGroup]="gradeForm" (ngSubmit)="onSubmitGradeForm()">
+      <p>Add Grade Form</p>
+      <div>
+        <app-number-input
+          [placeholder]="'Grade'"
+          [formControl]="formUtilitiesService.getControl(gradeForm, 'grade')"
+          [name]="'grade'"
+          [maxNumberLength]="100"
+          [digitsAfterDecimal]="0"
+          [formName]="'gradeForm'"
+        />
+      </div>
+      <div>
+        <app-select-input
+          [options]="subjectTypeOptions"
+          [placeholder]="'Subject'"
+          [formControl]="formUtilitiesService.getControl(gradeForm, 'subject')"
+          [name]="'subject'"
+          [formName]="'gradeForm'"
+        />
+      </div>
+      <div>
+        <app-date-input
+          [placeholder]="'Grade Date'"
+          [formControl]="formUtilitiesService.getControl(gradeForm, 'date')"
+          [name]="'date'"
+          [formName]="'gradeForm'"
+        />
+      </div>
+      <app-button
+        [text]="'Add grade'"
+        [color]="'primary'"
+        [type]="'submit'"
       />
-    </div>
-    <div>
-      <app-select-input
-        [options]="subjectTypeOptions"
-        [placeholder]="'Subject'"
-        [formControl]="formUtilitiesService.getControl(gradeForm, 'subject')"
-        [name]="'subject'"
-      />
-    </div>
-    <div>
-      <app-date-input
-        [placeholder]="'Grade Date'"
-        [formControl]="formUtilitiesService.getControl(gradeForm, 'date')"
-        [name]="'date'"
-      />
-    </div>
-    <app-button
-      [text]="'Add grade'"
-      [color]="'primary'"
-      [type]="'submit'"
-    />
-  </form>
+    </form>
+  }
 </div>

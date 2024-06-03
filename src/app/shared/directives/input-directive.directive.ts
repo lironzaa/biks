@@ -1,6 +1,6 @@
 import {
   Directive,
-  Inject,
+  inject,
   Injector,
   Input,
   OnInit,
@@ -21,13 +21,12 @@ import { Subject, distinctUntilChanged, startWith, takeUntil, tap } from "rxjs";
 })
 export class ControlValueAccessorDirective<T>
   implements ControlValueAccessor, OnInit {
-  constructor(@Inject(Injector) private injector: Injector) {
-  }
+  injector = inject(Injector);
 
   @Input() type = "text";
   control: FormControl | undefined;
   private _isDisabled = false;
-  private _destroy$ = new Subject<void>();
+  protected _destroy$ = new Subject<void>();
   private _onTouched!: () => T;
 
   ngOnInit(): void {
@@ -66,8 +65,7 @@ export class ControlValueAccessorDirective<T>
         startWith(this.control.value),
         distinctUntilChanged(),
         tap((val) => fn(val))
-      )
-      .subscribe();
+      ).subscribe();
   }
 
   registerOnTouched(fn: () => T): void {
@@ -76,7 +74,7 @@ export class ControlValueAccessorDirective<T>
 
   setDisabledState?(isDisabled: boolean): void {
     this._isDisabled = isDisabled;
-    if (this.control) {
+    if (this.control && this.control.disabled !== this._isDisabled) {
       isDisabled ? this.control.disable() : this.control.enable();
     }
   }

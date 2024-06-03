@@ -6,26 +6,30 @@ import { Observable, Subject } from "rxjs";
   providedIn: "root",
 })
 export class FormUtilitiesService {
-  private formSubmitAttempt = new Subject<boolean>();
-  private isFormCompleted = new Subject<boolean>();
+  private formSubmitAttempts: { [key: string]: Subject<boolean> } = {};
 
   getControl(formGroup: FormGroup, fieldName: string): FormControl {
     return formGroup.get(fieldName) as FormControl;
   }
 
-  getFormSubmitAttemptListener(): Observable<boolean> {
-    return this.formSubmitAttempt.asObservable();
+  getGroup(formGroup: FormGroup, groupName: string): FormGroup {
+    return formGroup.get(groupName) as FormGroup;
   }
 
-  setIsFormSubmitAttempt(formSubmitAttempt: boolean): void {
-    this.formSubmitAttempt.next(formSubmitAttempt);
+  getNestedControl(nestedFormGroup: FormGroup, fieldName: string): FormControl {
+    return nestedFormGroup.get(fieldName) as FormControl;
   }
 
-  getIsFormCompletedListener(): Observable<boolean> {
-    return this.isFormCompleted.asObservable();
+  getFormSubmitAttemptListener(formKey: string): Observable<boolean> {
+    if (!this.formSubmitAttempts[formKey]) this.formSubmitAttempts[formKey] = new Subject<boolean>();
+    return this.formSubmitAttempts[formKey].asObservable();
   }
 
-  setIsFormCompleted(isFormCompleted: boolean): void {
-    this.isFormCompleted.next(isFormCompleted);
+  setIsFormSubmitAttempt(formKey: string, formSubmitAttempt: boolean): void {
+    this.formSubmitAttempts[formKey].next(formSubmitAttempt);
+  }
+
+  removeFormSubmitAttempt(formKeys: string[]): void {
+    formKeys.forEach(formKey => delete this.formSubmitAttempts[formKey])
   }
 }

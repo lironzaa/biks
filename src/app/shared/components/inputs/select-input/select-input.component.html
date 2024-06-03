@@ -1,13 +1,21 @@
-<ng-container *ngIf="control">
+@if (control) {
   <mat-form-field [ngClass]="{'w-100': isFullWidth}">
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select [formControl]="control" [multiple]="isMultiple">
-      <mat-option *ngIf="isEmptyOption">None</mat-option>
-      <mat-option *ngFor="let option of options; trackBy: trackByOptionName" [value]="option">{{ option }}</mat-option>
+      @if (isEmptyOption) {
+        <mat-option>None</mat-option>
+      }
+      @for (option of options; track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
-  <app-error-input
-    [formContained]="control"
-    [controlName]="name"
-  ></app-error-input>
-</ng-container>
+  @if (formName) {
+    <app-error-input
+      [formContained]="control"
+      [controlName]="name"
+      [formName]="formName"
+      [customErrorMessages]="customErrorMessages"
+    ></app-error-input>
+  }
+}

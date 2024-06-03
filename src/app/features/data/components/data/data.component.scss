@@ -1,13 +1,11 @@
-  .table-container {
+.table-container {
   width: 60%;
   margin: 0.5rem;
 }
 
 .form-container {
   border: 1px solid var(--gray-color);
-  margin: 0.5rem 0.5rem 4rem 0.5rem;
+  margin: 0.5rem;
   width: 40%;
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
 }

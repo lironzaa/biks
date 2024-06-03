@@ -1,4 +1,4 @@
-<ng-container *ngIf="control">
+@if (control) {
   <mat-form-field class="mat-container">
     <mat-label>{{ placeholder }}</mat-label>
     <input matInput [matDatepicker]="picker" [formControl]="control">
@@ -7,8 +7,12 @@
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
-  <app-error-input
-    [formContained]="control"
-    [controlName]="name"
-  ></app-error-input>
-</ng-container>
+  @if (formName) {
+    <app-error-input
+      [formContained]="control"
+      [controlName]="name"
+      [formName]="formName"
+      [customErrorMessages]="customErrorMessages"
+    ></app-error-input>
+  }
+}

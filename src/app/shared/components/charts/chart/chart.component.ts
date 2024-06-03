@@ -25,7 +25,7 @@ export class ChartComponent implements OnInit, OnChanges {
       x: {},
       y: {
         min: 0,
-        max: 100,
+        max: 110,
       },
     },
     plugins: {
