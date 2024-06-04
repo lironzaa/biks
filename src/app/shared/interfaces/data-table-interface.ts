@@ -1,12 +1,29 @@
-export interface DataTableConfig {
-  columns: DataTableColumn[];
+import { SortDirectionEnum } from "../enums/sort-direction-enum";
+import { SortTypeEnum } from "../enums/sort-type-enum";
+
+export interface DataTableConfig<T> {
+  columns: DataTableColumn<T>[];
 }
 
-export interface DataTableColumn {
+export interface DataTableBaseColumn<T> {
   title: string;
-  dataProperty: string;
+  dataProperty: keyof T;
   columnType?: "date";
 }
+
+export interface DataTableSortableColumn<T> extends DataTableBaseColumn<T> {
+  isSortable: true;
+  sortDirection: SortDirectionEnum;
+  sortType: SortTypeEnum;
+}
+
+export interface DataTableNonSortableColumn<T> extends DataTableBaseColumn<T> {
+  isSortable?: false;
+  sortDirection?: never;
+  sortType?: never;
+}
+
+export type DataTableColumn<T> = DataTableSortableColumn<T> | DataTableNonSortableColumn<T>;
 
 export interface DataTableFiltersValues {
   [key: string]: unknown;

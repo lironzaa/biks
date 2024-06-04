@@ -11,10 +11,12 @@ import { traineesFeature, TraineesState } from "../../../data/store/trainees.red
 import { monitorTableConfig } from "../../data/monitor-table-config";
 import { MonitorsFiltersQueryParams } from "../../interfaces/monitors-filters-query-params.interface";
 import { DataTableFiltersValues, DataTableItem } from "../../../../shared/interfaces/data-table-interface";
+import { Trainee } from "../../../data/interfaces/trainee-interface";
 import { MonitorFiltersEnum } from "../../enums/monitor-filters-enum";
 import { IsPassedIsFailedQueryParamEnum } from "../../enums/is-passed-is-failed-query-param-enum";
 import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 import { FilterFn } from "../../../../shared/types/filter-fn-type";
+import { sortTrainees } from "../../../data/store/trainees.actions";
 
 @Component({
   selector: "app-monitor",
@@ -154,5 +156,9 @@ export class MonitorComponent extends Unsubscribe implements OnInit {
     this.monitorFiltersForm.reset();
     this.monitorFiltersForm.get("isPassed")?.setValue(true);
     this.monitorFiltersForm.get("isFailed")?.setValue(true);
+  }
+
+  onSortItemsClicked(sortedItems: DataTableItem[]): void {
+    this.store.dispatch(sortTrainees({ trainees: sortedItems as unknown as Trainee[] }));
   }
 }

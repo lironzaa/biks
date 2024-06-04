@@ -6,7 +6,20 @@
   <thead>
   <tr>
     @for (header of dataTableConfig.columns; track header.dataProperty) {
-      <th scope="col">{{ header.title }}</th>
+      <th scope="col" [ngClass]="{'pointer': header.isSortable}" (click)="onSortItems(header)">
+        @if (!header.isSortable) {
+          <span>{{ header.title }}</span>
+        } @else {
+          <div class="icon-th">
+            <span>{{ header.title }}</span>
+            @if (header.sortDirection === sortDirectionEnum.desc) {
+              <i class="material-icons">arrow_downward</i>
+            } @else if (header.sortDirection === sortDirectionEnum.asc) {
+              <i class="material-icons">arrow_upward</i>
+            }
+          </div>
+        }
+      </th>
     }
   </tr>
   </thead>
@@ -30,7 +43,7 @@
                   {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
                 }
                 @default {
-                  {{ item[header.dataProperty] }}
+                  {{ item[header.dataProperty] | validateType }}
                 }
               }
             </td>

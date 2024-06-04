@@ -9,6 +9,7 @@
     [activeItemId]="traineesState.selectedTraineesRow?.gradeId"
     [idKey]="'gradeId'"
     (tableRowClicked)="onTableRowClick($event)"
+    (sortItemsClicked)="onSortItemsClicked($event)"
   >
     <div class="search-container row">
       <app-text-input

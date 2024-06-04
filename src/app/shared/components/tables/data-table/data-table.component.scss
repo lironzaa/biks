@@ -61,6 +61,12 @@ th {
   unicode-bidi: isolate;
 }
 
+.icon-th {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 td {
   display: table-cell;
   vertical-align: inherit;
