@@ -5,7 +5,7 @@
 <table class="table">
   <thead>
   <tr>
-    @for (header of dataTableConfig.columns; track header.dataProperty) {
+    @for (header of dataTableConfig().columns; track header.dataProperty) {
       <th scope="col" [ngClass]="{'pointer': header.isSortable}" (click)="onSortItems(header)">
         @if (!header.isSortable) {
           <span>{{ header.title }}</span>
@@ -24,20 +24,20 @@
   </tr>
   </thead>
   <tbody>
-    @if (isLoading) {
+    @if (isLoading()) {
       <tr>
         <td colspan="12">
           <app-spinner></app-spinner>
         </td>
       </tr>
     }
-    @for (item of items | filterTableItems : filterFn | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; track item[idKey]) {
+    @for (item of items() | filterTableItems : filterFn() | slice : (paginationData.currentPage - 1) * paginationData.itemsPerPage : paginationData.currentPage * paginationData.itemsPerPage; track item[idKey()]) {
       <tr
-        [ngClass]="[activeItemId === item[idKey] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
+        [ngClass]="[activeItemId() === item[idKey()] ? 'bg-primary' : '', item.dynamicTrClass ? item.dynamicTrClass : '']"
         (click)="onTableRowClick(item)">
-        @if (!isLoading && items.length > 0) {
-          @for (header of dataTableConfig.columns; track header.dataProperty) {
-            <td [ngClass]="{'pointer': isPointer}">
+        @if (!isLoading() && items().length > 0) {
+          @for (header of dataTableConfig().columns; track header.dataProperty) {
+            <td [ngClass]="{'pointer': isPointer()}">
               @switch (header.columnType) {
                 @case ("date") {
                   {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
@@ -51,7 +51,7 @@
         }
       </tr>
     }
-    @if (!isLoading && paginationData.itemsCount === 0) {
+    @if (!isLoading() && paginationData.itemsCount === 0) {
       <tr>
         <td colspan="12">
           <p>No items to display</p>
@@ -61,6 +61,6 @@
   </tbody>
 </table>
 
-@if (!isLoading && paginationData.itemsCount > 0) {
+@if (!isLoading() && paginationData.itemsCount > 0) {
   <app-pagination />
 }

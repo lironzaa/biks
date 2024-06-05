@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  Output
+} from "@angular/core";
 import { takeUntil } from "rxjs";
 
 import { DataTableColumn, DataTableConfig, DataTableItem } from "../../../interfaces/data-table-interface";
@@ -20,17 +28,15 @@ import { SortTypeEnum } from "../../../enums/sort-type-enum";
 export class DataTableComponent<T> extends Unsubscribe implements OnInit {
   paginationDataService = inject(PaginationDataService);
 
-  @Input({ required: true }) dataTableConfig!: DataTableConfig<T>;
-  @Input({
-    transform: (items: TraineeRow[] | Trainee[]): DataTableItem[] => items as unknown as DataTableItem[],
-    required: true
-  }) items: DataTableItem[] = [];
-  @Input({ required: true }) isLoading = false;
-  @Input({ required: true }) filtersForm!: FormGroup;
-  @Input({ required: true }) filterFn!: FilterFn | undefined;
-  @Input() isPointer = false;
-  @Input() activeItemId: string | undefined;
-  @Input() idKey = "id";
+  dataTableConfig = input.required<DataTableConfig<T>>();
+  items = input.required({
+    transform: (items: TraineeRow[] | Trainee[]): DataTableItem[] => items as unknown as DataTableItem[]
+  })
+  isLoading = input.required<boolean>();
+  filterFn: InputSignal<FilterFn | undefined> = input.required();
+  isPointer = input(false);
+  activeItemId: InputSignal<string | undefined> = input();
+  idKey = input("id");
   @Output() tableRowClicked = new EventEmitter<DataTableItem>();
   @Output() sortItemsClicked = new EventEmitter<DataTableItem[]>();
 
@@ -72,14 +78,14 @@ export class DataTableComponent<T> extends Unsubscribe implements OnInit {
 
     switch (dataTableColumn.sortType) {
       case SortTypeEnum.string: {
-        return this.items.slice().sort((itemA, itemB) => {
+        return this.items().slice().sort((itemA, itemB) => {
           const a = itemA[dataTableColumn.dataProperty] as string;
           const b = itemB[dataTableColumn.dataProperty] as string;
           return b.localeCompare(a) * sortMultiplier;
         });
       }
       case SortTypeEnum.integer: {
-        return this.items.slice().sort((itemA, itemB) => {
+        return this.items().slice().sort((itemA, itemB) => {
           const a = itemA[dataTableColumn.dataProperty] as number;
           const b = itemB[dataTableColumn.dataProperty] as number;
           return (a - b) * sortMultiplier;
@@ -92,7 +98,7 @@ export class DataTableComponent<T> extends Unsubscribe implements OnInit {
   }
 
   resetActiveSortedColumn(dataTableColumn: DataTableColumn<T>): void {
-    const activeSortedTableColumn = this.dataTableConfig.columns.find(column => column.isSortable && column.sortDirection !== SortDirectionEnum.none && column.dataProperty !== dataTableColumn.dataProperty)
+    const activeSortedTableColumn = this.dataTableConfig().columns.find(column => column.isSortable && column.sortDirection !== SortDirectionEnum.none && column.dataProperty !== dataTableColumn.dataProperty)
     if (activeSortedTableColumn) activeSortedTableColumn.sortDirection = SortDirectionEnum.none;
   }
 }
