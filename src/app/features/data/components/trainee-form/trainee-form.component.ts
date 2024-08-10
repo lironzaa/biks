@@ -28,6 +28,7 @@ import { Unsubscribe } from "../../../../shared/class/unsubscribe.class";
 import { GradeCreateData, TraineeCreateData } from "../../types/trainee-type";
 import { EMAIL_REGEX } from "../../../../shared/regex/regex";
 import { TraineeFormCustomErrorsData } from "../../data/trainee-form-custom-errors";
+import { ErrorService } from "../../../../shared/services/error.service";
 
 @Component({
   selector: "app-trainee-form",
@@ -40,6 +41,7 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   fb = inject(FormBuilder);
   store = inject(Store);
   dialog = inject(MatDialog);
+  errorService = inject(ErrorService);
 
   isEditMode = false;
   selectedTraineesRow: TraineeRow | null = null;
@@ -47,21 +49,21 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   isAddGradeForm = false;
 
   traineeForm = this.fb.group({
-    "name": new FormControl<string>("", [ Validators.required ]),
+    "name": new FormControl<string | null>(null, [ Validators.required ]),
     "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
-    "email": new FormControl<string>("", [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
-    "dateJoined": new FormControl<string>("", [ Validators.required ]),
-    "address": new FormControl<string>("", [ Validators.required ]),
-    "city": new FormControl<string>("", [ Validators.required ]),
-    "country": new FormControl<string>("", [ Validators.required ]),
-    "zip": new FormControl<string>("", [ Validators.required, Validators.minLength(4), Validators.maxLength(5) ]),
+    "email": new FormControl<string | null>(null, [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
+    "dateJoined": new FormControl<string | Date | null>(null, [ Validators.required ]),
+    "address": new FormControl<string | null>(null, [ Validators.required ]),
+    "city": new FormControl<string | null>(null, [ Validators.required ]),
+    "country": new FormControl<string | null>(null, [ Validators.required ]),
+    "zip": new FormControl<string | null>(null, [ Validators.required, Validators.minLength(4), Validators.maxLength(5) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
   });
 
   gradeForm = this.fb.group({
     "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
-    "date": new FormControl<string>("", [ Validators.required ]),
+    "date": new FormControl<string | Date | null>(null, [ Validators.required ]),
     "traineeId": new FormControl<string>("", [ Validators.required ]),
   });
 
@@ -150,47 +152,54 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   }
 
   populateEditTraineeData(): EditTrainee {
+    if (!this.selectedTraineesRow) throw this.errorService.throwError("Selected Trainees Row is not defined");
     return {
       traineeData: {
-        id: this.selectedTraineesRow!.id,
+        id: this.selectedTraineesRow.id,
         ...this.getCommonTraineeData()
       },
       gradeData: {
-        id: this.selectedTraineesRow!.gradeId,
+        id: this.selectedTraineesRow.gradeId,
         ...this.getCommonGradeData(),
-        traineeId: this.selectedTraineesRow!.id!
+        traineeId: this.selectedTraineesRow.id
       }
     };
   }
 
   getCommonTraineeData(): TraineeCreateData {
+    if (!this.traineeForm.value || !this.traineeForm.value.name || !this.traineeForm.value.email || !this.traineeForm.value.address || !this.traineeForm.value.city || !this.traineeForm.value.country || !this.traineeForm.value.dateJoined || !this.traineeForm.value.zip) throw this.errorService.throwError("Trainee Form values are not defined");
+    if (typeof this.traineeForm.value.dateJoined === "string") throw this.errorService.throwError("Trainee Form dateJoined is not a date");
     return {
-      name: this.traineeForm.value.name!,
-      email: this.traineeForm.value.email!,
-      dateJoined: this.traineeForm.value.dateJoined!,
-      address: this.traineeForm.value.address!,
-      city: this.traineeForm.value.city!,
-      country: this.traineeForm.value.country!,
-      zip: this.traineeForm.value.zip!,
+      name: this.traineeForm.value.name,
+      email: this.traineeForm.value.email,
+      dateJoined: this.traineeForm.value.dateJoined.toJSON(),
+      address: this.traineeForm.value.address,
+      city: this.traineeForm.value.city,
+      country: this.traineeForm.value.country,
+      zip: this.traineeForm.value.zip,
     }
   }
 
   getCommonGradeData(): Omit<TraineeGrade, "id" | "traineeId"> {
+    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject || !this.traineeForm.value.dateJoined) throw this.errorService.throwError("Trainee Form values are not defined");
+    if (typeof this.traineeForm.value.dateJoined === "string") throw this.errorService.throwError("Trainee Form dateJoined is not a date");
     return {
-      grade: this.traineeForm.value.grade!,
-      subject: this.traineeForm.value.subject!,
-      date: this.traineeForm.value.dateJoined!,
+      grade: this.traineeForm.value.grade,
+      subject: this.traineeForm.value.subject,
+      date: this.traineeForm.value.dateJoined.toJSON(),
     }
   }
 
   populateSelectedTraineeRow(): TraineeRow {
+    if (!this.selectedTraineesRow) throw this.errorService.throwError("Selected Trainees Row is not defined");
+    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject) throw this.errorService.throwError("Trainee Form values are not defined");
     return {
-      id: this.selectedTraineesRow!.id,
-      gradeId: this.selectedTraineesRow!.gradeId,
+      id: this.selectedTraineesRow.id,
+      gradeId: this.selectedTraineesRow.gradeId,
       ...this.getCommonTraineeData(),
-      grade: this.traineeForm.value.grade!,
-      gradeDate: this.selectedTraineesRow!.gradeDate!,
-      subject: this.traineeForm.value.subject!,
+      grade: this.traineeForm.value.grade,
+      gradeDate: this.selectedTraineesRow.gradeDate,
+      subject: this.traineeForm.value.subject,
     }
   }
 
@@ -212,11 +221,13 @@ export class TraineeFormComponent extends Unsubscribe implements OnInit, OnDestr
   }
 
   populateCreateGradeData(): GradeCreateData {
+    if (!this.gradeForm.value || !this.gradeForm.value.grade || !this.gradeForm.value.subject || !this.gradeForm.value.date || !this.gradeForm.value.traineeId) throw this.errorService.throwError("Grade Form values are not defined");
+    if (typeof this.gradeForm.value.date === "string") throw this.errorService.throwError("Grade Form date is not a date");
     return {
-      grade: this.gradeForm.value.grade!,
-      subject: this.gradeForm.value.subject!,
-      date: this.gradeForm.value.date!,
-      traineeId: this.gradeForm.value.traineeId!
+      grade: this.gradeForm.value.grade,
+      subject: this.gradeForm.value.subject,
+      date: this.gradeForm.value.date.toJSON(),
+      traineeId: this.gradeForm.value.traineeId
     };
   }
 

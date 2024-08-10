@@ -28,7 +28,16 @@ import { appReducer } from "./store/app.reducer";
     MatIcon,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    StoreModule.forRoot(appReducer),
+    StoreModule.forRoot(appReducer, {
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictActionSerializability: true,
+        strictStateSerializability: true,
+        strictActionTypeUniqueness: true,
+        strictActionWithinNgZone: true
+      }
+    }),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode
