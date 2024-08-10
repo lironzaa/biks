@@ -34,6 +34,7 @@ import { CheckboxInputComponent } from "./components/inputs/checkbox-input/check
 import { NumberInputComponent } from "./components/inputs/number-input/number-input.component";
 import { RangeDateInputComponent } from "./components/inputs/range-date-input/range-date-input.component";
 import { FilterTableItemsPipe } from "./pipes/filter-table-items.pipe";
+import { ValidateTypePipe } from "./pipes/validate-type.pipe";
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { FilterTableItemsPipe } from "./pipes/filter-table-items.pipe";
     NumberInputComponent,
     RangeDateInputComponent,
     FilterTableItemsPipe,
+    ValidateTypePipe,
   ],
   exports: [
     DataTableComponent,

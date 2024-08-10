@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, forwardRef, Input } from "@angular/
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import { InputType } from "../../../types/input-type";
-import { ControlValueAccessorDirective } from "../../../directives/input-directive.directive";
 import { CustomErrorMessages } from "../error-input/error-messages";
+import { DateControlValueAccessorDirective } from "../../../directives/date-input.directive";
 
 @Component({
   selector: "app-date-input",
@@ -18,8 +18,8 @@ import { CustomErrorMessages } from "../error-input/error-messages";
   styleUrl: "./date-input.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DateInputComponent<T>
-  extends ControlValueAccessorDirective<T>
+export class DateInputComponent
+  extends DateControlValueAccessorDirective
   implements InputType {
   @Input() placeholder?: string | undefined;
   @Input() customErrorMessages: CustomErrorMessages = {};
@@ -27,6 +27,6 @@ export class DateInputComponent<T>
   @Input() formName!: string; // required for input with form validation, is used for FormSubmitAttempt
 
   clearDate(): void {
-    this.control?.setValue("");
+    this.control?.setValue(null);
   }
 }

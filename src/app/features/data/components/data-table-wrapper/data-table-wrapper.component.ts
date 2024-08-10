@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { debounceTime, distinctUntilChanged, Observable, skip, takeUntil, withLatestFrom } from "rxjs";
 
-import { setSelectedTraineeRow } from "../../store/trainees.actions";
+import { setSelectedTraineeRow, sortTraineesRows } from "../../store/trainees.actions";
 import { traineesFeature, TraineesState } from "../../store/trainees.reducer";
 import {
   DataFiltersFormPatchValues,
@@ -224,5 +224,9 @@ export class DataTableWrapperComponent extends Unsubscribe implements OnInit {
     this.dataFiltersForm.reset();
     this.gradeRangeControl?.patchValue(GradeRangeEnum.equals);
     this.gradeRangeControl?.disable({ emitEvent: false })
+  }
+
+  onSortItemsClicked(sortedItems: DataTableItem[]): void {
+    this.store.dispatch(sortTraineesRows({ traineesRows: sortedItems as unknown as TraineeRow[] }));
   }
 }

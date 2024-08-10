@@ -5,7 +5,7 @@
       [items]="traineesState.trainees"
       [filterFn]="filterFn"
       [isLoading]="traineesState.isLoading"
-      [filtersForm]="monitorFiltersForm"
+      (sortItemsClicked)="onSortItemsClicked($event)"
     >
       <div class="mb-3">
         @if (traineesStateIds$ | async; as traineesStateIds) {

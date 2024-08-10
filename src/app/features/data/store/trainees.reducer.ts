@@ -7,6 +7,8 @@ import {
   editTrainee,
   getTrainees,
   setSelectedTraineeRow,
+  sortTrainees,
+  sortTraineesRows,
   traineesError,
   traineesFetched,
 } from "./trainees.actions";
@@ -70,6 +72,18 @@ export const traineesFeature = createFeature({
       ...state,
       error: null,
       isLoading: true
+    })),
+    on(sortTraineesRows, (state, { traineesRows }): TraineesState => ({
+      ...state,
+      traineesRows: traineesRows,
+      error: null,
+      isLoading: false
+    })),
+    on(sortTrainees, (state, { trainees }): TraineesState => ({
+      ...state,
+      trainees: trainees,
+      error: null,
+      isLoading: false
     })),
   ),
   extraSelectors: ({
