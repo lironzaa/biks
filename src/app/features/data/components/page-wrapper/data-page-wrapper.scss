@@ -1,0 +1,18 @@
+.data-page-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-l);
+  height: 100%;
+
+  .data-table-section {
+    overflow: auto;
+  }
+
+  .form-section {
+    overflow: auto;
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}

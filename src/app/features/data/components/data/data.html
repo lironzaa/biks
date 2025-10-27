@@ -1,0 +1,43 @@
+<!--[activeItemId]="traineesState.selectedTraineesRow?.gradeId"-->
+<app-data-table
+  [config]="tableConfig()"
+  [items]="trainees()"
+  [filterFn]="filterFn()"
+  [isLoading]="isLoading()"
+  [isPointer]="true"
+  [idKey]="'gradeId'"
+  (tableRowClicked)="onTableRowClick($event)"
+>
+<!--  <div class="search-container row">-->
+<!--    <app-text-input-->
+<!--      [placeholder]="'ID'"-->
+<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'id')"-->
+<!--      [name]="'id'"-->
+<!--    />-->
+<!--    <app-number-input-->
+<!--      [placeholder]="'Grade'"-->
+<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'grade')"-->
+<!--      [name]="'grade'"-->
+<!--      [maxNumberLength]="100"-->
+<!--      [digitsAfterDecimal]="0"-->
+<!--    />-->
+<!--    <app-select-input-->
+<!--      [options]="gradeRangeOptions"-->
+<!--      [placeholder]="'Grade range'"-->
+<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'gradeRange')"-->
+<!--      [name]="'gradeRange'"-->
+<!--    />-->
+<!--    <app-range-date-input-->
+<!--      [placeholder]="'Date range'"-->
+<!--      [formGroup]="formUtilitiesService.getGroup(dataFiltersForm, 'dateRange')"-->
+<!--      [name]="'dateRange'"-->
+<!--      [startDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'startDate')"-->
+<!--      [endDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'endDate')"-->
+<!--    />-->
+<!--    <app-button-->
+<!--      [text]="'Reset filters'"-->
+<!--      [color]="'primary'"-->
+<!--      (buttonClicked)="resetFilters()"-->
+<!--    />-->
+<!--  </div>-->
+</app-data-table>

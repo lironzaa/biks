@@ -1,0 +1,1 @@
+export type CustomErrorMessages = Record<string, string>;

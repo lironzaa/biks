@@ -1,0 +1,22 @@
+@switch (variant()) {
+  @case ('fab') {
+    <button mat-fab [color]="color()" (click)="onButtonClick($event)" [disabled]="isDisabled()" [type]="type()" [attr.aria-label]="ariaLabel()" [attr.title]="title()">
+      {{ text() }}
+    </button>
+  }
+  @case ('flat') {
+    <button mat-flat-button [color]="color()" (click)="onButtonClick($event)" [disabled]="isDisabled()" [type]="type()" [attr.aria-label]="ariaLabel()" [attr.title]="title()">
+      {{ text() }}
+    </button>
+  }
+  @case ('stroked') {
+    <button mat-stroked-button [color]="color()" (click)="onButtonClick($event)" [disabled]="isDisabled()" [type]="type()" [attr.aria-label]="ariaLabel()" [attr.title]="title()">
+      {{ text() }}
+    </button>
+  }
+  @default {
+    <button mat-raised-button [color]="color()" (click)="onButtonClick($event)" [disabled]="isDisabled()" [type]="type()" [attr.aria-label]="ariaLabel()" [attr.title]="title()">
+      {{ text() }}
+    </button>
+  }
+}

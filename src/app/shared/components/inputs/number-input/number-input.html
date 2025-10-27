@@ -1,0 +1,26 @@
+@if (control()) {
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>
+      {{ label() }}
+    </mat-label>
+    <input
+      matInput
+      [formControl]="control()"
+      type="text"
+      [id]="name()"
+      (blur)="onBlur()"
+      mask="separator.{{digitsAfterDecimal()}}"
+      decimalMarker="."
+      thousandSeparator=","
+      separatorLimit="{{maxNumberLength()}}"
+    >
+    <mat-error>
+      <app-error-input
+        [control]="control()"
+        [controlName]="name()"
+        [customErrorMessages]="customErrorMessages()"
+        [isFormSubmitted]="isFormSubmitted()"
+      ></app-error-input>
+    </mat-error>
+  </mat-form-field>
+}

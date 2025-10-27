@@ -1,1 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@use 'app/spacing.scss';
+@use 'app/typography.scss';
+@use 'ngx-toastr/toastr';
+
+@include mat.core();
+
+$biks-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$biks-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$biks-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$biks-theme: mat.m2-define-light-theme((
+        color: (
+                primary: $biks-primary,
+                accent: $biks-accent,
+                warn: $biks-warn,
+        )
+));
+
+@include mat.all-component-themes($biks-theme);
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.pointer {
+  cursor: pointer;
+}

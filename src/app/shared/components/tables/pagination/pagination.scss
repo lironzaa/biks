@@ -1,0 +1,22 @@
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  margin-inline-start: var(--spacing-m);
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: var(--spacing-s);
+  margin-bottom: var(--spacing-m);
+}
+
+.current-page-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-container {
+  display: flex;
+  gap: var(--spacing-m);
+}

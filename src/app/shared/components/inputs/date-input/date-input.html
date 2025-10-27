@@ -1,0 +1,28 @@
+@if (control()) {
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ label() }}</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [formControl]="control()"
+      [id]="name()"
+      (blur)="onBlur()"
+    >
+    <mat-hint>DD/MM/YYYY</mat-hint>
+    <button matIconSuffix mat-icon-button aria-label="Clear" (click)="clearDate()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-datepicker-toggle matIconSuffix [for]="picker">
+      <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+    </mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-error>
+      <app-error-input
+        [control]="control()"
+        [controlName]="name()"
+        [customErrorMessages]="customErrorMessages()"
+        [isFormSubmitted]="isFormSubmitted()"
+      ></app-error-input>
+    </mat-error>
+  </mat-form-field>
+}

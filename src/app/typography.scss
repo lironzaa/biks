@@ -1,0 +1,11 @@
+// Typography scale CSS variables
+// Based on a modular scale for consistent font sizing throughout the app
+:root {
+  --font-size-xs: 0.75rem;   // 12px
+  --font-size-s: 0.875rem;   // 14px
+  --font-size-m: 1rem;       // 16px (base)
+  --font-size-l: 1.25rem;    // 20px
+  --font-size-xl: 1.5rem;    // 24px
+  --font-size-2xl: 2rem;     // 32px
+  --font-size-3xl: 2.5rem;   // 40px
+}

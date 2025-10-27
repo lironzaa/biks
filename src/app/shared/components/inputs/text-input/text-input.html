@@ -1,0 +1,22 @@
+@if (control()) {
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>
+      {{ label() }}
+    </mat-label>
+    <input
+      matInput
+      [formControl]="control()"
+      [type]="type()"
+      [id]="name()"
+      (blur)="onBlur()"
+    >
+    <mat-error>
+      <app-error-input
+        [control]="control()"
+        [controlName]="name()"
+        [customErrorMessages]="customErrorMessages()"
+        [isFormSubmitted]="isFormSubmitted()"
+      ></app-error-input>
+    </mat-error>
+  </mat-form-field>
+}

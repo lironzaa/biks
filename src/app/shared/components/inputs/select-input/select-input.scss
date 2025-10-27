@@ -1,0 +1,9 @@
+:host.is-horizontal {
+  display: flex;
+  gap: var(--spacing-m);
+  align-items: center;
+}
+
+label.is-horizontal {
+  margin: 0 !important;
+}

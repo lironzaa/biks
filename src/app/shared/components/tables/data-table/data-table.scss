@@ -1,0 +1,27 @@
+.table {
+  text-align: center;
+}
+
+.icon-th {
+  display: flex;
+  gap: var(--spacing-m);
+  justify-content: center;
+}
+
+// Material table row hover effect
+tr.mat-mdc-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &.mat-mdc-row-selected {
+    background-color: rgba(63, 81, 181, 0.12);
+
+    &:hover {
+      background-color: rgba(63, 81, 181, 0.16);
+    }
+  }
+}

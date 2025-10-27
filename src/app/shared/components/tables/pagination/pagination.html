@@ -1,0 +1,46 @@
+@if (paginationData$ | async; as paginationData) {
+  <div class="pagination-container">
+    <div class="pagination-buttons">
+      <app-button
+        [text]="'First Page'"
+        [color]="'primary'"
+        [isDisabled]="!paginationData.hasPreviousPage"
+        (buttonClicked)="navigateToPage('firstPage')"
+      />
+      <app-button
+        [text]="'Previous'"
+        [color]="'primary'"
+        [isDisabled]="!paginationData.hasPreviousPage"
+        (buttonClicked)="navigateToPage('previousPage')"
+      />
+      <div class="current-page-div">
+        <span>Page {{ currentPage }} out of {{ totalPages }}</span>
+      </div>
+      <app-button
+        [text]="'Next'"
+        [color]="'primary'"
+        [isDisabled]="!paginationData.hasNextPage"
+        (buttonClicked)="navigateToPage('nextPage')"
+      />
+      <app-button
+        [text]="'Last Page'"
+        [color]="'primary'"
+        [isDisabled]="!paginationData.hasNextPage"
+        (buttonClicked)="navigateToPage('lastPage')"
+      />
+    </div>
+    <div class="results-container">
+      <div class="d-flex align-items-center">
+      <span>Showing <span>{{ paginationData.from }}-{{ paginationData.to }}</span>
+      out of {{ paginationData.itemsCount }} results</span>
+      </div>
+      <app-select-input
+        [options]="paginationSelectItems"
+        [label]="'Number of items per page:'"
+        [formControl]="paginationForm.controls.itemsPerPage"
+        [name]="'itemsPerPage'"
+        [isHorizontal]="true"
+      />
+    </div>
+  </div>
+}

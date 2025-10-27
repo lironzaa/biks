@@ -1,0 +1,17 @@
+<mat-dialog-content>
+  <p>
+    {{ message }}
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="center" class="buttons-container">
+  <app-button
+    [text]="confirmButtonText"
+    [color]="'warn'"
+    (buttonClicked)="onConfirmClick()"
+  />
+  <app-button
+    mat-dialog-close
+    [text]="cancelButtonText"
+    [color]="'primary'"
+  />
+</mat-dialog-actions>
