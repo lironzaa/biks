@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { NgxMaskDirective } from 'ngx-mask';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
@@ -22,7 +21,6 @@ import { ErrorInput } from '../error-input/error-input';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    NgxMaskDirective,
     ErrorInput,
     MatFormField,
     MatLabel,
@@ -35,7 +33,4 @@ export class NumberInput extends NumberInputValueAccessorDirective {
   label = input<string>();
   customErrorMessages = input<CustomErrorMessages>({});
   isFormSubmitted = input(false);
-
-  digitsAfterDecimal = input<number>(2);
-  maxNumberLength = input<number>(1000000);
 }

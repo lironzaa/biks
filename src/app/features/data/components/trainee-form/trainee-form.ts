@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+  viewChild
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -8,7 +16,6 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ErrorService } from '../../../../shared/services/error/error.service';
 import { CreateTrainee, EditTrainee, TraineeGrade, TraineeRow } from '../../interfaces/trainee-interface';
@@ -54,13 +61,14 @@ export class TraineeForm {
   store = inject(Store);
   dialog = inject(MatDialog);
   errorService = inject(ErrorService);
-  destroyRef = inject(DestroyRef);
 
   isEditMode = signal(false);
-  selectedTraineesRow = signal<TraineeRow | null>(null);
   subjectTypeOptions = signal(SubjectTypeOptions);
   isAddGradeForm = signal(false);
   isFormSubmitted = signal(false);
+  traineeFormCustomErrors = signal(TraineeFormCustomErrorsData);
+  isLoading = this.store.selectSignal(traineesFeature.selectIsLoading);
+  selectedTraineesRow = this.store.selectSignal(traineesFeature.selectSelectedTraineesRow);
 
   traineeForm = this.fb.group({
     "name": new FormControl<string | null>(null, [ Validators.required ]),
@@ -74,31 +82,27 @@ export class TraineeForm {
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
   });
 
-
-  traineeFormCustomErrors = TraineeFormCustomErrorsData;
-
   traineeFormDirective = viewChild.required<FormGroupDirective>("traineeFormDirective");
 
-  ngOnInit(): void {
-    this.initStoreSub();
-  }
-
-  initStoreSub(): void {
-    this.store.select(traineesFeature.selectSelectedTraineesRow).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(selectedTraineesRow => {
-      this.selectedTraineesRow.set(selectedTraineesRow);
+  constructor() {
+    effect(() => {
       const selectedTraineesRowData = this.selectedTraineesRow();
-      if (selectedTraineesRowData) {
-        this.isEditMode.set(true);
-        this.traineeForm.patchValue(selectedTraineesRowData);
-      } else {
-        this.isEditMode.set(false);
-        this.traineeForm.reset();
-      }
+
+      untracked(() => {
+        if (selectedTraineesRowData) {
+          this.isEditMode.set(true);
+          this.traineeForm.patchValue(selectedTraineesRowData);
+        } else {
+          this.isEditMode.set(false);
+          this.traineeForm.reset();
+        }
+      });
     });
   }
 
   addTrainee(): void {
     this.resetForm();
+    this.isAddGradeForm.set(false);
     this.store.dispatch(setSelectedTraineeRow({ traineeRow: null }));
   }
 
@@ -118,6 +122,7 @@ export class TraineeForm {
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      this.isAddGradeForm.set(false);
       const selectedTraineesRowData = this.selectedTraineesRow();
       if (confirmed && selectedTraineesRowData) this.store.dispatch(deleteTrainee({ id: selectedTraineesRowData.id }));
     });
@@ -132,17 +137,16 @@ export class TraineeForm {
     if (this.traineeForm.valid) {
       if (!this.isEditMode()) {
         const traineeData: CreateTrainee = this.populateCreateTraineeData();
-        console.log(traineeData);
         this.resetForm();
         this.store.dispatch(createTrainee({ data: traineeData }));
       } else {
         const editTraineeData: EditTrainee = this.populateEditTraineeData();
-        console.log(editTraineeData);
         const selectedTraineeRow: TraineeRow = this.populateSelectedTraineeRow();
         this.resetForm();
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     }
+    console.log(this.traineeForm.value);
   }
 
   populateCreateTraineeData(): CreateTrainee {
@@ -159,7 +163,6 @@ export class TraineeForm {
 
   populateEditTraineeData(): EditTrainee {
     const selectedTraineesRowData = this.selectedTraineesRow();
-    console.log(selectedTraineesRowData);
     if (!selectedTraineesRowData) throw this.errorService.throwError("Selected Trainees Row is not defined");
     return {
       traineeData: {
@@ -176,12 +179,10 @@ export class TraineeForm {
 
   getCommonTraineeData(): TraineeCreateData {
     if (!this.traineeForm.value || !this.traineeForm.value.name || !this.traineeForm.value.email || !this.traineeForm.value.address || !this.traineeForm.value.city || !this.traineeForm.value.country || !this.traineeForm.value.dateJoined || !this.traineeForm.value.zip) throw this.errorService.throwError("Trainee Form values are not defined");
-    console.log(this.traineeForm.value);
-    if (typeof this.traineeForm.value.dateJoined === "string") throw this.errorService.throwError("Trainee Form dateJoined is not a date");
     return {
       name: this.traineeForm.value.name,
       email: this.traineeForm.value.email,
-      dateJoined: this.traineeForm.value.dateJoined.toJSON(),
+      dateJoined: typeof this.traineeForm.value.dateJoined === "string" ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
       address: this.traineeForm.value.address,
       city: this.traineeForm.value.city,
       country: this.traineeForm.value.country,
@@ -191,11 +192,10 @@ export class TraineeForm {
 
   getCommonGradeData(): Omit<TraineeGrade, "id" | "traineeId"> {
     if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject || !this.traineeForm.value.dateJoined) throw this.errorService.throwError("Trainee Form values are not defined");
-    if (typeof this.traineeForm.value.dateJoined === "string") throw this.errorService.throwError("Trainee Form dateJoined is not a date");
     return {
       grade: this.traineeForm.value.grade,
       subject: this.traineeForm.value.subject,
-      date: this.traineeForm.value.dateJoined.toJSON(),
+      date: typeof this.traineeForm.value.dateJoined === "string" ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
     }
   }
 

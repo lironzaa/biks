@@ -1,43 +1,51 @@
-<!--[activeItemId]="traineesState.selectedTraineesRow?.gradeId"-->
 <app-data-table
   [config]="tableConfig()"
-  [items]="trainees()"
-  [filterFn]="filterFn()"
+  [items]="filteredTrainees()"
   [isLoading]="isLoading()"
   [isPointer]="true"
   [idKey]="'gradeId'"
+  [activeItemId]="selectedTraineesRow()?.gradeId"
   (tableRowClicked)="onTableRowClick($event)"
 >
-<!--  <div class="search-container row">-->
-<!--    <app-text-input-->
-<!--      [placeholder]="'ID'"-->
-<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'id')"-->
-<!--      [name]="'id'"-->
-<!--    />-->
-<!--    <app-number-input-->
-<!--      [placeholder]="'Grade'"-->
-<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'grade')"-->
-<!--      [name]="'grade'"-->
-<!--      [maxNumberLength]="100"-->
-<!--      [digitsAfterDecimal]="0"-->
-<!--    />-->
-<!--    <app-select-input-->
-<!--      [options]="gradeRangeOptions"-->
-<!--      [placeholder]="'Grade range'"-->
-<!--      [formControl]="formUtilitiesService.getControl(dataFiltersForm, 'gradeRange')"-->
-<!--      [name]="'gradeRange'"-->
-<!--    />-->
-<!--    <app-range-date-input-->
-<!--      [placeholder]="'Date range'"-->
-<!--      [formGroup]="formUtilitiesService.getGroup(dataFiltersForm, 'dateRange')"-->
-<!--      [name]="'dateRange'"-->
-<!--      [startDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'startDate')"-->
-<!--      [endDateControl]="formUtilitiesService.getNestedControl(dateRangeGroup, 'endDate')"-->
-<!--    />-->
-<!--    <app-button-->
-<!--      [text]="'Reset filters'"-->
-<!--      [color]="'primary'"-->
-<!--      (buttonClicked)="resetFilters()"-->
-<!--    />-->
-<!--  </div>-->
+  <div class="filter-container">
+    <app-select-input
+      [options]="filterTypeOptions"
+      [label]="'Select Filter Type'"
+      [formControl]="filterTypeControl"
+      [name]="'filterType'"
+    />
+
+    @switch (filterTypeControl.value) {
+      @case ('id') {
+        <app-text-input
+          [label]="'ID'"
+          [formControl]="dataFiltersForm.controls.id"
+          [name]="'id'"
+        />
+      }
+      @case ('name') {
+        <app-text-input
+          [label]="'Name'"
+          [formControl]="dataFiltersForm.controls.name"
+          [name]="'name'"
+        />
+      }
+      @case ('dateRange') {
+        <app-range-date-input
+          [formGroup]="dataFiltersForm.controls.dateRange"
+          [startDateControl]="dataFiltersForm.controls.dateRange.controls.startDate"
+          [endDateControl]="dataFiltersForm.controls.dateRange.controls.endDate"
+          [name]="'dateRange'"
+        />
+      }
+      @case ('subject') {
+        <app-select-input
+          [options]="subjectTypeOptions()"
+          [label]="'Subject'"
+          [formControl]="dataFiltersForm.controls.subject"
+          [name]="'subject'"
+        />
+      }
+    }
+  </div>
 </app-data-table>

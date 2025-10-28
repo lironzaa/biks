@@ -34,8 +34,6 @@
         [label]="'Grade'"
         [formControl]="traineeForm.controls.grade"
         [name]="'grade'"
-        [maxNumberLength]="100"
-        [digitsAfterDecimal]="0"
         [isFormSubmitted]="isFormSubmitted()"
       />
     </div>
@@ -53,7 +51,7 @@
         [label]="'Date Joined'"
         [formControl]="traineeForm.controls.dateJoined"
         [name]="'dateJoined'"
-        [customErrorMessages]="traineeFormCustomErrors.dateJoined"
+        [customErrorMessages]="traineeFormCustomErrors().dateJoined"
         [isFormSubmitted]="isFormSubmitted()"
       />
     </div>
@@ -93,7 +91,7 @@
     <div class="mb-4">
       <app-select-input
         [options]="subjectTypeOptions()"
-        [placeholder]="'Subject'"
+        [label]="'Subject'"
         [formControl]="traineeForm.controls.subject"
         [name]="'subject'"
         [isFormSubmitted]="isFormSubmitted()"
@@ -103,6 +101,7 @@
       [text]="isEditMode() ? 'Edit' : 'Create'"
       [color]="'primary'"
       [type]="'submit'"
+      [isDisabled]="isLoading()"
     />
   </form>
 

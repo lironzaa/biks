@@ -132,42 +132,41 @@ export class TraineesEffects {
     );
   });
 
-  // deleteTrainee = createEffect(() => {
-  //   return this.actions$.pipe(
-  //     ofType(deleteTrainee),
-  //     switchMap((deleteTraineeData) => {
-  //       return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${ deleteTraineeData.id }`).pipe(
-  //         mergeMap(() => {
-  //           const queryParams = this.route.snapshot.queryParams;
-  //           return [
-  //             setSelectedTraineeRow({ traineeRow: null }),
-  //             getTrainees({ queryParams: queryParams as DataFiltersQueryParams })
-  //           ];
-  //         }),
-  //         catchError((errorRes: HttpErrorResponse) => of(traineesError({ errorMessage: errorRes.message })))
-  //       );
-  //     })
-  //   );
-  // });
-  //
-  // createTraineeGrade = createEffect(() => {
-  //   return this.actions$.pipe(
-  //     ofType(createTraineeGrade),
-  //     switchMap((createTraineeGrade) => {
-  //       return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, createTraineeGrade.data).pipe(
-  //         map(() => {
-  //           const queryParams = this.route.snapshot.queryParams;
-  //           return getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
-  //         }),
-  //         catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message))
-  //       );
-  //     }));
-  // });
+  deleteTrainee = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(TraineesActions.deleteTrainee),
+      switchMap((deleteTraineeData) => {
+        return this.http.delete<CreateUpdateDeleteTraineeResponse>(`${ this.apiPrefix }/${ deleteTraineeData.id }`).pipe(
+          mergeMap(() => {
+            const queryParams = this.route.snapshot.queryParams;
+            return [
+              TraineesActions.setSelectedTraineeRow({ traineeRow: null }),
+              TraineesActions.getTrainees({ queryParams: queryParams as DataFiltersQueryParams })
+            ];
+          }),
+          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message, TraineesActions.deleteTraineeError))
+        );
+      })
+    );
+  });
+
+  createTraineeGrade = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(TraineesActions.createTraineeGrade),
+      switchMap((createTraineeGrade) => {
+        return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, createTraineeGrade.data).pipe(
+          map(() => {
+            const queryParams = this.route.snapshot.queryParams;
+            return TraineesActions.getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
+          }),
+          catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message, TraineesActions.createTraineeGradeError))
+        );
+      }));
+  });
 
   handleError(errorMessage: string, actionCreator: (props: { error: string }) => any) {
     console.log(errorMessage);
     this.toastr.error(errorMessage);
     return of(actionCreator({ error: errorMessage }));
-
   }
 }

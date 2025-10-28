@@ -43,7 +43,6 @@ export class SelectInput<T extends AppSelectItem> extends ControlValueAccessorDi
   options = input.required<T[]>();
   name = input.required<string>();
   label = input<string>();
-  placeholder = input<string>('');
   customErrorMessages = input<CustomErrorMessages>({});
   isMultiple = input<boolean>(false);
   isHorizontal = input<boolean>(false);
@@ -56,8 +55,4 @@ export class SelectInput<T extends AppSelectItem> extends ControlValueAccessorDi
     super.ngOnInit();
     this.isHorizontalClass = this.isHorizontal();
   }
-
-  // onChange(selectItem: T): void {
-  //   if (selectItem) this.valueSelected.emit(selectItem);
-  // }
 }

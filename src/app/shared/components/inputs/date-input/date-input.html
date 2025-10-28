@@ -9,10 +9,12 @@
       (blur)="onBlur()"
     >
     <mat-hint>DD/MM/YYYY</mat-hint>
-    <button matIconSuffix mat-icon-button aria-label="Clear" (click)="clearDate()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <mat-datepicker-toggle matIconSuffix [for]="picker">
+    @if (control().value) {
+      <button matSuffix mat-icon-button aria-label="Clear" (click)="clearDate($event)" type="button">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+    <mat-datepicker-toggle matSuffix [for]="picker">
       <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
     </mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>

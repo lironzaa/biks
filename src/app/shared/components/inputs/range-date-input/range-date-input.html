@@ -1,0 +1,35 @@
+<div class="range-date-container">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Start Date</mat-label>
+    <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl()" [id]="name() + '-start'">
+    <mat-datepicker-toggle matSuffix [for]="startPicker">
+      <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+    </mat-datepicker-toggle>
+    <mat-datepicker #startPicker></mat-datepicker>
+    <mat-error>
+      <app-error-input
+        [control]="startDateControl()"
+        [controlName]="name() + '-start'"
+        [customErrorMessages]="customErrorMessages()"
+        [isFormSubmitted]="isFormSubmitted()"
+      ></app-error-input>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>End Date</mat-label>
+    <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl()" [id]="name() + '-end'">
+    <mat-datepicker-toggle matSuffix [for]="endPicker">
+      <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+    </mat-datepicker-toggle>
+    <mat-datepicker #endPicker></mat-datepicker>
+    <mat-error>
+      <app-error-input
+        [control]="endDateControl()"
+        [controlName]="name() + '-end'"
+        [customErrorMessages]="customErrorMessages()"
+        [isFormSubmitted]="isFormSubmitted()"
+      ></app-error-input>
+    </mat-error>
+  </mat-form-field>
+</div>

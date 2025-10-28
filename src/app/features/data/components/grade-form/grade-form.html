@@ -5,15 +5,13 @@
       [label]="'Grade'"
       [formControl]="gradeForm.controls.grade"
       [name]="'grade'"
-      [maxNumberLength]="100"
-      [digitsAfterDecimal]="0"
       [isFormSubmitted]="isFormSubmitted()"
     />
   </div>
   <div class="mb-4">
     <app-select-input
       [options]="subjectTypeOptions()"
-      [placeholder]="'Subject'"
+      [label]="'Subject'"
       [formControl]="gradeForm.controls.subject"
       [name]="'subject'"
       [isFormSubmitted]="isFormSubmitted()"

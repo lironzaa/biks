@@ -36,7 +36,7 @@ export const traineesFeature = createFeature({
       error: null,
       isLoading: false
     })),
-    on(TraineesActions.getTraineesError, TraineesActions.createTraineeError, (state, { error }): TraineesState => ({
+    on(TraineesActions.getTraineesError, TraineesActions.createTraineeError, TraineesActions.editTraineeError, TraineesActions.deleteTraineeError, TraineesActions.createTraineeGradeError, (state, { error }): TraineesState => ({
       ...state,
       error,
       isLoading: false

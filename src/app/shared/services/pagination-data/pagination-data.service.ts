@@ -1,33 +1,21 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
 
 import { PaginationData } from '../../interfaces/data-table/pagination-data-interface';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { LocalStorageKeysEnum } from '../../enums/local-storage/local-storage-keys.enum';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PaginationDataService {
-  localStorageService = inject(LocalStorageService);
-
-  private _itemsPerPage: number = this.getItemsPerPageFromLocalStorage();
-
-  get itemsPerPage(): number {
-    return this._itemsPerPage;
-  }
-
-  set itemsPerPage(itemsPerPage: number) {
-    this._itemsPerPage = itemsPerPage;
-    this.localStorageService.setItem(LocalStorageKeysEnum.itemsPerPage, itemsPerPage.toString());
-  }
+  private localStorageService = inject(LocalStorageService);
 
   private getItemsPerPageFromLocalStorage(): number {
     const storedItemsPerPage = this.localStorageService.getItem(LocalStorageKeysEnum.itemsPerPage);
     return storedItemsPerPage ? +storedItemsPerPage : 10;
   }
 
-  private paginationData = new BehaviorSubject<PaginationData>({
+  private readonly _itemsPerPage = signal(this.getItemsPerPageFromLocalStorage());
+  readonly itemsPerPage = this._itemsPerPage.asReadonly();
+  private readonly _paginationData = signal<PaginationData>({
     currentPage: 1,
     itemsCount: 0,
     totalPages: 0,
@@ -35,16 +23,23 @@ export class PaginationDataService {
     hasNextPage: false,
     previousPage: 0,
     hasPreviousPage: false,
-    itemsPerPage: this._itemsPerPage,
+    itemsPerPage: this._itemsPerPage(),
     from: 0,
     to: 0,
     isPaginated: false,
   });
+  readonly paginationData = this._paginationData.asReadonly();
+
+  setItemsPerPage(itemsPerPage: number): void {
+    this._itemsPerPage.set(itemsPerPage);
+    this.localStorageService.setItem(LocalStorageKeysEnum.itemsPerPage, itemsPerPage.toString());
+  }
 
   calculatePaginationData(page: number, itemsCount?: number | undefined, isPaginated?: boolean): PaginationData {
-    const updatedItemsCount = itemsCount ?? this.paginationData.value.itemsCount;
-    const itemsPerPage = this._itemsPerPage;
-    const to = this.paginationData.value.hasNextPage ? page * itemsPerPage : Math.min(page * itemsPerPage, updatedItemsCount);
+    const updatedItemsCount = itemsCount ?? this._paginationData().itemsCount;
+    const itemsPerPage = this._itemsPerPage();
+    const currentData = this._paginationData();
+    const to = currentData.hasNextPage ? page * itemsPerPage : Math.min(page * itemsPerPage, updatedItemsCount);
 
     return {
       currentPage: page,
@@ -62,10 +57,6 @@ export class PaginationDataService {
   }
 
   setPaginationData(paginationData: PaginationData): void {
-    this.paginationData.next(paginationData);
-  }
-
-  getPaginationDataListener(): Observable<PaginationData> {
-    return this.paginationData.asObservable();
+    this._paginationData.set(paginationData);
   }
 }

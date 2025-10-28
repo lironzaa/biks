@@ -1,0 +1,9 @@
+.range-date-container {
+  display: flex;
+  gap: var(--spacing-m);
+  align-items: flex-start;
+
+  mat-form-field {
+    flex: 1;
+  }
+}

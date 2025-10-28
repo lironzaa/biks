@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
@@ -11,6 +11,7 @@ import { createTraineeGrade } from '../../store/trainees.actions';
 import { SubjectType } from '../../types/subject-type';
 import { ErrorService } from '../../../../shared/services/error/error.service';
 import { SubjectTypeOptions } from '../../data/subject-type-options';
+import { traineesFeature } from '../../store/trainees.reducer';
 
 @Component({
   selector: 'app-grade-form',
@@ -30,6 +31,8 @@ export class GradeForm {
   store = inject(Store);
   errorService = inject(ErrorService);
 
+  selectedTraineesRow = this.store.selectSignal(traineesFeature.selectSelectedTraineesRow);
+
   gradeForm = this.fb.group({
     "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
     "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
@@ -39,7 +42,18 @@ export class GradeForm {
   subjectTypeOptions = signal(SubjectTypeOptions);
   isFormSubmitted = signal(false);
 
-  @ViewChild("gradeFormDirective") gradeFormDirective!: FormGroupDirective;
+  gradeFormDirective = viewChild.required<FormGroupDirective>("gradeFormDirective");
+
+  constructor() {
+    effect(() => {
+      const selectedTraineesRowData = this.selectedTraineesRow();
+
+      untracked(() => {
+        if (selectedTraineesRowData) this.gradeForm.get("traineeId")?.setValue(selectedTraineesRowData.id);
+        else this.gradeForm.get("traineeId")?.setValue("");
+      });
+    });
+  }
 
   onSubmitGradeForm(): void {
     this.isFormSubmitted.set(true);
@@ -47,24 +61,23 @@ export class GradeForm {
     if (this.gradeForm.valid) {
       const gradeData: GradeCreateData = this.populateCreateGradeData();
       this.store.dispatch(createTraineeGrade({ data: gradeData }));
-      this.resetForm();
-      // this.gradeForm.get("traineeId")?.setValue(this.selectedTraineesRow()!.id);
+      this.resetForm(gradeData.traineeId);
     }
   }
 
   populateCreateGradeData(): GradeCreateData {
     if (!this.gradeForm.value || !this.gradeForm.value.grade || !this.gradeForm.value.subject || !this.gradeForm.value.date || !this.gradeForm.value.traineeId) throw this.errorService.throwError("Grade Form values are not defined");
-    if (typeof this.gradeForm.value.date === "string") throw this.errorService.throwError("Grade Form date is not a date");
     return {
       grade: this.gradeForm.value.grade,
       subject: this.gradeForm.value.subject,
-      date: this.gradeForm.value.date.toJSON(),
+      date: typeof this.gradeForm.value.date === "string" ? this.gradeForm.value.date : this.gradeForm.value.date.toJSON(),
       traineeId: this.gradeForm.value.traineeId
     };
   }
 
-  resetForm(): void {
+  resetForm(selectedTraineeId: string): void {
     this.gradeForm.reset();
-    this.gradeFormDirective.resetForm();
+    this.gradeFormDirective().resetForm();
+    this.gradeForm.get("traineeId")?.setValue(selectedTraineeId)
   }
 }

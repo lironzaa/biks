@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatError, MatFormField, MatHint, MatLabel, MatSuffix } from '@angular/material/form-field';
 import {
   MatDatepicker,
   MatDatepickerInput,
@@ -33,6 +33,7 @@ import { ErrorInput } from '../error-input/error-input';
     MatFormField,
     MatHint,
     MatLabel,
+    MatSuffix,
     MatDatepickerToggle,
     MatIcon,
     MatDatepicker,
@@ -49,7 +50,9 @@ export class DateInput extends ControlValueAccessorDirective<Date | null> {
   customErrorMessages = input<CustomErrorMessages>({});
   isFormSubmitted = input(false);
 
-  clearDate(): void {
-    this.control()?.setValue(null);
+  clearDate(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.control().setValue(null);
   }
 }

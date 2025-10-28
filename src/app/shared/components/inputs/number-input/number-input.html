@@ -6,13 +6,9 @@
     <input
       matInput
       [formControl]="control()"
-      type="text"
+      type="number"
       [id]="name()"
       (blur)="onBlur()"
-      mask="separator.{{digitsAfterDecimal()}}"
-      decimalMarker="."
-      thousandSeparator=","
-      separatorLimit="{{maxNumberLength()}}"
     >
     <mat-error>
       <app-error-input
