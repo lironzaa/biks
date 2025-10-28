@@ -12,7 +12,7 @@
     @for (header of config().columns; track header.dataProperty) {
       <ng-container [matColumnDef]="header.dataProperty">
         <th mat-header-cell *matHeaderCellDef>{{ header.title }}</th>
-        <td mat-cell *matCellDef="let item" [ngClass]="{'pointer': isPointer()}">
+        <td mat-cell *matCellDef="let item">
           @switch (header.columnType) {
             @case (columnTypeEnum().date) {
               {{ item | getItemValue : header.dataProperty | date:"dd/MM/yyyy" }}
@@ -31,19 +31,18 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns();"
         (click)="onTableRowClick(row)"
-        [class.mat-mdc-row-selected]="activeItemId() === (row | getItemValue : idKey())"></tr>
+        [class.mat-mdc-row-selected]="activeItemId() === (row | getItemValue : idKey())"
+        [class.pointer]="isPointer()"
+        [ngClass]="row | traineeRowClass"></tr>
 
-    @if (paginationData().itemsCount === 0) {
-      <tr class="mat-row">
-        <td class="mat-cell" [attr.colspan]="displayedColumns().length">
-          <span>No items to display</span>
-        </td>
-      </tr>
-    }
+    <tr class="mat-mdc-no-data-row" *matNoDataRow>
+      <td class="mat-mdc-cell" [attr.colspan]="displayedColumns().length">
+        <span>{{ paginationData().itemsCount === 0 ? 'No items to display' : 'No results found for current filters' }}</span>
+      </td>
+    </tr>
   </table>
 }
 
-<div>{{ paginationData() | json }}</div>
 @if (isPagination() && paginationData().itemsCount > 0) {
   <app-pagination />
 }

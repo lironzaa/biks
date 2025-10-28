@@ -2,6 +2,7 @@
 @use '@angular/material' as mat;
 @use 'app/spacing.scss';
 @use 'app/typography.scss';
+@use 'app/colors.scss';
 @use 'ngx-toastr/toastr';
 
 @include mat.core();
@@ -33,4 +34,9 @@ body {
 
 .pointer {
   cursor: pointer;
+}
+
+// Utility classes for form fields
+.full-width {
+  width: 100% !important;
 }

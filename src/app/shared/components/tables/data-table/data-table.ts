@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { NgClass, SlicePipe, DatePipe, JsonPipe } from '@angular/common';
+import { NgClass, SlicePipe, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 
 import { DataTableConfig } from '../../../interfaces/data-table/data-table-interface';
@@ -9,6 +9,7 @@ import { Pagination } from '../pagination/pagination';
 import { TableFilters } from '../table-filters/table-filters';
 import { ColumnTypeEnum } from '../../../enums/tables/column-type.enum';
 import { Spinner } from '../../spinners/spinner/spinner';
+import { TraineeRowClassPipe } from '../../../pipes/trainee-status.pipe';
 
 @Component({
   selector: 'app-data-table',
@@ -24,7 +25,7 @@ import { Spinner } from '../../spinners/spinner/spinner';
     NgClass,
     MatTableModule,
     Spinner,
-    JsonPipe,
+    TraineeRowClassPipe,
   ]
 })
 export class DataTable<T> {

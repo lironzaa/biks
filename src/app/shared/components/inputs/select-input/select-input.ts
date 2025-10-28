@@ -8,6 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
@@ -37,6 +38,7 @@ import { AppSelectItem } from '../../../interfaces/general/app-select-item.inter
     MatSelect,
     MatOption,
     MatError,
+    NgClass,
   ],
 })
 export class SelectInput<T extends AppSelectItem> extends ControlValueAccessorDirective<T['id']> implements OnInit {
@@ -48,6 +50,7 @@ export class SelectInput<T extends AppSelectItem> extends ControlValueAccessorDi
   isHorizontal = input<boolean>(false);
   isEmptyOption = input<boolean>(false);
   isFormSubmitted = input(false);
+  formFieldClass = input<string>('');
   @HostBinding('class.is-horizontal') isHorizontalClass = false;
   valueSelected = output<T>();
 

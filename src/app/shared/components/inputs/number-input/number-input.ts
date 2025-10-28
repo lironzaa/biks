@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
@@ -25,7 +26,8 @@ import { ErrorInput } from '../error-input/error-input';
     MatFormField,
     MatLabel,
     MatInput,
-    MatError
+    MatError,
+    NgClass,
   ],
 })
 export class NumberInput extends NumberInputValueAccessorDirective {
@@ -33,4 +35,5 @@ export class NumberInput extends NumberInputValueAccessorDirective {
   label = input<string>();
   customErrorMessages = input<CustomErrorMessages>({});
   isFormSubmitted = input(false);
+  formFieldClass = input<string>('');
 }

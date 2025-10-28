@@ -3,27 +3,26 @@ import { GradeCreateData, TraineeCreateData } from "../types/trainee-type";
 
 interface TraineeBase {
   id: string;
-  name: string;
-  email: string;
-  dateJoined: string;
   address: string;
   city: string;
   country: string;
+  dateJoined: string;
+  email: string;
+  name: string;
   zip: string;
 }
 
 export interface Trainee extends TraineeBase {
   average: number;
   exams: number;
-  dynamicTrClass?: string;
   grades: TraineeGrade[];
 }
 
 export interface TraineeRow extends TraineeBase {
   grade: number;
   gradeDate: string;
-  subject: SubjectType;
   gradeId: string;
+  subject: SubjectType;
 }
 
 export interface FormattedTrainees {
@@ -33,18 +32,18 @@ export interface FormattedTrainees {
 
 export interface TraineeGrade {
   id: string;
+  date: string;
   grade: number;
   subject: SubjectType;
-  date: string;
   traineeId: string;
 }
 
 export interface CreateTrainee {
-  traineeData: TraineeCreateData;
   gradeData: GradeCreateData;
+  traineeData: TraineeCreateData;
 }
 
 export interface EditTrainee {
-  traineeData: Omit<Trainee, "average" | "exams" | "dynamicTrClass" | "grades">
   gradeData: TraineeGrade;
+  traineeData: Omit<Trainee, "average" | "exams" | "grades">
 }

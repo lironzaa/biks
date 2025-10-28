@@ -1,0 +1,43 @@
+<app-data-table
+  [config]="tableConfig()"
+  [items]="filteredTrainees()"
+  [isLoading]="isLoading()"
+>
+  <div class="filter-container">
+    <app-select-input
+      [options]="traineesStateIds()"
+      [label]="'IDs:'"
+      [formControl]="monitorFiltersForm.controls.ids"
+      [name]="'ids'"
+      [isMultiple]="true"
+      [formFieldClass]="'full-width'"
+    />
+    <app-text-input
+      [label]="'Names:'"
+      [formControl]="monitorFiltersForm.controls.name"
+      [name]="'name'"
+      [formFieldClass]="'full-width'"
+    />
+    <div class="state-filter">
+      <label class="state-label">State:</label>
+      <div class="checkboxes-container">
+        <app-checkbox-input
+          [option]="'Passed'"
+          [formControl]="monitorFiltersForm.controls.isPassed"
+          [name]="'isPassed'"
+        />
+        <app-checkbox-input
+          [option]="'Failed'"
+          [formControl]="monitorFiltersForm.controls.isFailed"
+          [name]="'isFailed'"
+        />
+      </div>
+    </div>
+    <app-button
+      [text]="'Clear Filters'"
+      [variant]="'stroked'"
+      [color]="'primary'"
+      (buttonClicked)="clearFilters()"
+    />
+  </div>
+</app-data-table>

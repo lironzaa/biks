@@ -69,7 +69,7 @@ export const traineesFeature = createFeature({
                    }) => ({
     selectTraineesIds: createSelector(
       selectTrainees,
-      trainees => trainees.map(trainee => trainee.id)
+      trainees => trainees.map(trainee => ({ id: trainee.id, label: trainee.id }))
     )
   })
 })

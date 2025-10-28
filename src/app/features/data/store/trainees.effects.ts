@@ -57,7 +57,6 @@ export class TraineesEffects {
       return {
         ...trainee,
         average: average,
-        dynamicTrClass: average > 65 ? "bg-primary" : "bg-danger",
         exams: trainee.grades.length,
       };
     });

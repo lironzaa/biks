@@ -1,0 +1,21 @@
+@if (control()) {
+  <section>
+    @if (label()) {
+      <label class="section-label">{{ label() }}</label>
+    }
+    <mat-checkbox
+      [formControl]="control()"
+      [id]="name()"
+      [attr.aria-label]="option()"
+      (blur)="onBlur()"
+    >
+      {{ option() }}
+    </mat-checkbox>
+    <app-error-input
+      [control]="control()"
+      [controlName]="name()"
+      [customErrorMessages]="customErrorMessages()"
+      [isFormSubmitted]="isFormSubmitted()"
+    />
+  </section>
+}

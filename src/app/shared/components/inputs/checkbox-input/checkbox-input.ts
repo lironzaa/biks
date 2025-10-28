@@ -1,41 +1,34 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatLabel } from '@angular/material/form-field';
 
 import { ControlValueAccessorDirective } from '../../../directives/input.directive';
 import { ErrorInput } from '../error-input/error-input';
 import { CustomErrorMessages } from '../../../types/inputs/error-input/custom-error-messages.type';
 
 @Component({
-  selector: 'app-text-input',
+  selector: 'app-checkbox-input',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextInput),
+      useExisting: forwardRef(() => CheckboxInput),
       multi: true,
     },
   ],
-  templateUrl: './text-input.html',
-  styleUrls: [ './text-input.scss' ],
+  templateUrl: './checkbox-input.html',
+  styleUrl: './checkbox-input.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     ErrorInput,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    NgClass,
+    MatCheckbox,
   ],
 })
-export class TextInput extends ControlValueAccessorDirective<string | null> {
+export class CheckboxInput extends ControlValueAccessorDirective<boolean | null> {
   name = input.required<string>();
   label = input<string>();
-  type = input<'text' | 'email'>('text');
-  mask = input<string>();
+  option = input.required<string>();
   customErrorMessages = input<CustomErrorMessages>({});
   isFormSubmitted = input(false);
-  formFieldClass = input<string>('');
 }

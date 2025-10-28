@@ -1,6 +1,7 @@
 .filter-container {
   display: flex;
   gap: var(--spacing-m);
-  align-items: flex-end;
+  align-items: center;
   margin-bottom: var(--spacing-m);
+  padding-top: var(--spacing-s);
 }

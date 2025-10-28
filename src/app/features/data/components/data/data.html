@@ -9,8 +9,8 @@
 >
   <div class="filter-container">
     <app-select-input
-      [options]="filterTypeOptions"
-      [label]="'Select Filter Type'"
+      [options]="filterTypeOptions()"
+      [label]="'Filter:'"
       [formControl]="filterTypeControl"
       [name]="'filterType'"
     />
@@ -38,6 +38,19 @@
           [name]="'dateRange'"
         />
       }
+      @case ('grade') {
+        <app-number-input
+          [label]="'Grade'"
+          [formControl]="dataFiltersForm.controls.grade"
+          [name]="'grade'"
+        />
+        <app-select-input
+          [options]="gradeRangeOptions()"
+          [label]="'Grade range'"
+          [formControl]="dataFiltersForm.controls.gradeRange"
+          [name]="'gradeRange'"
+        />
+      }
       @case ('subject') {
         <app-select-input
           [options]="subjectTypeOptions()"
@@ -47,5 +60,11 @@
         />
       }
     }
+    <app-button
+      [text]="'Clear Filters'"
+      [variant]="'stroked'"
+      [color]="'primary'"
+      (buttonClicked)="clearFilters()"
+    />
   </div>
 </app-data-table>

@@ -1,0 +1,26 @@
+// Color Variables
+// Extracted from all SCSS files across the project
+
+// Primary Colors (Material Indigo)
+:root {
+  // Base colors
+  --color-primary: rgb(63, 81, 181);           // Material Indigo 500
+  --color-primary-light: rgba(63, 81, 181, 0.12);
+  --color-primary-dark: rgba(63, 81, 181, 0.16);
+
+  // Success/Passed colors (Green)
+  --color-success: rgb(46, 125, 50);           // Material Green 700
+  --color-success-light: rgba(46, 125, 50, 0.08);
+  --color-success-medium: rgba(46, 125, 50, 0.12);
+
+  // Error/Failed colors (Red)
+  --color-error: rgb(211, 47, 47);             // Material Red 600
+  --color-error-light: rgba(211, 47, 47, 0.08);
+  --color-error-medium: rgba(211, 47, 47, 0.12);
+
+  // Neutral colors
+  --color-white: rgb(255, 255, 255);
+  --color-white-overlay: rgba(255, 255, 255, 0.1);
+  --color-black: rgb(0, 0, 0);
+  --color-black-overlay: rgba(0, 0, 0, 0.04);
+}

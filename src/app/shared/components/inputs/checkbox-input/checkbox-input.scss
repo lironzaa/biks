@@ -1,0 +1,13 @@
+section {
+  display: flex;
+  flex-direction: column;
+
+  .section-label {
+    font-size: var(--font-size-m);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  mat-checkbox {
+    margin: 0;
+  }
+}

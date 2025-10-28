@@ -10,18 +10,48 @@
 
 // Material table row hover effect
 tr.mat-mdc-row {
-  cursor: pointer;
   transition: background-color 0.2s ease;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+  &.pointer {
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-black-overlay);
+    }
   }
 
   &.mat-mdc-row-selected {
-    background-color: rgba(63, 81, 181, 0.12);
+    background-color: var(--color-primary-light);
 
     &:hover {
-      background-color: rgba(63, 81, 181, 0.16);
+      background-color: var(--color-primary-dark);
     }
+  }
+}
+
+// Status row styling
+.row-passed {
+  background-color: var(--color-success-light) !important;
+
+  &:hover {
+    background-color: var(--color-success-medium) !important;
+  }
+}
+
+.row-failed {
+  background-color: var(--color-error-light) !important;
+
+  &:hover {
+    background-color: var(--color-error-medium) !important;
+  }
+}
+
+// Empty state styling
+.mat-mdc-no-data-row {
+  td {
+    text-align: center;
+    padding: var(--spacing-l) !important;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-m);
   }
 }

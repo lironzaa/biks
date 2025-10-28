@@ -14,6 +14,7 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { traineesFeature } from '../../store/trainees.reducer';
 import { DataTable } from '../../../../shared/components/tables/data-table/data-table';
@@ -35,7 +36,8 @@ import { SubjectType } from '../../types/subject-type';
 import { TextInput } from '../../../../shared/components/inputs/text-input/text-input';
 import { SelectInput } from '../../../../shared/components/inputs/select-input/select-input';
 import { RangeDateInput } from '../../../../shared/components/inputs/range-date-input/range-date-input';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Button } from '../../../../shared/components/buttons/button/button';
+import { NumberInput } from '../../../../shared/components/inputs/number-input/number-input';
 
 @Component({
   selector: 'app-data',
@@ -44,7 +46,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     TextInput,
     SelectInput,
     RangeDateInput,
-    ReactiveFormsModule
+    Button,
+    ReactiveFormsModule,
+    NumberInput
   ],
   providers: [ PaginationDataService ],
   templateUrl: './data.html',
@@ -59,19 +63,30 @@ export class Data implements OnInit {
   paginationDataService = inject(PaginationDataService);
   destroyRef = inject(DestroyRef);
 
-  trainees = this.store.selectSignal(traineesFeature.selectTraineesRows);
+  traineesRows = this.store.selectSignal(traineesFeature.selectTraineesRows);
   isLoading = this.store.selectSignal(traineesFeature.selectIsLoading);
   selectedTraineesRow = this.store.selectSignal(traineesFeature.selectSelectedTraineesRow);
   filterFn = signal<FilterFn<TraineeRow> | undefined>(undefined);
   tableConfig = signal(dataTableConfig);
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
   subjectTypeOptions = signal(SubjectTypeOptions);
-
+  filterTypeOptions = signal([
+    { id: 'id', label: 'ID' },
+    { id: 'name', label: 'Name' },
+    { id: 'grade', label: 'Grade' },
+    { id: 'dateRange', label: 'Date Range' },
+    { id: 'subject', label: 'Subject' }
+  ]);
+  gradeRangeOptions = signal([
+    { id: GradeRangeEnum.equals, label: 'Equals' },
+    { id: GradeRangeEnum.greaterThan, label: 'Greater Than' },
+    { id: GradeRangeEnum.lessThan, label: 'Less Than' }
+  ]);
   filteredTrainees = computed(() => {
-    const trainees = this.trainees();
+    const traineesRows = this.traineesRows();
     const filterFn = this.filterFn();
 
-    let items = [ ...trainees ];
+    let items = [ ...traineesRows ];
     if (filterFn) items = items.filter(filterFn);
 
     return items;
@@ -88,7 +103,33 @@ export class Data implements OnInit {
         this.paginationDataService.setPaginationData(paginationData);
       });
     });
+
+    effect(() => {
+      const queryParams = this.queryParams();
+
+      untracked(() => {
+        const paginationData = this.paginationDataService.paginationData();
+        if (!paginationData.isPaginated) {
+          const isApplyFilters = this.isApplyFilters(queryParams);
+          if (isApplyFilters) this.filterFn.set(this.createFilterFn(queryParams));
+          else this.filterFn.set(undefined);
+        }
+      });
+    });
   }
+
+  private readonly DEBOUNCE_TIME_MS = 500;
+  private readonly DEFAULT_FORM_VALUES = {
+    id: "",
+    name: "",
+    grade: null,
+    subject: null,
+    gradeRange: GradeRangeEnum.equals,
+    dateRange: {
+      startDate: null,
+      endDate: null
+    }
+  } as const;
 
   filterTypeControl = new FormControl<string | null>(null);
 
@@ -108,16 +149,8 @@ export class Data implements OnInit {
   });
   gradeRangeControl = this.dataFiltersForm.get('gradeRange');
 
-  filterTypeOptions = [
-    { id: 'id', label: 'ID' },
-    { id: 'name', label: 'Name' },
-    { id: 'dateRange', label: 'Date Range' },
-    { id: 'subject', label: 'Subject' }
-  ];
-
   ngOnInit(): void {
     this.patchFiltersFormValue();
-    this.initQueryParamsSub();
     this.initFiltersFormSub();
     this.initFilterTypeControlSub();
   }
@@ -138,44 +171,30 @@ export class Data implements OnInit {
         }
       }),
     }
-    this.dataFiltersForm.patchValue(dataFiltersQueryParamsPatchValues);
+    this.dataFiltersForm.patchValue(dataFiltersQueryParamsPatchValues, { emitEvent: false });
 
     if (dataFiltersQueryParams.id) {
-      this.filterTypeControl.setValue('id');
+      this.filterTypeControl.setValue('id', { emitEvent: false });
     } else if (dataFiltersQueryParams.name) {
-      this.filterTypeControl.setValue('name');
+      this.filterTypeControl.setValue('name', { emitEvent: false });
+    } else if (dataFiltersQueryParams.grade) {
+      this.filterTypeControl.setValue('grade', { emitEvent: false });
     } else if (dataFiltersQueryParams.startDate || dataFiltersQueryParams.endDate) {
-      this.filterTypeControl.setValue('dateRange');
+      this.filterTypeControl.setValue('dateRange', { emitEvent: false });
     } else if (dataFiltersQueryParams.subject) {
-      this.filterTypeControl.setValue('subject');
+      this.filterTypeControl.setValue('subject', { emitEvent: false });
     }
-  }
-
-  initQueryParamsSub(): void {
-    this.route.queryParams.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((queryParams) => {
-      const paginationData = this.paginationDataService.paginationData();
-      console.log(paginationData);
-      if (!paginationData.isPaginated) {
-        const isApplyFilters = this.isApplyFilters(queryParams);
-        if (isApplyFilters) this.filterFn.set(this.createFilterFn(queryParams));
-        else this.filterFn.set(undefined);
-      }
-    });
   }
 
   initFiltersFormSub(): void {
     this.dataFiltersForm.valueChanges
       .pipe(
-        debounceTime(500),
+        debounceTime(this.DEBOUNCE_TIME_MS),
         distinctUntilChanged(),
-        skip(1),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(filtersFormValues => {
       const filtersFormState: FiltersFormState = this.generateFormState(filtersFormValues);
-      console.log(filtersFormState);
-      this.setGrandeRangeIsDisabled(filtersFormState.updatedQueryParams.grade);
+      this.setGradeRangeIsDisabled(filtersFormState.updatedQueryParams.grade);
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
@@ -192,33 +211,25 @@ export class Data implements OnInit {
       .pipe(
         skip(1),
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(() => {
-      this.dataFiltersForm.reset({
-        id: "",
-        name: "",
-        grade: null,
-        subject: null,
-        gradeRange: GradeRangeEnum.equals,
-        dateRange: {
-          startDate: null,
-          endDate: null
-        }
-      }, { emitEvent: false });
+      ).subscribe(() => this.resetFiltersAndQueryParams());
+  }
 
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {
-          id: null,
-          name: null,
-          grade: null,
-          gradeRange: null,
-          subject: null,
-          startDate: null,
-          endDate: null,
-          page: 1
-        },
-        queryParamsHandling: "merge",
-      });
+  private resetFiltersAndQueryParams(): void {
+    this.dataFiltersForm.reset(this.DEFAULT_FORM_VALUES, { emitEvent: false });
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        id: null,
+        name: null,
+        grade: null,
+        gradeRange: null,
+        subject: null,
+        startDate: null,
+        endDate: null,
+        page: 1
+      },
+      queryParamsHandling: "merge",
     });
   }
 
@@ -278,7 +289,7 @@ export class Data implements OnInit {
     return false;
   }
 
-  setGrandeRangeIsDisabled(grade: number | null | undefined): void {
+  setGradeRangeIsDisabled(grade: number | null | undefined): void {
     if (typeof grade === "number") this.gradeRangeControl?.enable({ emitEvent: false });
     else this.gradeRangeControl?.disable({ emitEvent: false });
   }
@@ -321,8 +332,12 @@ export class Data implements OnInit {
     }
   }
 
+  clearFilters(): void {
+    this.filterTypeControl.setValue(null, { emitEvent: false });
+    this.resetFiltersAndQueryParams();
+  }
+
   onTableRowClick(traineeRow: TraineeRow) {
-    console.log(traineeRow);
     this.store.dispatch(setSelectedTraineeRow({ traineeRow }));
   }
 }
