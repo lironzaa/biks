@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: 'analysis',
-    loadComponent: () => import('./features/analysis/analysis').then(m => m.Analysis)
+    loadComponent: () => import('./features/analysis/components/analysis/analysis').then(m => m.Analysis)
   },
   {
     path: 'monitor',

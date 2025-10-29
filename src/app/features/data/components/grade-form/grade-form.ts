@@ -34,10 +34,10 @@ export class GradeForm {
   selectedTraineesRow = this.store.selectSignal(traineesFeature.selectSelectedTraineesRow);
 
   gradeForm = this.fb.group({
-    "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
-    "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
-    "date": new FormControl<string | Date | null>(null, [ Validators.required ]),
-    "traineeId": new FormControl<string>("", [ Validators.required ]),
+    grade: new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    subject: new FormControl<SubjectType | null>(null, [ Validators.required ]),
+    date: new FormControl<string | Date | null>(null, [ Validators.required ]),
+    traineeId: new FormControl<string>("", [ Validators.required ]),
   });
   subjectTypeOptions = signal(SubjectTypeOptions);
   isFormSubmitted = signal(false);
@@ -49,8 +49,8 @@ export class GradeForm {
       const selectedTraineesRowData = this.selectedTraineesRow();
 
       untracked(() => {
-        if (selectedTraineesRowData) this.gradeForm.get("traineeId")?.setValue(selectedTraineesRowData.id);
-        else this.gradeForm.get("traineeId")?.setValue("");
+        if (selectedTraineesRowData) this.gradeForm.controls.traineeId.setValue(selectedTraineesRowData.id);
+        else this.gradeForm.controls.traineeId.setValue("");
       });
     });
   }
@@ -78,6 +78,6 @@ export class GradeForm {
   resetForm(selectedTraineeId: string): void {
     this.gradeForm.reset();
     this.gradeFormDirective().resetForm();
-    this.gradeForm.get("traineeId")?.setValue(selectedTraineeId)
+    this.gradeForm.controls.traineeId.setValue(selectedTraineeId);
   }
 }

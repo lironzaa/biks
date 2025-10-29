@@ -1,0 +1,58 @@
+<div class="analysis-container">
+  <div class="filters-container">
+    <app-select-input
+      [options]="traineesStateIds()"
+      [label]="'IDs:'"
+      [formControl]="analysisForm.controls.ids"
+      [name]="'ids'"
+      [isMultiple]="true"
+      [formFieldClass]="'full-width'"
+    />
+    <app-select-input
+      [options]="subjectTypeOptions()"
+      [label]="'Subjects:'"
+      [formControl]="analysisForm.controls.subjects"
+      [name]="'subjects'"
+      [isMultiple]="true"
+      [formFieldClass]="'full-width'"
+    />
+  </div>
+
+  <div class="charts-container">
+    <div
+      class="chart-section"
+      cdkDropList
+      id="leftChartList"
+      [cdkDropListConnectedTo]="['hiddenChartList']"
+      (cdkDropListDropped)="dropOnLeft($event)"
+    >
+      <app-chart-display [chartNumber]="visibleCharts().left" />
+    </div>
+
+    <div
+      class="chart-section"
+      cdkDropList
+      id="rightChartList"
+      [cdkDropListConnectedTo]="['hiddenChartList']"
+      (cdkDropListDropped)="dropOnRight($event)"
+    >
+      <app-chart-display [chartNumber]="visibleCharts().right" />
+    </div>
+  </div>
+
+  <div
+    class="hidden-chart-container"
+    cdkDropList
+    id="hiddenChartList"
+    [cdkDropListConnectedTo]="['leftChartList', 'rightChartList']"
+    [cdkDropListSortingDisabled]="true"
+  >
+    <div
+      class="hidden-chart-button"
+      cdkDrag
+      [cdkDragData]="hiddenChart()"
+    >
+      {{ hiddenChartTitle() }}
+    </div>
+  </div>
+</div>

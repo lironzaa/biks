@@ -32,39 +32,45 @@ export class TraineesEffects {
   apiPrefix = this.baseUrl + "trainees";
   gradesApiPrefix = this.baseUrl + "grades";
 
-  mapTraineeRows(trainees: Trainee[]): FormattedTrainees {
-    const traineeRows: TraineeRow[] = [];
+  private calculateAverage(grades: { grade: number }[]): number {
+    if (grades.length === 0) return 0;
+    const total = grades.reduce((sum, g) => sum + g.grade, 0);
+    return Utils.roundToDecimal(total / grades.length, 2);
+  }
 
-    const formattedTrainees: Trainee[] = trainees.map(trainee => {
-      const gradesTotal = trainee.grades.reduce((total, traineeGrade) => total + traineeGrade.grade, 0);
-      const average = Utils.roundToDecimal(gradesTotal / trainee.grades.length, 2);
-      trainee.grades.map(grade => {
-        traineeRows.push({
-          id: trainee.id,
-          gradeId: grade.id,
-          name: trainee.name,
-          email: trainee.email,
-          dateJoined: trainee.dateJoined,
-          address: trainee.address,
-          city: trainee.city,
-          country: trainee.country,
-          zip: trainee.zip,
-          grade: grade.grade,
-          gradeDate: grade.date,
-          subject: grade.subject,
-        });
-      });
-      return {
-        ...trainee,
-        average: average,
-        exams: trainee.grades.length,
-      };
-    });
+  private enrichTrainee(trainee: Trainee): Trainee {
+    return {
+      ...trainee,
+      average: this.calculateAverage(trainee.grades),
+      exams: trainee.grades.length
+    };
+  }
+
+  private traineeToRows(trainee: Trainee): TraineeRow[] {
+    return trainee.grades.map(grade => ({
+      id: trainee.id,
+      gradeId: grade.id,
+      name: trainee.name,
+      email: trainee.email,
+      dateJoined: trainee.dateJoined,
+      address: trainee.address,
+      city: trainee.city,
+      country: trainee.country,
+      zip: trainee.zip,
+      grade: grade.grade,
+      gradeDate: grade.date,
+      subject: grade.subject,
+    }));
+  }
+
+  mapTraineeRows(trainees: Trainee[]): FormattedTrainees {
+    const enrichedTrainees = trainees.map(t => this.enrichTrainee(t));
+    const traineeRows = enrichedTrainees.flatMap(t => this.traineeToRows(t));
 
     return {
-      traineeRows: traineeRows,
-      trainees: formattedTrainees
-    }
+      trainees: enrichedTrainees,
+      traineeRows
+    };
   }
 
   getTrainees = createEffect(() => {

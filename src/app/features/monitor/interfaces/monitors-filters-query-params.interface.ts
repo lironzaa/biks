@@ -1,6 +1,6 @@
 interface MonitorsFiltersQueryParamsBase {
-  ids?: string | string[] | null;
-  name?: string | null;
+  ids?: string | string[] | null | undefined;
+  name?: string | null | undefined;
   page?: string;
 }
 

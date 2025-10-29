@@ -1,0 +1,41 @@
+@switch (chartNumber()) {
+  @case (1) {
+    <h3 class="section-title">{{ chartTitle() }}</h3>
+    @for (traineesGradesAverage of traineesGradesAverages(); track traineesGradesAverage.trainee.id) {
+      <div class="chart-wrapper">
+        <app-chart
+          [data]="traineesGradesAverage.averages"
+          [graphLabel]="'Grades averages for trainee ' + traineesGradesAverage.trainee.name"
+        />
+      </div>
+    } @empty {
+      <p class="empty-message">Select at least one trainee to display grades average chart</p>
+    }
+  }
+  @case (2) {
+    <h3 class="section-title">{{ chartTitle() }}</h3>
+    @if (hasOverallTraineesData()) {
+      <div class="chart-wrapper">
+        <app-chart
+          [data]="overallTraineesAverages()"
+          [graphLabel]="'Overall averages for selected trainees'"
+        />
+      </div>
+    } @else {
+      <p class="empty-message">Select at least one trainee to display overall averages chart</p>
+    }
+  }
+  @case (3) {
+    <h3 class="section-title">{{ chartTitle() }}</h3>
+    @if (hasSubjectsData()) {
+      <div class="chart-wrapper">
+        <app-chart
+          [data]="subjectsGradesAverages()"
+          [graphLabel]="'Grades averages per subject'"
+        />
+      </div>
+    } @else {
+      <p class="empty-message">Select at least one subject to display grades average chart</p>
+    }
+  }
+}

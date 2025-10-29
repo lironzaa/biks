@@ -1,0 +1,17 @@
+<div>
+  <p class="text-center main-text bold">{{ graphLabel() }}</p>
+  <canvas
+    baseChart
+    class="chart"
+    [data]="barChartData()"
+    [options]="barChartOptions"
+    [plugins]="barChartPlugins"
+    [type]="barChartType"
+  >
+  </canvas>
+  @if (barChartData().datasets.length === 0) {
+    <div class="d-flex-center">
+      <p>No data available</p>
+    </div>
+  }
+</div>

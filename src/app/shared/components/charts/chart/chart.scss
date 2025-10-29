@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 350px;
+}
+
+.chart {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.main-text {
+  font-size: var(--font-size-m);
+  margin-bottom: var(--spacing-m);
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.d-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  color: var(--color-gray-dark);
+}

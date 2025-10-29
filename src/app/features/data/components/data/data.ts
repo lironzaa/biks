@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { DEBOUNCE_TIME_MS } from '../../../../shared/const/app.constants';
 import { traineesFeature } from '../../store/trainees.reducer';
 import { DataTable } from '../../../../shared/components/tables/data-table/data-table';
 import { dataTableConfig } from '../../data/data-table-config';
@@ -118,7 +119,6 @@ export class Data implements OnInit {
     });
   }
 
-  private readonly DEBOUNCE_TIME_MS = 500;
   private readonly DEFAULT_FORM_VALUES = {
     id: "",
     name: "",
@@ -134,20 +134,20 @@ export class Data implements OnInit {
   filterTypeControl = new FormControl<string | null>(null);
 
   dataFiltersForm = this.fb.group({
-    "id": new FormControl<string | null>(""),
-    "name": new FormControl<string | null>(""),
-    "grade": new FormControl<number | null>(null),
-    "subject": new FormControl<SubjectType | null>(null),
-    "gradeRange": new FormControl<GradeRangeType | null>({
+    id: new FormControl<string | null>(""),
+    name: new FormControl<string | null>(""),
+    grade: new FormControl<number | null>(null),
+    subject: new FormControl<SubjectType | null>(null),
+    gradeRange: new FormControl<GradeRangeType | null>({
       value: GradeRangeEnum.equals,
       disabled: !this.route.snapshot.queryParams["grade"]
     }),
-    "dateRange": this.fb.group({
-      "startDate": new FormControl<string | Date | null>(null),
-      "endDate": new FormControl<string | Date | null>(null),
+    dateRange: this.fb.group({
+      startDate: new FormControl<string | Date | null>(null),
+      endDate: new FormControl<string | Date | null>(null),
     })
   });
-  gradeRangeControl = this.dataFiltersForm.get('gradeRange');
+  gradeRangeControl = this.dataFiltersForm.controls.gradeRange;
 
   ngOnInit(): void {
     this.patchFiltersFormValue();
@@ -189,7 +189,7 @@ export class Data implements OnInit {
   initFiltersFormSub(): void {
     this.dataFiltersForm.valueChanges
       .pipe(
-        debounceTime(this.DEBOUNCE_TIME_MS),
+        debounceTime(DEBOUNCE_TIME_MS),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(filtersFormValues => {

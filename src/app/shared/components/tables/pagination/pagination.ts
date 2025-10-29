@@ -29,7 +29,7 @@ export class Pagination implements OnInit {
   paginationSelectItems = PaginationSelectItems;
 
   paginationForm = this.fb.group({
-    'itemsPerPage': new FormControl<string>(this.paginationDataService.itemsPerPage().toString(), { nonNullable: true }),
+    itemsPerPage: new FormControl<string>(this.paginationDataService.itemsPerPage().toString(), { nonNullable: true }),
   });
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class Pagination implements OnInit {
   }
 
   initPaginationFormSub(): void {
-    this.paginationForm.get('itemsPerPage')?.valueChanges
+    this.paginationForm.controls.itemsPerPage.valueChanges
       .pipe(
         distinctUntilChanged(),
         skip(1),

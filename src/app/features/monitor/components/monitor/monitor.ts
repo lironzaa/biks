@@ -20,7 +20,10 @@ import { traineesFeature } from '../../../data/store/trainees.reducer';
 import { monitorTableConfig } from '../../data/monitor-table-config';
 import { FilterFn } from '../../../../shared/types/data-table/filter-fn-type';
 import { Trainee } from '../../../data/interfaces/trainee-interface';
-import { MonitorsFiltersQueryParams, MonitorsFiltersFormPatchValues } from '../../interfaces/monitors-filters-query-params.interface';
+import {
+  MonitorsFiltersQueryParams,
+  MonitorsFiltersFormPatchValues
+} from '../../interfaces/monitors-filters-query-params.interface';
 import { IsPassedIsFailedQueryParamEnum } from '../../enums/is-passed-is-failed-query-param-enum';
 import { MonitorFiltersEnum } from '../../enums/monitor-filters-enum';
 import { Button } from '../../../../shared/components/buttons/button/button';
@@ -28,6 +31,7 @@ import { DataTable } from '../../../../shared/components/tables/data-table/data-
 import { SelectInput } from '../../../../shared/components/inputs/select-input/select-input';
 import { TextInput } from '../../../../shared/components/inputs/text-input/text-input';
 import { CheckboxInput } from '../../../../shared/components/inputs/checkbox-input/checkbox-input';
+import { DEBOUNCE_TIME_MS, PASSING_THRESHOLD } from '../../../../shared/const/app.constants';
 
 @Component({
   selector: 'app-monitor',
@@ -96,10 +100,10 @@ export class Monitor implements OnInit {
   }
 
   monitorFiltersForm = this.fb.group({
-    "ids": new FormControl<string | string[]>([]),
-    "name": new FormControl<string>(""),
-     "isPassed": new FormControl<boolean | null>(true),
-    "isFailed": new FormControl<boolean | null>(true),
+    ids: new FormControl<string | string[]>([]),
+    name: new FormControl<string>(""),
+    isPassed: new FormControl<boolean | null>(true),
+    isFailed: new FormControl<boolean | null>(true),
   });
 
   ngOnInit(): void {
@@ -133,12 +137,11 @@ export class Monitor implements OnInit {
   initFiltersFormSub(): void {
     this.monitorFiltersForm.valueChanges
       .pipe(
-        debounceTime(500),
+        debounceTime(DEBOUNCE_TIME_MS),
         distinctUntilChanged(),
         map(formValues => this.formatSearchFormToQueryParams(formValues)),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(formatedQueryParams => {
-      console.log(formatedQueryParams);
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { ...formatedQueryParams, page: this.isResetPage() ? 1 : this.route.snapshot.queryParams['page'] },
@@ -188,8 +191,6 @@ export class Monitor implements OnInit {
   }
 
   createFilterFn(queryParams: MonitorsFiltersQueryParams): FilterFn<Trainee> {
-    const PASSING_THRESHOLD = 65;
-
     const lowerNameQueryParam = queryParams.name?.toLowerCase();
     const isFilterByName = lowerNameQueryParam !== undefined;
 
@@ -205,16 +206,16 @@ export class Monitor implements OnInit {
       let statusMatch = true;
 
       if (isFilterByIds) {
-        idMatch = idsArray!.includes(item.id as string);
+        idMatch = idsArray!.includes(item.id);
       }
 
       if (isFilterByName) {
-        const itemNameLower = (item.name as string).toLowerCase();
+        const itemNameLower = (item.name).toLowerCase();
         nameMatch = itemNameLower.includes(lowerNameQueryParam!);
       }
 
-      const isPassed = (item.average as number) >= PASSING_THRESHOLD;
-      const isFailed = (item.average as number) < PASSING_THRESHOLD;
+      const isPassed = item.average >= PASSING_THRESHOLD;
+      const isFailed = item.average < PASSING_THRESHOLD;
 
       if (!showPassed && isPassed) {
         statusMatch = false;
@@ -229,7 +230,7 @@ export class Monitor implements OnInit {
 
   clearFilters(): void {
     this.monitorFiltersForm.reset();
-    this.monitorFiltersForm.get("isPassed")?.setValue(true);
-    this.monitorFiltersForm.get("isFailed")?.setValue(true);
+    this.monitorFiltersForm.controls.isPassed.setValue(true);
+    this.monitorFiltersForm.controls.isFailed.setValue(true);
   }
 }
