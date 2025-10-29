@@ -101,7 +101,7 @@ export class Monitor implements OnInit {
 
   monitorFiltersForm = this.fb.group({
     ids: new FormControl<string | string[]>([]),
-    name: new FormControl<string>(""),
+    name: new FormControl<string>(''),
     isPassed: new FormControl<boolean | null>(true),
     isFailed: new FormControl<boolean | null>(true),
   });
@@ -116,7 +116,7 @@ export class Monitor implements OnInit {
     const formValues: Partial<MonitorsFiltersFormPatchValues> = {};
 
     if (queryParams.ids) {
-      formValues.ids = typeof queryParams.ids === "string" ? queryParams.ids.split(",") : queryParams.ids;
+      formValues.ids = typeof queryParams.ids === 'string' ? queryParams.ids.split(',') : queryParams.ids;
     }
 
     if (queryParams.name) {
@@ -145,7 +145,7 @@ export class Monitor implements OnInit {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { ...formatedQueryParams, page: this.isResetPage() ? 1 : this.route.snapshot.queryParams['page'] },
-        queryParamsHandling: "merge",
+        queryParamsHandling: 'merge',
       });
       if (!this.isResetPage()) this.isResetPage.set(true);
     })
@@ -154,7 +154,7 @@ export class Monitor implements OnInit {
   formatSearchFormToQueryParams(formValues: Partial<MonitorsFiltersFormPatchValues>): MonitorsFiltersQueryParams {
     const formattedParams: MonitorsFiltersQueryParams = {};
 
-    if (formValues.ids !== null && formValues.ids !== undefined && formValues.ids !== "") {
+    if (formValues.ids !== null && formValues.ids !== undefined && formValues.ids !== '') {
       formattedParams.ids = Array.isArray(formValues.ids)
         ? (formValues.ids.length ? formValues.ids.toString() : null)
         : formValues.ids;
@@ -162,7 +162,7 @@ export class Monitor implements OnInit {
       formattedParams.ids = null;
     }
 
-    if (formValues.name !== null && formValues.name !== undefined && formValues.name !== "") {
+    if (formValues.name !== null && formValues.name !== undefined && formValues.name !== '') {
       formattedParams.name = formValues.name;
     } else {
       formattedParams.name = null;
@@ -194,7 +194,7 @@ export class Monitor implements OnInit {
     const lowerNameQueryParam = queryParams.name?.toLowerCase();
     const isFilterByName = lowerNameQueryParam !== undefined;
 
-    const idsArray = typeof queryParams.ids === "string" ? queryParams.ids.split(",") : queryParams.ids;
+    const idsArray = typeof queryParams.ids === 'string' ? queryParams.ids.split(',') : queryParams.ids;
     const isFilterByIds = idsArray !== undefined && idsArray !== null && idsArray.length > 0;
 
     const showPassed = queryParams.isPassed === undefined || queryParams.isPassed === IsPassedIsFailedQueryParamEnum.true || queryParams.isPassed === true;

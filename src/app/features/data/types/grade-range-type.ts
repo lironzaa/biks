@@ -1,1 +1,1 @@
-export type GradeRangeType = "=" | "Less than" | "Greater than";
+export type GradeRangeType = '=' | 'Less than' | 'Greater than';

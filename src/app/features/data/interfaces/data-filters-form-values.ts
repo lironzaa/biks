@@ -1,6 +1,6 @@
-import { GradeRangeType } from "../types/grade-range-type";
-import { SubjectType } from "../types/subject-type";
-import { DataFiltersQueryParams } from "./data-filters-query-params.interface";
+import { GradeRangeType } from '../types/grade-range-type';
+import { SubjectType } from '../types/subject-type';
+import { DataFiltersQueryParams } from './data-filters-query-params.interface';
 
 export interface DataFiltersFormValues {
   id: string | null;

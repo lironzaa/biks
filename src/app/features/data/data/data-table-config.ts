@@ -5,28 +5,28 @@ import { ColumnTypeEnum } from '../../../shared/enums/tables/column-type.enum';
 export const dataTableConfig: DataTableConfig = {
   columns: [
     {
-      title: "ID",
+      title: 'ID',
       dataProperty: DataTablePropsEnum.id,
       columnType: ColumnTypeEnum.string
     },
     {
-      title: "Name",
+      title: 'Name',
       dataProperty: DataTablePropsEnum.name,
       columnType: ColumnTypeEnum.string
     },
     {
-      title: "Date",
+      title: 'Date',
       dataProperty: DataTablePropsEnum.gradeDate,
       columnType: ColumnTypeEnum.date
     },
     {
-      title: "Grade",
+      title: 'Grade',
       dataProperty: DataTablePropsEnum.grade,
       columnType: ColumnTypeEnum.number
 
     },
     {
-      title: "Subject",
+      title: 'Subject',
       dataProperty: DataTablePropsEnum.subject,
       columnType: ColumnTypeEnum.string
 

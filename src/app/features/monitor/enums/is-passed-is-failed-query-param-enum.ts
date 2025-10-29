@@ -1,4 +1,4 @@
 export enum IsPassedIsFailedQueryParamEnum {
-  false = "false",
-  true = "true",
+  false = 'false',
+  true = 'true',
 }

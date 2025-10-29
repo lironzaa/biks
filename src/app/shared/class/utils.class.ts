@@ -7,6 +7,6 @@ export class Utils {
     const date = new Date(dateString);
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    return `${ year }-${ month < 10 ? "0" + month : month }`;
+    return `${ year }-${ month < 10 ? '0' + month : month }`;
   }
 }

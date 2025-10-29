@@ -1,4 +1,4 @@
-import { SubjectType } from "../types/subject-type";
+import { SubjectType } from '../types/subject-type';
 
 export interface CreateUpdateDeleteTraineeResponse {
   address: string;

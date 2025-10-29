@@ -1,25 +1,25 @@
-import { inject, Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { catchError, map, mergeMap, switchMap } from "rxjs/operators";
-import { of } from "rxjs";
-import { ToastrService } from "ngx-toastr";
-import { ActivatedRoute } from "@angular/router";
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute } from '@angular/router';
 
-import * as TraineesActions from "./trainees.actions";
+import * as TraineesActions from './trainees.actions';
 import {
   FormattedTrainees,
   Trainee,
   TraineeRow
-} from "../interfaces/trainee-interface";
-import { environment } from "../../../../environments/environment";
-import { DataFiltersQueryParams } from "../interfaces/data-filters-query-params.interface";
+} from '../interfaces/trainee-interface';
+import { environment } from '../../../../environments/environment';
+import { DataFiltersQueryParams } from '../interfaces/data-filters-query-params.interface';
 import {
   CreateOrUpdateGradeResponse,
   CreateUpdateDeleteTraineeResponse
-} from "../interfaces/trainee-api-responses.interface";
-import { GradeCreateData } from "../types/trainee-type";
-import { Utils } from "../../../shared/class/utils.class";
+} from '../interfaces/trainee-api-responses.interface';
+import { GradeCreateData } from '../types/trainee-type';
+import { Utils } from '../../../shared/class/utils.class';
 
 @Injectable()
 export class TraineesEffects {
@@ -29,8 +29,8 @@ export class TraineesEffects {
   actions$ = inject(Actions);
 
   baseUrl = environment.baseUrl;
-  apiPrefix = this.baseUrl + "trainees";
-  gradesApiPrefix = this.baseUrl + "grades";
+  apiPrefix = this.baseUrl + 'trainees';
+  gradesApiPrefix = this.baseUrl + 'grades';
 
   private calculateAverage(grades: { grade: number }[]): number {
     if (grades.length === 0) return 0;
@@ -104,7 +104,7 @@ export class TraineesEffects {
             return this.http.post<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }`, updatedGradeData).pipe(
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
-                this.toastr.success("Trainee created successfully");
+                this.toastr.success('Trainee created successfully');
                 return TraineesActions.getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
               }),
               catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message, TraineesActions.createTraineeError))
@@ -125,7 +125,7 @@ export class TraineesEffects {
             return this.http.put<CreateOrUpdateGradeResponse>(`${ this.gradesApiPrefix }/${ editTraineeData.data.gradeData.id }`, editTraineeData.data.gradeData).pipe(
               map(() => {
                 const queryParams = this.route.snapshot.queryParams;
-                this.toastr.success("Trainee updated successfully");
+                this.toastr.success('Trainee updated successfully');
                 return TraineesActions.getTrainees({ queryParams: queryParams as DataFiltersQueryParams });
               }),
               catchError((errorRes: HttpErrorResponse) => this.handleError(errorRes.message, TraineesActions.editTraineeError))

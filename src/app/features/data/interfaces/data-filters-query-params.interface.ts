@@ -1,5 +1,5 @@
-import { GradeRangeType } from "../types/grade-range-type";
-import { SubjectType } from "../types/subject-type";
+import { GradeRangeType } from '../types/grade-range-type';
+import { SubjectType } from '../types/subject-type';
 
 interface DataFiltersQueryParamsBase {
   id?: string | null;

@@ -37,12 +37,12 @@ export class GradeForm {
     grade: new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
     subject: new FormControl<SubjectType | null>(null, [ Validators.required ]),
     date: new FormControl<string | Date | null>(null, [ Validators.required ]),
-    traineeId: new FormControl<string>("", [ Validators.required ]),
+    traineeId: new FormControl<string>('', [ Validators.required ]),
   });
   subjectTypeOptions = signal(SubjectTypeOptions);
   isFormSubmitted = signal(false);
 
-  gradeFormDirective = viewChild.required<FormGroupDirective>("gradeFormDirective");
+  gradeFormDirective = viewChild.required<FormGroupDirective>('gradeFormDirective');
 
   constructor() {
     effect(() => {
@@ -50,7 +50,7 @@ export class GradeForm {
 
       untracked(() => {
         if (selectedTraineesRowData) this.gradeForm.controls.traineeId.setValue(selectedTraineesRowData.id);
-        else this.gradeForm.controls.traineeId.setValue("");
+        else this.gradeForm.controls.traineeId.setValue('');
       });
     });
   }
@@ -66,11 +66,11 @@ export class GradeForm {
   }
 
   populateCreateGradeData(): GradeCreateData {
-    if (!this.gradeForm.value || !this.gradeForm.value.grade || !this.gradeForm.value.subject || !this.gradeForm.value.date || !this.gradeForm.value.traineeId) throw this.errorService.throwError("Grade Form values are not defined");
+    if (!this.gradeForm.value || !this.gradeForm.value.grade || !this.gradeForm.value.subject || !this.gradeForm.value.date || !this.gradeForm.value.traineeId) throw this.errorService.throwError('Grade Form values are not defined');
     return {
       grade: this.gradeForm.value.grade,
       subject: this.gradeForm.value.subject,
-      date: typeof this.gradeForm.value.date === "string" ? this.gradeForm.value.date : this.gradeForm.value.date.toJSON(),
+      date: typeof this.gradeForm.value.date === 'string' ? this.gradeForm.value.date : this.gradeForm.value.date.toJSON(),
       traineeId: this.gradeForm.value.traineeId
     };
   }

@@ -5,24 +5,24 @@ import { MonitorTablePropsEnum } from '../enums/monitor-table-props-enum';
 export const monitorTableConfig: DataTableConfig = {
   columns: [
     {
-      title: "ID",
+      title: 'ID',
       dataProperty: MonitorTablePropsEnum.id,
       columnType: ColumnTypeEnum.string
     },
     {
-      title: "Name",
+      title: 'Name',
       dataProperty: MonitorTablePropsEnum.name,
       columnType: ColumnTypeEnum.string
 
     },
     {
-      title: "Average",
+      title: 'Average',
       dataProperty: MonitorTablePropsEnum.average,
       columnType: ColumnTypeEnum.number
 
     },
     {
-      title: "Exams",
+      title: 'Exams',
       dataProperty: MonitorTablePropsEnum.exams,
       columnType: ColumnTypeEnum.number
     },

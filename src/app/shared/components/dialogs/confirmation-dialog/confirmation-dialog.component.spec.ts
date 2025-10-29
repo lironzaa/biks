@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmationDialogComponent } from "./confirmation-dialog.component";
+import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 
-describe("ConfirmationDialogComponent", () => {
+describe('ConfirmationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
   let fixture: ComponentFixture<ConfirmationDialogComponent>;
 
@@ -17,7 +17,7 @@ describe("ConfirmationDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

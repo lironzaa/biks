@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal, viewChild } from "@angular/core";
-import { BaseChartDirective } from "ng2-charts";
-import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from "chart.js";
-import DataLabelsPlugin from "chartjs-plugin-datalabels";
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, viewChild } from '@angular/core';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 
 import { ChartDataInterface } from '../../../interfaces/components/charts/chart-data-interface';
 
 Chart.register(...registerables);
 
 @Component({
-  selector: "app-chart",
-  templateUrl: "./chart.html",
-  styleUrl: "./chart.scss",
+  selector: 'app-chart',
+  templateUrl: './chart.html',
+  styleUrl: './chart.scss',
   imports: [
     BaseChartDirective
   ],
@@ -68,7 +68,7 @@ export class ChartComp {
     return this._colorPalette;
   }
 
-  readonly barChartOptions: ChartConfiguration["options"] = {
+  readonly barChartOptions: ChartConfiguration['options'] = {
     maintainAspectRatio: false,
     scales: {
       x: {},
@@ -82,15 +82,15 @@ export class ChartComp {
         display: false,
       },
       datalabels: {
-        anchor: "end",
-        align: "end",
+        anchor: 'end',
+        align: 'end',
       },
     },
   };
-  readonly barChartType: ChartType = "bar";
+  readonly barChartType: ChartType = 'bar';
   readonly barChartPlugins = [ DataLabelsPlugin ];
 
-  barChartData = computed<ChartData<"bar">>(() => {
+  barChartData = computed<ChartData<'bar'>>(() => {
     const currentData = this.data();
     const currentLabel = this.graphLabel();
     const dataValues = Object.values(currentData);

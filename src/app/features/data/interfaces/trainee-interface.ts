@@ -1,5 +1,5 @@
-import { SubjectType } from "../types/subject-type";
-import { GradeCreateData, TraineeCreateData } from "../types/trainee-type";
+import { SubjectType } from '../types/subject-type';
+import { GradeCreateData, TraineeCreateData } from '../types/trainee-type';
 
 interface TraineeBase {
   id: string;
@@ -45,5 +45,5 @@ export interface CreateTrainee {
 
 export interface EditTrainee {
   gradeData: TraineeGrade;
-  traineeData: Omit<Trainee, "average" | "exams" | "grades">
+  traineeData: Omit<Trainee, 'average' | 'exams' | 'grades'>
 }

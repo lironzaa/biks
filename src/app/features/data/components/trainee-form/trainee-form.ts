@@ -71,18 +71,18 @@ export class TraineeForm {
   selectedTraineesRow = this.store.selectSignal(traineesFeature.selectSelectedTraineesRow);
 
   traineeForm = this.fb.group({
-    "name": new FormControl<string | null>(null, [ Validators.required ]),
-    "grade": new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
-    "email": new FormControl<string | null>(null, [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
-    "dateJoined": new FormControl<string | Date | null>(null, [ Validators.required ]),
-    "address": new FormControl<string | null>(null, [ Validators.required ]),
-    "city": new FormControl<string | null>(null, [ Validators.required ]),
-    "country": new FormControl<string | null>(null, [ Validators.required ]),
-    "zip": new FormControl<string | null>(null, [ Validators.required, Validators.minLength(5), Validators.maxLength(7) ]),
-    "subject": new FormControl<SubjectType | null>(null, [ Validators.required ]),
+    'name': new FormControl<string | null>(null, [ Validators.required ]),
+    'grade': new FormControl<number | null>(null, [ Validators.required, Validators.min(0), Validators.max(100) ]),
+    'email': new FormControl<string | null>(null, [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
+    'dateJoined': new FormControl<string | Date | null>(null, [ Validators.required ]),
+    'address': new FormControl<string | null>(null, [ Validators.required ]),
+    'city': new FormControl<string | null>(null, [ Validators.required ]),
+    'country': new FormControl<string | null>(null, [ Validators.required ]),
+    'zip': new FormControl<string | null>(null, [ Validators.required, Validators.minLength(5), Validators.maxLength(7) ]),
+    'subject': new FormControl<SubjectType | null>(null, [ Validators.required ]),
   });
 
-  traineeFormDirective = viewChild.required<FormGroupDirective>("traineeFormDirective");
+  traineeFormDirective = viewChild.required<FormGroupDirective>('traineeFormDirective');
 
   constructor() {
     effect(() => {
@@ -113,10 +113,10 @@ export class TraineeForm {
   openConfirmationDialog(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
-        message: "Are you sure want to delete?",
+        message: 'Are you sure want to delete?',
         buttonText: {
-          ok: "Yes",
-          cancel: "No"
+          ok: 'Yes',
+          cancel: 'No'
         }
       }
     });
@@ -156,14 +156,14 @@ export class TraineeForm {
       },
       gradeData: {
         ...this.getCommonGradeData(),
-        traineeId: ""
+        traineeId: ''
       }
     };
   }
 
   populateEditTraineeData(): EditTrainee {
     const selectedTraineesRowData = this.selectedTraineesRow();
-    if (!selectedTraineesRowData) throw this.errorService.throwError("Selected Trainees Row is not defined");
+    if (!selectedTraineesRowData) throw this.errorService.throwError('Selected Trainees Row is not defined');
     return {
       traineeData: {
         id: selectedTraineesRowData.id,
@@ -178,11 +178,11 @@ export class TraineeForm {
   }
 
   getCommonTraineeData(): TraineeCreateData {
-    if (!this.traineeForm.value || !this.traineeForm.value.name || !this.traineeForm.value.email || !this.traineeForm.value.address || !this.traineeForm.value.city || !this.traineeForm.value.country || !this.traineeForm.value.dateJoined || !this.traineeForm.value.zip) throw this.errorService.throwError("Trainee Form values are not defined");
+    if (!this.traineeForm.value || !this.traineeForm.value.name || !this.traineeForm.value.email || !this.traineeForm.value.address || !this.traineeForm.value.city || !this.traineeForm.value.country || !this.traineeForm.value.dateJoined || !this.traineeForm.value.zip) throw this.errorService.throwError('Trainee Form values are not defined');
     return {
       name: this.traineeForm.value.name,
       email: this.traineeForm.value.email,
-      dateJoined: typeof this.traineeForm.value.dateJoined === "string" ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
+      dateJoined: typeof this.traineeForm.value.dateJoined === 'string' ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
       address: this.traineeForm.value.address,
       city: this.traineeForm.value.city,
       country: this.traineeForm.value.country,
@@ -190,19 +190,19 @@ export class TraineeForm {
     }
   }
 
-  getCommonGradeData(): Omit<TraineeGrade, "id" | "traineeId"> {
-    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject || !this.traineeForm.value.dateJoined) throw this.errorService.throwError("Trainee Form values are not defined");
+  getCommonGradeData(): Omit<TraineeGrade, 'id' | 'traineeId'> {
+    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject || !this.traineeForm.value.dateJoined) throw this.errorService.throwError('Trainee Form values are not defined');
     return {
       grade: this.traineeForm.value.grade,
       subject: this.traineeForm.value.subject,
-      date: typeof this.traineeForm.value.dateJoined === "string" ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
+      date: typeof this.traineeForm.value.dateJoined === 'string' ? this.traineeForm.value.dateJoined : this.traineeForm.value.dateJoined.toJSON(),
     }
   }
 
   populateSelectedTraineeRow(): TraineeRow {
     const selectedTraineesRowData = this.selectedTraineesRow();
-    if (!selectedTraineesRowData) throw this.errorService.throwError("Selected Trainees Row is not defined");
-    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject) throw this.errorService.throwError("Trainee Form values are not defined");
+    if (!selectedTraineesRowData) throw this.errorService.throwError('Selected Trainees Row is not defined');
+    if (!this.traineeForm.value || !this.traineeForm.value.grade || !this.traineeForm.value.subject) throw this.errorService.throwError('Trainee Form values are not defined');
     return {
       id: selectedTraineesRowData.id,
       gradeId: selectedTraineesRowData.gradeId,

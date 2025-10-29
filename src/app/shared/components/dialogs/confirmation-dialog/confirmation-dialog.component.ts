@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject, Inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
   MatDialogRef
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
-import { ConfirmationDialogProps } from "../../../interfaces/components/dialogs/confirmation-dialog-interface";
-import { Button } from "../../buttons/button/button";
+import { ConfirmationDialogProps } from '../../../interfaces/components/dialogs/confirmation-dialog-interface';
+import { Button } from '../../buttons/button/button';
 
 @Component({
-  selector: "app-confirmation-dialog",
-  templateUrl: "./confirmation-dialog.component.html",
-  styleUrl: "./confirmation-dialog.component.scss",
+  selector: 'app-confirmation-dialog',
+  templateUrl: './confirmation-dialog.component.html',
+  styleUrl: './confirmation-dialog.component.scss',
   imports: [
     Button,
     MatDialogActions,
@@ -23,9 +23,9 @@ import { Button } from "../../buttons/button/button";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmationDialogComponent {
-  message: string = "Are you sure?";
-  confirmButtonText = "Yes";
-  cancelButtonText = "Cancel";
+  message: string = 'Are you sure?';
+  confirmButtonText = 'Yes';
+  cancelButtonText = 'Cancel';
   dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
 
   constructor(

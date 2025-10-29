@@ -1,10 +1,10 @@
-import { createFeature, createReducer, createSelector, on } from "@ngrx/store";
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 
-import { SubjectType } from "../../data/types/subject-type";
-import { setSelectedSubjects, setSelectedTraineesIds } from "./analysis.actions";
-import { Utils } from "../../../shared/class/utils.class";
-import { traineesFeature } from "../../data/store/trainees.reducer";
-import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from "../interfaces/analysis-charts-interface";
+import { SubjectType } from '../../data/types/subject-type';
+import { setSelectedSubjects, setSelectedTraineesIds } from './analysis.actions';
+import { Utils } from '../../../shared/class/utils.class';
+import { traineesFeature } from '../../data/store/trainees.reducer';
+import { ChartSubjectsGradesAverages, ChartTraineesGradesAverages } from '../interfaces/analysis-charts-interface';
 
 export interface AnalysisState {
   selectedSubjects: SubjectType[];
@@ -21,7 +21,7 @@ const initialState: AnalysisState = {
 }
 
 export const analysisFeature = createFeature({
-  name: "analysis",
+  name: 'analysis',
   reducer: createReducer(
     initialState,
     on(setSelectedSubjects, (state, { selectedSubjects }): AnalysisState => ({

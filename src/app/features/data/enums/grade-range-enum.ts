@@ -1,5 +1,5 @@
 export enum GradeRangeEnum {
-  lessThan = "Less than",
-  greaterThan = "Greater than",
-  equals = "=",
+  lessThan = 'Less than',
+  greaterThan = 'Greater than',
+  equals = '=',
 }

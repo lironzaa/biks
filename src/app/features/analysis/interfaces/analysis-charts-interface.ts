@@ -5,7 +5,7 @@ export interface ChartTraineesGradesAverages {
   averages: {
     [monthYear: string]: number
   },
-  trainee: Pick<Trainee, "id" | "name">
+  trainee: Pick<Trainee, 'id' | 'name'>
 }
 
 export type ChartSubjectsGradesAverages = {

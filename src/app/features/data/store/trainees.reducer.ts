@@ -1,7 +1,7 @@
-import { createFeature, createReducer, createSelector, on } from "@ngrx/store";
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 
-import { Trainee, TraineeRow } from "../interfaces/trainee-interface";
-import * as TraineesActions from "./trainees.actions";
+import { Trainee, TraineeRow } from '../interfaces/trainee-interface';
+import * as TraineesActions from './trainees.actions';
 
 export interface TraineesState {
   trainees: Trainee[];
@@ -20,7 +20,7 @@ const initialState: TraineesState = {
 };
 
 export const traineesFeature = createFeature({
-  name: "trainees",
+  name: 'trainees',
   reducer: createReducer(
     initialState,
     on(TraineesActions.getTrainees, (state): TraineesState => ({

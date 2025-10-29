@@ -1,7 +1,7 @@
-import { ActionReducerMap } from "@ngrx/store";
+import { ActionReducerMap } from '@ngrx/store';
 
-import { traineesFeature, TraineesState } from "../../features/data/store/trainees.reducer";
-import { analysisFeature, AnalysisState } from "../../features/analysis/store/analysis.reducer";
+import { traineesFeature, TraineesState } from '../../features/data/store/trainees.reducer';
+import { analysisFeature, AnalysisState } from '../../features/analysis/store/analysis.reducer';
 
 export interface AppState {
   trainees: TraineesState;

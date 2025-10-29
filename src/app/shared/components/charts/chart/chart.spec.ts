@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Chart } from "./chart";
+import { Chart } from './chart';
 
-describe("Chart", () => {
+describe('Chart', () => {
   let component: Chart;
   let fixture: ComponentFixture<Chart>;
 
@@ -17,7 +17,7 @@ describe("Chart", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -120,8 +120,8 @@ export class Data implements OnInit {
   }
 
   private readonly DEFAULT_FORM_VALUES = {
-    id: "",
-    name: "",
+    id: '',
+    name: '',
     grade: null,
     subject: null,
     gradeRange: GradeRangeEnum.equals,
@@ -134,13 +134,13 @@ export class Data implements OnInit {
   filterTypeControl = new FormControl<string | null>(null);
 
   dataFiltersForm = this.fb.group({
-    id: new FormControl<string | null>(""),
-    name: new FormControl<string | null>(""),
+    id: new FormControl<string | null>(''),
+    name: new FormControl<string | null>(''),
     grade: new FormControl<number | null>(null),
     subject: new FormControl<SubjectType | null>(null),
     gradeRange: new FormControl<GradeRangeType | null>({
       value: GradeRangeEnum.equals,
-      disabled: !this.route.snapshot.queryParams["grade"]
+      disabled: !this.route.snapshot.queryParams['grade']
     }),
     dateRange: this.fb.group({
       startDate: new FormControl<string | Date | null>(null),
@@ -199,9 +199,9 @@ export class Data implements OnInit {
         relativeTo: this.route,
         queryParams: {
           ...filtersFormState.updatedQueryParams,
-          page: filtersFormState.isResetPage ? 1 : this.route.snapshot.queryParams["page"]
+          page: filtersFormState.isResetPage ? 1 : this.route.snapshot.queryParams['page']
         },
-        queryParamsHandling: "merge",
+        queryParamsHandling: 'merge',
       });
     })
   }
@@ -229,7 +229,7 @@ export class Data implements OnInit {
         endDate: null,
         page: 1
       },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -290,7 +290,7 @@ export class Data implements OnInit {
   }
 
   setGradeRangeIsDisabled(grade: number | null | undefined): void {
-    if (typeof grade === "number") this.gradeRangeControl?.enable({ emitEvent: false });
+    if (typeof grade === 'number') this.gradeRangeControl?.enable({ emitEvent: false });
     else this.gradeRangeControl?.disable({ emitEvent: false });
   }
 
