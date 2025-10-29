@@ -1,59 +1,60 @@
-# Biks
+# Biks - Student Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
+A modern Angular application for managing student trainees, grades, and performance monitoring.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Angular 18+** with standalone components
+- **RxJS** for reactive programming
+- **NgRx** for state management
+- **Chart.js** for data visualization
+- **JSON Server** for mock backend
+- **Signals** for reactive state
 
-```bash
-ng serve
-```
+## Quick Start
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Installation
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
+### Running the Project
 
-To build the project run:
+1. **Start the Mock API Server**
+   ```bash
+   cd database
+   json-server --watch db.json
+   ```
+   API will run on `http://localhost:3000`
+
+2. **Start the Development Server** (in a new terminal)
+   ```bash
+   npm start
+   ```
+   Navigate to `http://localhost:4200/`
+
+### Build for Production
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Project Structure
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
 ```
 
-## Running end-to-end tests
+## Key Capabilities
 
-For end-to-end (e2e) testing, run:
+- ✅ CRUD operations for trainees and grades
+- ✅ Advanced multi-criteria filtering
+- ✅ Real-time data validation
+- ✅ Performance analytics with charts
+- ✅ Responsive pagination
+- ✅ Signal-based reactivity
+- ✅ Type-safe with TypeScript
+- ✅ OnPush change detection for performance
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Built with Angular CLI version 20.1.6
