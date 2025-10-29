@@ -170,7 +170,6 @@ export class TraineesEffects {
   });
 
   handleError(errorMessage: string, actionCreator: (props: { error: string }) => any) {
-    console.log(errorMessage);
     this.toastr.error(errorMessage);
     return of(actionCreator({ error: errorMessage }));
   }

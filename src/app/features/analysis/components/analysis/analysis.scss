@@ -56,7 +56,7 @@
 
   &:hover {
     background-color: var(--color-primary-dark);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--color-black-shadow-light);
   }
 
   &:active {
@@ -69,7 +69,7 @@
   background-color: var(--color-primary);
   color: var(--color-white);
   border-radius: 4px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px var(--color-black-shadow-medium);
   font-size: var(--font-size-m);
   font-weight: 600;
   opacity: 0.95;

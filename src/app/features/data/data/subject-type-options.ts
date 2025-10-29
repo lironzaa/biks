@@ -3,8 +3,13 @@ import { AppSelectItem } from '../../../shared/interfaces/general/app-select-ite
 
 export const SubjectTypeOptions: AppSelectItem<SubjectType, SubjectType>[] = [
   { id: 'Math', label: 'Math' },
-  { id: 'Algebra', label: 'Algebra' },
   { id: 'Chemistry', label: 'Chemistry' },
+  { id: 'Geography', label: 'Geography' },
+  { id: 'Physics', label: 'Physics' },
+  { id: 'History', label: 'History' },
+  { id: 'English', label: 'English' },
+  { id: 'Computer Science', label: 'Computer Science' },
+  { id: 'Economics', label: 'Economics' },
   { id: 'Biology', label: 'Biology' },
-  { id: 'Geography', label: 'Geography' }
+  { id: 'Physical Education', label: 'Physical Education' }
 ];

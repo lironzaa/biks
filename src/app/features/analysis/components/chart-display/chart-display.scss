@@ -10,6 +10,11 @@
   border-radius: 4px;
   padding: var(--spacing-m);
   background-color: var(--color-gray-light);
+  margin-bottom: var(--spacing-m);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .empty-message {

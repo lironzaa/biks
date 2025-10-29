@@ -4,7 +4,6 @@ import { MatTableModule } from '@angular/material/table';
 
 import { DataTableConfig } from '../../../interfaces/data-table/data-table-interface';
 import { PaginationDataService } from '../../../services/pagination-data/pagination-data.service';
-import { GetItemValuePipe } from '../../../pipes/get-item-value-pipe';
 import { Pagination } from '../pagination/pagination';
 import { TableFilters } from '../table-filters/table-filters';
 import { ColumnTypeEnum } from '../../../enums/tables/column-type.enum';
@@ -21,7 +20,6 @@ import { TraineeRowClassPipe } from '../../../pipes/trainee-status.pipe';
     Pagination,
     SlicePipe,
     DatePipe,
-    GetItemValuePipe,
     NgClass,
     MatTableModule,
     Spinner,

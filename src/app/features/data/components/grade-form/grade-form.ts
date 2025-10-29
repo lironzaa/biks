@@ -57,7 +57,6 @@ export class GradeForm {
 
   onSubmitGradeForm(): void {
     this.isFormSubmitted.set(true);
-    console.log(this.gradeForm);
     if (this.gradeForm.valid) {
       const gradeData: GradeCreateData = this.populateCreateGradeData();
       this.store.dispatch(createTraineeGrade({ data: gradeData }));

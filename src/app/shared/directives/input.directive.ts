@@ -72,11 +72,11 @@ export class ControlValueAccessorDirective<T>
   }
 
   setIsRequired(): void {
-    this.isRequired.set(this.control().hasValidator(Validators.required));  // No more null check!
+    this.isRequired.set(this.control().hasValidator(Validators.required));
   }
 
   writeValue(value: T): void {
-    if (this.control().value !== value) {  // No more null check!
+    if (this.control().value !== value) {
       this.control().setValue(value, { emitEvent: false });
     }
   }

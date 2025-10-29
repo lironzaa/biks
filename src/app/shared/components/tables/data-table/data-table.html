@@ -15,13 +15,13 @@
         <td mat-cell *matCellDef="let item">
           @switch (header.columnType) {
             @case (columnTypeEnum().date) {
-              {{ item | getItemValue : header.dataProperty | date:"dd/MM/yyyy" }}
+              {{ item[header.dataProperty] | date:"dd/MM/yyyy" }}
             }
             @case (columnTypeEnum().string) {
-              {{ item | getItemValue : header.dataProperty }}
+              {{ item[header.dataProperty] }}
             }
             @case (columnTypeEnum().number) {
-              {{ item | getItemValue : header.dataProperty }}
+              {{ item[header.dataProperty] }}
             }
           }
         </td>
@@ -31,7 +31,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns();"
         (click)="onTableRowClick(row)"
-        [class.mat-mdc-row-selected]="activeItemId() === (row | getItemValue : idKey())"
+        [class.mat-mdc-row-selected]="activeItemId() === row[idKey()]"
         [class.pointer]="isPointer()"
         [ngClass]="row | traineeRowClass"></tr>
 

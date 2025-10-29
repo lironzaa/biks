@@ -8,7 +8,6 @@
   justify-content: center;
 }
 
-// Material table row hover effect
 tr.mat-mdc-row {
   transition: background-color 0.2s ease;
 
@@ -29,7 +28,6 @@ tr.mat-mdc-row {
   }
 }
 
-// Status row styling
 .row-passed {
   background-color: var(--color-success-light) !important;
 
@@ -46,7 +44,6 @@ tr.mat-mdc-row {
   }
 }
 
-// Empty state styling
 .mat-mdc-no-data-row {
   td {
     text-align: center;

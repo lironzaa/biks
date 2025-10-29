@@ -23,12 +23,12 @@ import { dataTableConfig } from '../../data/data-table-config';
 import { FilterFn } from '../../../../shared/types/data-table/filter-fn-type';
 import { TraineeRow } from '../../interfaces/trainee-interface';
 import { PaginationDataService } from '../../../../shared/services/pagination-data/pagination-data.service';
+import { DataFilterService } from '../../services/data-filter.service';
 import { GradeRangeEnum } from '../../enums/grade-range-enum';
 import {
   DataFiltersFormPatchValues,
   DataFiltersQueryParams
 } from '../../interfaces/data-filters-query-params.interface';
-import { DataFiltersEnum } from '../../enums/data-filters-enum';
 import { DataFiltersFormValues, FiltersFormState } from '../../interfaces/data-filters-form-values';
 import { GradeRangeType } from '../../types/grade-range-type';
 import { setSelectedTraineeRow } from '../../store/trainees.actions';
@@ -62,6 +62,7 @@ export class Data implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   paginationDataService = inject(PaginationDataService);
+  dataFilterService = inject(DataFilterService);
   destroyRef = inject(DestroyRef);
 
   traineesRows = this.store.selectSignal(traineesFeature.selectTraineesRows);
@@ -71,6 +72,7 @@ export class Data implements OnInit {
   tableConfig = signal(dataTableConfig);
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
   subjectTypeOptions = signal(SubjectTypeOptions);
+  isClearing = signal(false);
   filterTypeOptions = signal([
     { id: 'id', label: 'ID' },
     { id: 'name', label: 'Name' },
@@ -94,25 +96,32 @@ export class Data implements OnInit {
   });
 
   constructor() {
+    this.setupPaginationEffect();
+    this.setupFilterEffect();
+  }
+
+  private setupPaginationEffect(): void {
     effect(() => {
       const items = this.filteredTrainees();
-      const queryParams = this.queryParams();
-      const currentPage = queryParams['page'] ? +queryParams['page'] : 1;
+      const params = this.queryParams();
+      const currentPage = params['page'] ? +params['page'] : 1;
 
       untracked(() => {
         const paginationData = this.paginationDataService.calculatePaginationData(currentPage, items.length);
         this.paginationDataService.setPaginationData(paginationData);
       });
     });
+  }
 
+  private setupFilterEffect(): void {
     effect(() => {
-      const queryParams = this.queryParams();
+      const params = this.queryParams();
 
       untracked(() => {
         const paginationData = this.paginationDataService.paginationData();
         if (!paginationData.isPaginated) {
-          const isApplyFilters = this.isApplyFilters(queryParams);
-          if (isApplyFilters) this.filterFn.set(this.createFilterFn(queryParams));
+          const shouldApplyFilters = this.dataFilterService.isApplyFilters(params);
+          if (shouldApplyFilters) this.filterFn.set(this.dataFilterService.createFilterFn(params));
           else this.filterFn.set(undefined);
         }
       });
@@ -193,6 +202,11 @@ export class Data implements OnInit {
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(filtersFormValues => {
+      if (this.isClearing()) {
+        this.isClearing.set(false);
+        return;
+      }
+
       const filtersFormState: FiltersFormState = this.generateFormState(filtersFormValues);
       this.setGradeRangeIsDisabled(filtersFormState.updatedQueryParams.grade);
       this.router.navigate([], {
@@ -231,62 +245,6 @@ export class Data implements OnInit {
       },
       queryParamsHandling: 'merge',
     });
-  }
-
-  createFilterFn(queryParams: DataFiltersQueryParams): FilterFn<TraineeRow> {
-    let startDate: Date;
-    let endDate: Date;
-    const isFilterByDate = queryParams.startDate !== undefined && queryParams.endDate !== undefined;
-    if (isFilterByDate) {
-      startDate = new Date(queryParams.startDate!);
-      endDate = new Date(queryParams.endDate!);
-    }
-
-    let gradeQueryParam: number;
-    const isFilterByGrade = queryParams.grade !== undefined;
-    if (isFilterByGrade) gradeQueryParam = Number(queryParams.grade);
-
-    const isFilterById = queryParams.id !== undefined;
-    const isFilterByName = queryParams.name !== undefined;
-    const isFilterBySubject = queryParams.subject !== undefined;
-
-    return (item): boolean => {
-      let idMatch = true;
-      let nameMatch = true;
-      let gradeMatch = true;
-      let dateMatch = true;
-      let subjectMatch = true;
-
-      if (isFilterById) idMatch = item.id === queryParams.id;
-      if (isFilterByName) nameMatch = item.name.toLowerCase().includes(queryParams.name!.toLowerCase());
-      if (isFilterByGrade) gradeMatch = this.compareAccordingToOperator(item.grade, queryParams.gradeRange, gradeQueryParam);
-      if (isFilterByDate) {
-        const itemDate = new Date(item.gradeDate);
-        dateMatch = startDate <= itemDate && itemDate <= endDate;
-      }
-      if (isFilterBySubject) subjectMatch = item.subject === queryParams.subject;
-
-      return idMatch && nameMatch && gradeMatch && dateMatch && subjectMatch;
-    };
-  }
-
-  compareAccordingToOperator(grade: number, gradeRange: string | null | undefined, queryParamsGrade: number): boolean {
-    switch (gradeRange) {
-      case GradeRangeEnum.greaterThan:
-        return grade > queryParamsGrade!;
-      case GradeRangeEnum.lessThan:
-        return grade < queryParamsGrade!;
-      case GradeRangeEnum.equals:
-      default:
-        return grade === queryParamsGrade!;
-    }
-  }
-
-  isApplyFilters(queryParams: DataFiltersQueryParams): boolean {
-    for (const filter in queryParams) {
-      if (filter === DataFiltersEnum.id || filter === DataFiltersEnum.name || filter === DataFiltersEnum.grade || filter === DataFiltersEnum.startDate || filter === DataFiltersEnum.endDate || filter === DataFiltersEnum.subject) return true;
-    }
-    return false;
   }
 
   setGradeRangeIsDisabled(grade: number | null | undefined): void {
@@ -333,8 +291,15 @@ export class Data implements OnInit {
   }
 
   clearFilters(): void {
+    this.isClearing.set(true);
     this.filterTypeControl.setValue(null, { emitEvent: false });
-    this.resetFiltersAndQueryParams();
+    this.dataFiltersForm.reset(this.DEFAULT_FORM_VALUES);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      queryParamsHandling: '',
+    });
   }
 
   onTableRowClick(traineeRow: TraineeRow) {

@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   input,
   OnInit,
@@ -40,15 +39,6 @@ export class ErrorInput implements OnInit {
   });
   private controlTouchedSignal = signal(false);
   private controlErrorsSignal = signal<ValidationErrors | null>(null);
-
-  // Reset touched signal when isFormSubmitted changes to false
-  private resetTouchedEffect = effect(() => {
-    // console.log('effect resetTouchedEffect', 'component:', this.controlName())
-    if (!this.isFormSubmitted()) {
-      this.controlTouchedSignal.set(false);
-      // console.log('effect change');
-    }
-  });
 
   ngOnInit(): void {
     this.initControlErrorStateTracking();

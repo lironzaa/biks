@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { PaginationDataService } from '../../../../shared/services/pagination-data/pagination-data.service';
+import { MonitorFilterService } from '../../services/monitor-filter.service';
 import { traineesFeature } from '../../../data/store/trainees.reducer';
 import { monitorTableConfig } from '../../data/monitor-table-config';
 import { FilterFn } from '../../../../shared/types/data-table/filter-fn-type';
@@ -25,13 +26,12 @@ import {
   MonitorsFiltersFormPatchValues
 } from '../../interfaces/monitors-filters-query-params.interface';
 import { IsPassedIsFailedQueryParamEnum } from '../../enums/is-passed-is-failed-query-param-enum';
-import { MonitorFiltersEnum } from '../../enums/monitor-filters-enum';
 import { Button } from '../../../../shared/components/buttons/button/button';
 import { DataTable } from '../../../../shared/components/tables/data-table/data-table';
 import { SelectInput } from '../../../../shared/components/inputs/select-input/select-input';
 import { TextInput } from '../../../../shared/components/inputs/text-input/text-input';
 import { CheckboxInput } from '../../../../shared/components/inputs/checkbox-input/checkbox-input';
-import { DEBOUNCE_TIME_MS, PASSING_THRESHOLD } from '../../../../shared/const/app.constants';
+import { DEBOUNCE_TIME_MS } from '../../../../shared/const/app.constants';
 
 @Component({
   selector: 'app-monitor',
@@ -54,6 +54,7 @@ export class Monitor implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   paginationDataService = inject(PaginationDataService);
+  monitorFilterService = inject(MonitorFilterService);
   destroyRef = inject(DestroyRef);
 
   traineesStateIds = this.store.selectSignal(traineesFeature.selectTraineesIds);
@@ -74,25 +75,32 @@ export class Monitor implements OnInit {
   });
 
   constructor() {
+    this.setupPaginationEffect();
+    this.setupFilterEffect();
+  }
+
+  private setupPaginationEffect(): void {
     effect(() => {
       const items = this.filteredTrainees();
-      const queryParams = this.queryParams();
-      const currentPage = queryParams['page'] ? +queryParams['page'] : 1;
+      const params = this.queryParams();
+      const currentPage = params['page'] ? +params['page'] : 1;
 
       untracked(() => {
         const paginationData = this.paginationDataService.calculatePaginationData(currentPage, items.length);
         this.paginationDataService.setPaginationData(paginationData);
       });
     });
+  }
 
+  private setupFilterEffect(): void {
     effect(() => {
-      const queryParams = this.queryParams();
+      const params = this.queryParams();
 
       untracked(() => {
         const paginationData = this.paginationDataService.paginationData();
         if (!paginationData.isPaginated) {
-          const isApplyFilters = this.isApplyFilters(queryParams);
-          if (isApplyFilters) this.filterFn.set(this.createFilterFn(queryParams));
+          const shouldApplyFilters = this.monitorFilterService.isApplyFilters(params);
+          if (shouldApplyFilters) this.filterFn.set(this.monitorFilterService.createFilterFn(params));
           else this.filterFn.set(undefined);
         }
       });
@@ -181,51 +189,6 @@ export class Monitor implements OnInit {
     }
 
     return formattedParams;
-  }
-
-  isApplyFilters(queryParams: MonitorsFiltersQueryParams): boolean {
-    for (const filter in queryParams) {
-      if (filter === MonitorFiltersEnum.ids || filter === MonitorFiltersEnum.name || filter === MonitorFiltersEnum.isPassed || filter === MonitorFiltersEnum.isFailed) return true;
-    }
-    return false;
-  }
-
-  createFilterFn(queryParams: MonitorsFiltersQueryParams): FilterFn<Trainee> {
-    const lowerNameQueryParam = queryParams.name?.toLowerCase();
-    const isFilterByName = lowerNameQueryParam !== undefined;
-
-    const idsArray = typeof queryParams.ids === 'string' ? queryParams.ids.split(',') : queryParams.ids;
-    const isFilterByIds = idsArray !== undefined && idsArray !== null && idsArray.length > 0;
-
-    const showPassed = queryParams.isPassed === undefined || queryParams.isPassed === IsPassedIsFailedQueryParamEnum.true || queryParams.isPassed === true;
-    const showFailed = queryParams.isFailed === undefined || queryParams.isFailed === IsPassedIsFailedQueryParamEnum.true || queryParams.isFailed === true;
-
-    return (item: Trainee): boolean => {
-      let nameMatch = true;
-      let idMatch = true;
-      let statusMatch = true;
-
-      if (isFilterByIds) {
-        idMatch = idsArray!.includes(item.id);
-      }
-
-      if (isFilterByName) {
-        const itemNameLower = (item.name).toLowerCase();
-        nameMatch = itemNameLower.includes(lowerNameQueryParam!);
-      }
-
-      const isPassed = item.average >= PASSING_THRESHOLD;
-      const isFailed = item.average < PASSING_THRESHOLD;
-
-      if (!showPassed && isPassed) {
-        statusMatch = false;
-      }
-      if (!showFailed && isFailed) {
-        statusMatch = false;
-      }
-
-      return nameMatch && idMatch && statusMatch;
-    }
   }
 
   clearFilters(): void {

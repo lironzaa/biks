@@ -2,18 +2,20 @@
   <app-button
     [text]="'Add trainee'"
     [color]="'primary'"
+    [isDisabled]="isLoading()"
     (buttonClicked)="addTrainee()"
   />
   <app-button
     [text]="'Delete trainee'"
     [color]="'warn'"
     (buttonClicked)="onDeleteTrainee()"
-    [isDisabled]="!isEditMode()"
+    [isDisabled]="!isEditMode() || isLoading()"
   />
   @if (isEditMode()) {
     <app-button
       [text]="'Add grade'"
       [color]="'accent'"
+      [isDisabled]="isLoading()"
       (buttonClicked)="addGrade()"
     />
   }

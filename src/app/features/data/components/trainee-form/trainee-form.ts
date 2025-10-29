@@ -146,7 +146,6 @@ export class TraineeForm {
         this.store.dispatch(editTrainee({ data: editTraineeData, selectedTraineeRow }));
       }
     }
-    console.log(this.traineeForm.value);
   }
 
   populateCreateTraineeData(): CreateTrainee {
